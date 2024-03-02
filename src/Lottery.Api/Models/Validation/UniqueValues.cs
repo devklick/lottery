@@ -5,7 +5,7 @@ using Lottery.Common.Extensions;
 namespace Lottery.Api.Models.Validation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class UniqueValues : ValidationAttribute
+public class UniqueValues<TValue> : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
@@ -16,11 +16,11 @@ public class UniqueValues : ValidationAttribute
             return new ValidationResult("Value does not represent a collection", [validationContext.MemberName!]);
         }
 
-        var list = (List<object>)value;
+        var list = (List<TValue>)value;
 
         if (list.HasDuplicate(out _))
         {
-            return new ValidationResult("Value does not represent a collection", [validationContext.MemberName!]);
+            return new ValidationResult("Values in the collection must be unique", [validationContext.MemberName!]);
         }
 
         return ValidationResult.Success;

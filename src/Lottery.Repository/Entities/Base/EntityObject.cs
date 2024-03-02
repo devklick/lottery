@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Lottery.Repository.Attributes;
-using Lottery.Repository.Entities.Dbo;
 using Lottery.Repository.Entities.Idt;
 using Lottery.Repository.Entities.Ref;
 
@@ -24,7 +24,10 @@ public abstract class EntityObject
     public ItemState State { get; set; }
 
     [Required, SqlColumnDefaultConstraint("CURRENT_TIMESTAMP", isSqlCommand: true)]
-    public DateTime StateLastUpdated { get; set; }
+    public DateTime StateLastUpdatedUtc { get; set; }
+
+    [Required, SqlColumnDefaultConstraint("CURRENT_TIMESTAMP", isSqlCommand: true)]
+    public DateTime UpdatedOnUtc { get; set; }
 
     public required AppUser CreatedBy { get; set; }
 }

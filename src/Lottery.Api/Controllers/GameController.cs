@@ -1,27 +1,26 @@
+using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Services;
+using Lottery.Repository.Entities.Idt;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lottery.Api.Controllers;
 
+[Authorize(Roles = "GameAdmin,SystemAdmin")]
 [ApiController]
 [Route("[controller]")]
-public class GameController(ILogger<GameController> logger) : ControllerBase
+public class GameController(ILogger<GameController> logger, GameService gameService) : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<GameController> _logger = logger;
+    private readonly GameService _gameService = gameService;
+
 
     [HttpPost]
-    public IEnumerable<WeatherForecast> CreateGame()
+    public async Task<ActionResult<CreateGameRequest>> CreateGame(CreateGameRequest request)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        await _gameService.CreateGame(request, User);
+        return Ok(request);
     }
 }

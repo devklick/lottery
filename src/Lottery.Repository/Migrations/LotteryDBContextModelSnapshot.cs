@@ -46,10 +46,16 @@ namespace Lottery.Repository.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("state");
 
-                    b.Property<DateTime>("StateLastUpdated")
+                    b.Property<DateTime>("StateLastUpdatedUtc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("state_last_updated")
+                        .HasColumnName("state_last_updated_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
@@ -90,10 +96,16 @@ namespace Lottery.Repository.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("state");
 
-                    b.Property<DateTime>("StateLastUpdated")
+                    b.Property<DateTime>("StateLastUpdatedUtc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("state_last_updated")
+                        .HasColumnName("state_last_updated_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
@@ -144,10 +156,16 @@ namespace Lottery.Repository.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("state");
 
-                    b.Property<DateTime>("StateLastUpdated")
+                    b.Property<DateTime>("StateLastUpdatedUtc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("state_last_updated")
+                        .HasColumnName("state_last_updated_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
@@ -188,10 +206,16 @@ namespace Lottery.Repository.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("state");
 
-                    b.Property<DateTime>("StateLastUpdated")
+                    b.Property<DateTime>("StateLastUpdatedUtc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("state_last_updated")
+                        .HasColumnName("state_last_updated_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
@@ -248,8 +272,8 @@ namespace Lottery.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a0738ca5-9f1d-4c34-9829-cd2c389ae31f"),
-                            ConcurrencyStamp = "90c473a2b7f94cda8b281a62b6014020",
+                            Id = new Guid("dddc593a-ab2a-47ba-99f0-80829eeba1dd"),
+                            ConcurrencyStamp = "cd59aba1381d43b8a7b64b278d5db0e6",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -257,8 +281,8 @@ namespace Lottery.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("488c804e-5321-404e-9c8c-c333f79604c1"),
-                            ConcurrencyStamp = "05857132a7cb44f3922075263e424ded",
+                            Id = new Guid("327c81a8-3cfa-48bc-a3b8-02d3f21421d2"),
+                            ConcurrencyStamp = "8702f1c0210d4beebf126d250cd23d49",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -266,8 +290,8 @@ namespace Lottery.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("45ed77a2-36f5-44b5-aba2-21835a3110ef"),
-                            ConcurrencyStamp = "a0162189da75467b8f2bfd9e38f9e632",
+                            Id = new Guid("f23443f2-beb3-4dd9-a51a-e10a447af49c"),
+                            ConcurrencyStamp = "7b34319ff17a47a49826d30ad6a432db",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -385,33 +409,33 @@ namespace Lottery.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("19f40d93-4d51-4458-9e9c-998568aed063"),
+                            Id = new Guid("27380faa-a07d-4325-8d38-3119411ccc87"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "43f056d36bc24fc9b559c5440b65ca17",
+                            ConcurrencyStamp = "215f8bcdce72432aa4b1d19c20d5e715",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEC+tzoapmfsiLIV7l2aHjFAdFUyOfODeQfgOnrZCmByUYFO/qwokNopTAQGZ84Tmg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECim+vdmr+DeZG1dHenANaqkw2yB2r5u369ggiq+azHP04cMB4qXhFWirvp4Wn5Q2w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5e605c9a4aa043059565de7b250133e7",
+                            SecurityStamp = "95b883f51c0a4d008bbc868499a37cc5",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
                         new
                         {
-                            Id = new Guid("26fb4004-f122-48eb-9a0d-6df7cda1107e"),
+                            Id = new Guid("2cc3a99b-7169-45df-92eb-58b3abe0cb90"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a1b58288e7a24241adbd535a7cede74f",
+                            ConcurrencyStamp = "f7c67bcbfe2747f5889815e6a9b07aa7",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFTc5+gREzjqz6PActjgXbzorR9yOkq+c/Fg4e4HjrdhOpfXkJSiPasYQBgMUZPWeQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKke0t8dsC4gfQDwjgerM3S9Hg3g9g8P2F22bRlJSrZngVrQFk36Fmrwc/vm8ebsyg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "328a742b02134136aad33c2e63da733f",
+                            SecurityStamp = "be6d5313aaa842c49bd15a857ceea8d3",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         });
@@ -489,13 +513,13 @@ namespace Lottery.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("19f40d93-4d51-4458-9e9c-998568aed063"),
-                            RoleId = new Guid("a0738ca5-9f1d-4c34-9829-cd2c389ae31f")
+                            UserId = new Guid("27380faa-a07d-4325-8d38-3119411ccc87"),
+                            RoleId = new Guid("dddc593a-ab2a-47ba-99f0-80829eeba1dd")
                         },
                         new
                         {
-                            UserId = new Guid("26fb4004-f122-48eb-9a0d-6df7cda1107e"),
-                            RoleId = new Guid("488c804e-5321-404e-9c8c-c333f79604c1")
+                            UserId = new Guid("2cc3a99b-7169-45df-92eb-58b3abe0cb90"),
+                            RoleId = new Guid("327c81a8-3cfa-48bc-a3b8-02d3f21421d2")
                         });
                 });
 

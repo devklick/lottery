@@ -192,7 +192,8 @@ namespace Lottery.Repository.Migrations
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    state_last_updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    state_last_updated_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -218,7 +219,8 @@ namespace Lottery.Repository.Migrations
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    state_last_updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    state_last_updated_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -243,7 +245,8 @@ namespace Lottery.Repository.Migrations
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    state_last_updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    state_last_updated_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -275,7 +278,8 @@ namespace Lottery.Repository.Migrations
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    state_last_updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    state_last_updated_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -309,9 +313,9 @@ namespace Lottery.Repository.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { new Guid("45ed77a2-36f5-44b5-aba2-21835a3110ef"), "a0162189da75467b8f2bfd9e38f9e632", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
-                    { new Guid("488c804e-5321-404e-9c8c-c333f79604c1"), "05857132a7cb44f3922075263e424ded", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
-                    { new Guid("a0738ca5-9f1d-4c34-9829-cd2c389ae31f"), "90c473a2b7f94cda8b281a62b6014020", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" }
+                    { new Guid("327c81a8-3cfa-48bc-a3b8-02d3f21421d2"), "8702f1c0210d4beebf126d250cd23d49", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
+                    { new Guid("dddc593a-ab2a-47ba-99f0-80829eeba1dd"), "cd59aba1381d43b8a7b64b278d5db0e6", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
+                    { new Guid("f23443f2-beb3-4dd9-a51a-e10a447af49c"), "7b34319ff17a47a49826d30ad6a432db", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" }
                 });
 
             migrationBuilder.InsertData(
@@ -320,8 +324,8 @@ namespace Lottery.Repository.Migrations
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("19f40d93-4d51-4458-9e9c-998568aed063"), 0, "43f056d36bc24fc9b559c5440b65ca17", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEEC+tzoapmfsiLIV7l2aHjFAdFUyOfODeQfgOnrZCmByUYFO/qwokNopTAQGZ84Tmg==", null, false, "5e605c9a4aa043059565de7b250133e7", false, "SystemAdmin" },
-                    { new Guid("26fb4004-f122-48eb-9a0d-6df7cda1107e"), 0, "a1b58288e7a24241adbd535a7cede74f", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEFTc5+gREzjqz6PActjgXbzorR9yOkq+c/Fg4e4HjrdhOpfXkJSiPasYQBgMUZPWeQ==", null, false, "328a742b02134136aad33c2e63da733f", false, "GameAdmin" }
+                    { new Guid("27380faa-a07d-4325-8d38-3119411ccc87"), 0, "215f8bcdce72432aa4b1d19c20d5e715", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAECim+vdmr+DeZG1dHenANaqkw2yB2r5u369ggiq+azHP04cMB4qXhFWirvp4Wn5Q2w==", null, false, "95b883f51c0a4d008bbc868499a37cc5", false, "SystemAdmin" },
+                    { new Guid("2cc3a99b-7169-45df-92eb-58b3abe0cb90"), 0, "f7c67bcbfe2747f5889815e6a9b07aa7", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEKke0t8dsC4gfQDwjgerM3S9Hg3g9g8P2F22bRlJSrZngVrQFk36Fmrwc/vm8ebsyg==", null, false, "be6d5313aaa842c49bd15a857ceea8d3", false, "GameAdmin" }
                 });
 
             migrationBuilder.InsertData(
@@ -330,8 +334,8 @@ namespace Lottery.Repository.Migrations
                 columns: new[] { "role_id", "user_id" },
                 values: new object[,]
                 {
-                    { new Guid("a0738ca5-9f1d-4c34-9829-cd2c389ae31f"), new Guid("19f40d93-4d51-4458-9e9c-998568aed063") },
-                    { new Guid("488c804e-5321-404e-9c8c-c333f79604c1"), new Guid("26fb4004-f122-48eb-9a0d-6df7cda1107e") }
+                    { new Guid("dddc593a-ab2a-47ba-99f0-80829eeba1dd"), new Guid("27380faa-a07d-4325-8d38-3119411ccc87") },
+                    { new Guid("327c81a8-3cfa-48bc-a3b8-02d3f21421d2"), new Guid("2cc3a99b-7169-45df-92eb-58b3abe0cb90") }
                 });
 
             migrationBuilder.CreateIndex(

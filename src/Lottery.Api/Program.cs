@@ -5,6 +5,8 @@ using Lottery.Repository.Context;
 using Lottery.Repository.Entities.Dbo;
 using Microsoft.AspNetCore.Identity;
 using Lottery.Repository.Entities.Idt;
+using Lottery.Api.Services;
+using Lottery.Repository;
 
 namespace Lottery.Api;
 
@@ -17,6 +19,8 @@ public class Program
         // Add services to the container.
 
         ConfigureEntityFramework(builder);
+        ConfigureAutoMapper(builder);
+        ConfigureServices(builder);
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -40,6 +44,21 @@ public class Program
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static void ConfigureServices(WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<GameService>();
+        builder.Services.AddScoped<EntryService>();
+
+        builder.Services.AddScoped<GameRepository>();
+        builder.Services.AddScoped<EntryRepository>();
+    }
+
+    private static void ConfigureAutoMapper(WebApplicationBuilder builder)
+    {
+        builder.Services.AddAutoMapper(typeof(Program));
     }
 
     private static void ConfigureEntityFramework(WebApplicationBuilder builder)

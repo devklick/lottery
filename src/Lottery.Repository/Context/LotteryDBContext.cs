@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lottery.Repository.Entities.Idt;
+using Lottery.Repository.Entities.Base;
 
 namespace Lottery.Repository.Context;
 
@@ -21,6 +22,7 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
     private readonly IConfiguration _config = config;
 
     public DbSet<Game> Games { get; set; }
+    public DbSet<Entry> Entries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -193,8 +195,8 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
         }
 
         // grab SU password - this should be in secrets file and added to config
-        var suPass = _config["LotteryDBContext:SuperUserPassword"];
-        if (suPass.IsNullOrEmpty())
+        var gaPass = _config["LotteryDBContext:GameAdminPassword"];
+        if (gaPass.IsNullOrEmpty())
         {
             throw new InvalidOperationException(
                 "Unable to find the password for the SuperUser account. Make sure this is present in user secrets.");
@@ -262,7 +264,7 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
             SecurityStamp = Guid.NewGuid().ToString("N"),
             ConcurrencyStamp = Guid.NewGuid().ToString("N")
         };
-        gaUser.PasswordHash = hasher.HashPassword(gaUser, suPass);
+        gaUser.PasswordHash = hasher.HashPassword(gaUser, gaPass);
         builder.Entity<AppUser>().HasData(gaUser);
 
         // Give the Super User account the Super User role
@@ -283,5 +285,34 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
             ConcurrencyStamp = Guid.NewGuid().ToString("N"),
             Description = "Permission to access the site and play games.",
         });
+    }
+
+    public override int SaveChanges()
+    {
+        var now = DateTime.UtcNow;
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.Entity is EntityObject entity)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entity.CreatedOnUtc = now;
+                    entity.UpdatedOnUtc = now;
+                    entity.StateLastUpdatedUtc = now;
+                }
+                if (entry.State == EntityState.Modified)
+                {
+                    entity.UpdatedOnUtc = now;
+
+                    // TODO: Dunno about this, need to verify it works
+                    if (entry.Collections.Any(c => c.Metadata.Name == nameof(EntityObject.State)))
+                    {
+                        entity.StateLastUpdatedUtc = now;
+                    }
+                }
+            }
+        }
+
+        return base.SaveChanges();
     }
 }
