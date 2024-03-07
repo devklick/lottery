@@ -3,8 +3,9 @@ using System.Security.Claims;
 using AutoMapper;
 
 using Lottery.Api.Models.Entry.Create;
-using Lottery.Repository.Entities.Dbo;
-using Lottery.Repository;
+using Lottery.DB.Entities.Dbo;
+using Lottery.DB;
+using Lottery.Api.Repositories;
 
 namespace Lottery.Api.Services;
 

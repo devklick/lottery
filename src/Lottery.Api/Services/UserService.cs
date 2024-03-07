@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-using Lottery.Repository.Entities.Idt;
+using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Identity;
 

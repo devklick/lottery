@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
-using Lottery.Repository.Configuration;
-using Lottery.Repository.Context;
-using Lottery.Repository.Entities.Dbo;
+using Lottery.DB.Configuration;
+using Lottery.DB.Context;
 using Microsoft.AspNetCore.Identity;
-using Lottery.Repository.Entities.Idt;
+using Lottery.DB.Entities.Idt;
 using Lottery.Api.Services;
-using Lottery.Repository;
+using Lottery.Api.Repositories;
 
 namespace Lottery.Api;
 

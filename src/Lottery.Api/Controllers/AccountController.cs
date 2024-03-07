@@ -1,5 +1,5 @@
 using Lottery.Api.Models.Account.SignIn;
-using Lottery.Repository.Entities.Idt;
+using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +17,11 @@ public class AccountController(ILogger<AccountController> logger, SignInManager<
     [HttpPost("signIn")]
     public async Task<ActionResult<SignInResponseBody>> SignIn(SignInRequest request)
     {
+        if (User != null && _signInManager.IsSignedIn(User))
+        {
+            return Ok();
+        }
+
         var result = await _signInManager.PasswordSignInAsync(
             request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);
 

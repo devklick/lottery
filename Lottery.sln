@@ -7,9 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{16FD39EE-CDF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.Api", "src\Lottery.Api\Lottery.Api.csproj", "{215405BD-3862-42FF-95C9-FAD22D62A3E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.Repository", "src\Lottery.Repository\Lottery.Repository.csproj", "{42403B61-6007-42C3-B2B7-00B39923FA2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.DB", "src\Lottery.DB\Lottery.DB.csproj", "{42403B61-6007-42C3-B2B7-00B39923FA2A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.Common", "src\Lottery.Common\Lottery.Common.csproj", "{F694665D-A3F0-4B5E-BEA9-1DA02975CBDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.ResultService", "src\Lottery.ResultService\Lottery.ResultService.csproj", "{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +34,15 @@ Global
 		{F694665D-A3F0-4B5E-BEA9-1DA02975CBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F694665D-A3F0-4B5E-BEA9-1DA02975CBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F694665D-A3F0-4B5E-BEA9-1DA02975CBDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{215405BD-3862-42FF-95C9-FAD22D62A3E2} = {16FD39EE-CDF8-4867-80A0-5BC08BDB3F60}
 		{42403B61-6007-42C3-B2B7-00B39923FA2A} = {16FD39EE-CDF8-4867-80A0-5BC08BDB3F60}
 		{F694665D-A3F0-4B5E-BEA9-1DA02975CBDD} = {16FD39EE-CDF8-4867-80A0-5BC08BDB3F60}
+		{E893CBF9-CB51-4BBD-8BF6-DE01169CE5F4} = {16FD39EE-CDF8-4867-80A0-5BC08BDB3F60}
 	EndGlobalSection
 EndGlobal

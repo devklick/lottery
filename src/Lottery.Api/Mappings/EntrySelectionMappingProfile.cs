@@ -12,7 +12,7 @@ public class EntrySelectionMappingProfile : AutoMapper.Profile
 
     private void MapModelsForCreate()
     {
-        CreateMap<CreateEntrySelectionRequestBody, Repository.Entities.Dbo.EntrySelection>()
+        CreateMap<CreateEntrySelectionRequestBody, DB.Entities.Dbo.EntrySelection>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
     }
 }

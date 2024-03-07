@@ -1,6 +1,6 @@
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Services;
-using Lottery.Repository.Entities.Idt;
+using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +20,8 @@ public class GameController(ILogger<GameController> logger, GameService gameServ
     [HttpPost]
     public async Task<ActionResult<CreateGameRequest>> CreateGame(CreateGameRequest request)
     {
-        await _gameService.CreateGame(request, User);
-        return Ok(request);
+        var response = await _gameService.CreateGame(request, User);
+
+        return Ok(response.Body);
     }
 }
