@@ -10,6 +10,15 @@ public class ResultRepository(LotteryDBContext db)
 {
     private readonly LotteryDBContext _db = db;
 
+    public async Task SaveChangesAsync() => await _db.SaveChangesAsync();
+
+    public async Task<Guid> GetSystemAdminUserId()
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == "SystemAdmin");
+
+        return user == null ? throw new Exception("SystemAdmin user not found") : user.Id;
+    }
+
     public async Task<List<Game>> GetGamesToResult()
     {
         return await _db.Games
@@ -18,11 +27,12 @@ public class ResultRepository(LotteryDBContext db)
                 && !_db.GameResults.Any(gr => gr.GameId == g.Id)
             )
             .Include(g => g.Selections)
+            .Include(g => g.Prizes)
             .ToListAsync();
     }
 
-    public async Task AddWinningSelections(IEnumerable<GameSelection> winningSelections)
-        => await _db.GameSelections.AddRangeAsync(winningSelections);
+    public async Task AddGameResults(IEnumerable<GameResult> winningSelections)
+        => await _db.GameResults.AddRangeAsync(winningSelections);
 
     public async Task<List<(GamePrize Prize, IEnumerable<Entry> WinningEntries)>> GetPrizeWinners(Guid gameId, IEnumerable<Guid> winningGameSelectionIds)
     {
@@ -52,7 +62,7 @@ public class ResultRepository(LotteryDBContext db)
             var winningEntries = winners
                 .Where(we => we.WinningSelections.Count == prize.NumberMatchCount)
                 .Where(we => !result.Any(r => r.WinningEntries.Any(e => e.Id == we.EntryId)))
-                .SelectMany(we => we.WinningSelections.Select(ws => ws.Entry)).ToList();
+                .SelectMany(we => we.WinningSelections.Select(ws => ws.Entry)).Distinct().ToList();
 
             result.Add((prize, winningEntries));
         }

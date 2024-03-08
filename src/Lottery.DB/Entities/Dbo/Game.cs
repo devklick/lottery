@@ -17,6 +17,10 @@ public class Game : EntityObject
     [Required, StringLength(64)]
     public required string Name { get; set; }
 
-    public required List<GameSelection> Selections { get; set; }
-    public required List<GamePrize> Prizes { get; set; }
+    [Required]
+    public required int NumbersRequired { get; set; }
+
+    public List<GameSelection> Selections { get; set; }
+    public List<GamePrize> Prizes { get; set; }
+    public List<Entry> Entries { get; set; }
 }

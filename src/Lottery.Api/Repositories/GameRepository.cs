@@ -32,4 +32,7 @@ public class GameRepository(LotteryDBContext db)
         .Include(g => g.Prizes)
         .ToListAsync();
     }
+
+    public async Task<Game?> GetGame(Guid gameId)
+        => await _db.Games.Include(g => g.Selections).FirstOrDefaultAsync(g => g.Id == gameId);
 }

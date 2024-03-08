@@ -19,6 +19,6 @@ public class GameMappingProfile : AutoMapper.Profile
 
         CreateMap<CreateGameRequestUnbound, DB.Entities.Dbo.Game>();
 
-        CreateMap<DB.Entities.Dbo.Game, CreateGameResponseBody>();
+        CreateMap<DB.Entities.Dbo.Game, CreateGameResponse>();
     }
 }

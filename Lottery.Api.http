@@ -12,6 +12,7 @@ Content-Type: application/json
 
 ###
 
+# @name createGame
 POST {{Lottery.Api_HostAddress}}/game/
 Accept: application/json
 Content-Type: application/json
@@ -21,7 +22,7 @@ Content-Type: application/json
     "name": "Test Game", 
     "startTime": "2024-03-02T11:43:39.151Z", 
     "drawTime": "2024-03-03T11:43:39.151Z", 
-    "numbersToDraw": 5,
+    "numbersRequired": 5,
     "selections": [
         { "selectionNumber": 1 },
         { "selectionNumber": 2 },
@@ -36,4 +37,16 @@ Content-Type: application/json
       { "position": 2, "numberMatchCount": 4 },
       { "position": 3, "numberMatchCount": 3 }
     ]
+}
+
+### 
+
+@gameId = {{createGame.response.body.$.id}}
+# @name createEntry
+POST {{Lottery.Api_HostAddress}}/entry
+Accept: application/json
+Content-Type: application/json
+
+{
+  "gameId": "@{{gameId}}"
 }

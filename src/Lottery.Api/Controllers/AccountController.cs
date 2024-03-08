@@ -15,12 +15,12 @@ public class AccountController(ILogger<AccountController> logger, SignInManager<
 
 
     [HttpPost("signIn")]
-    public async Task<ActionResult<SignInResponseBody>> SignIn(SignInRequest request)
+    public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)
     {
-        if (User != null && _signInManager.IsSignedIn(User))
-        {
-            return Ok();
-        }
+        // if (User != null && _signInManager.IsSignedIn(User))
+        // {
+        //     return Ok();
+        // }
 
         var result = await _signInManager.PasswordSignInAsync(
             request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);

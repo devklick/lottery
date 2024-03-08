@@ -7,6 +7,6 @@ public class GamePrizeMappingProfile : AutoMapper.Profile
     public GamePrizeMappingProfile()
     {
         CreateMap<CreateGamePrizeRequestBody, DB.Entities.Dbo.GamePrize>();
-        CreateMap<DB.Entities.Dbo.GamePrize, CreateGamePrizeResponseBody>();
+        CreateMap<DB.Entities.Dbo.GamePrize, CreateGamePrizeResponse>();
     }
 }

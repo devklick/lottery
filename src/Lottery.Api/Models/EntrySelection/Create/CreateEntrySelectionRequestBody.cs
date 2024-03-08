@@ -5,10 +5,10 @@ namespace Lottery.Api.Models.EntrySelection.Create;
 public class CreateEntrySelectionRequestBody : IEquatable<CreateEntrySelectionRequestBody>
 {
     [Required]
-    public Guid GameSelectionId { get; set; }
+    public int SelectionNumber { get; set; }
 
     public bool Equals(CreateEntrySelectionRequestBody? other)
-        => other != null && other.GameSelectionId != GameSelectionId;
+        => other != null && other.SelectionNumber != SelectionNumber;
 
     public override bool Equals(object? obj)
         => Equals(obj as CreateEntrySelectionRequestBody);
@@ -16,7 +16,7 @@ public class CreateEntrySelectionRequestBody : IEquatable<CreateEntrySelectionRe
     public override int GetHashCode()
     {
         var hash = new HashCode();
-        hash.Add(GameSelectionId);
+        hash.Add(SelectionNumber);
         return hash.ToHashCode();
     }
 }

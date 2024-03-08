@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     [DbContext(typeof(LotteryDBContext))]
-    [Migration("20240307210619_InitialMigration")]
+    [Migration("20240308140158_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -43,6 +43,10 @@ namespace Lottery.DB.Migrations
                         .HasColumnName("created_on_utc")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("game_id");
+
                     b.Property<int>("State")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -64,6 +68,8 @@ namespace Lottery.DB.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("GameId");
 
                     b.ToTable("entry", "dbo");
                 });
@@ -126,7 +132,7 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("GamePrizeId");
 
-                    b.ToTable("entry_prizes", (string)null);
+                    b.ToTable("entry_prize", "dbo");
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Dbo.EntrySelection", b =>
@@ -209,6 +215,10 @@ namespace Lottery.DB.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("name");
+
+                    b.Property<int>("NumbersRequired")
+                        .HasColumnType("integer")
+                        .HasColumnName("numbers_required");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone")
@@ -346,7 +356,7 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("SelectionId");
 
-                    b.ToTable("game_results", (string)null);
+                    b.ToTable("game_result", "dbo");
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Dbo.GameSelection", b =>
@@ -446,8 +456,8 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3d5bdee6-406a-4cb5-b556-3665cbbb65a4"),
-                            ConcurrencyStamp = "7adb4ee16aeb4173994b5e9fd92f5133",
+                            Id = new Guid("4b794a10-0a07-4221-9460-f97848305470"),
+                            ConcurrencyStamp = "d620fa1c65a4415995cbd3d2da3cf6a1",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -455,8 +465,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("56f8e818-a2be-4e81-85a8-5e2889a5afb6"),
-                            ConcurrencyStamp = "012fdd1cf676448c9c9831494075a85f",
+                            Id = new Guid("f037875c-c8d7-4904-bb18-586b988e87ca"),
+                            ConcurrencyStamp = "0de63a4fbb214a3b9e1722d397cbd803",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -464,8 +474,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("816110a5-0b0b-4751-8729-d02b30f58242"),
-                            ConcurrencyStamp = "a3a7449ed9a048aaa087681b3553bba6",
+                            Id = new Guid("90a235a7-6a26-4798-ae29-a2cd9a7c194c"),
+                            ConcurrencyStamp = "1d1d569fe1f542d6a31dfbc81a83453b",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -583,33 +593,33 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("095c78fc-f471-48da-ab84-8d059d8e29db"),
+                            Id = new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2d081a3e657149fabc9983a0886520a3",
+                            ConcurrencyStamp = "6963be86e3de4cc7b4598623eb75dcee",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOJiv72qsEv9LjmNp2LzpsdPtVDp5mlUk/uPBgvsHSKutSErx76LsNSVNbR99YMPDQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEIHJHV9Ayep4mG5kMkAkCgv7BUrVPdz3ki3ZtxFQF+M6ZEBrc3CBdyLQBKztCkVNg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "338a5d87cdc54973b0d0e455ee8b8de2",
+                            SecurityStamp = "a8441c0bbc4441219baaac0cf0ad38ec",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
                         new
                         {
-                            Id = new Guid("b8e8255e-94d5-4d2e-b7cd-21b5022715c0"),
+                            Id = new Guid("faef0c72-131b-4578-815e-006701feef64"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2e5cce2f0e6d48a1902ecb24564b4c05",
+                            ConcurrencyStamp = "ee5b9fd92abf4c2c90fe1d9133cacce0",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK0PYep+NSeaO7Fj0NFRznPntx1AQA5zJb477MNqLWKpG+Y25GV/6p4jQ0VhfLRSZw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELsG6gwr5IdFDuVCa2y4MtDtVQ7qhvcSgLaHArakcssEH9xYRGHvKXEc5qrOpczx2g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8b304fc7b4224a33a140151b3f58f034",
+                            SecurityStamp = "2921e8a98ce049f28ec21a1e0c375148",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         });
@@ -687,13 +697,13 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("095c78fc-f471-48da-ab84-8d059d8e29db"),
-                            RoleId = new Guid("3d5bdee6-406a-4cb5-b556-3665cbbb65a4")
+                            UserId = new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586"),
+                            RoleId = new Guid("4b794a10-0a07-4221-9460-f97848305470")
                         },
                         new
                         {
-                            UserId = new Guid("b8e8255e-94d5-4d2e-b7cd-21b5022715c0"),
-                            RoleId = new Guid("56f8e818-a2be-4e81-85a8-5e2889a5afb6")
+                            UserId = new Guid("faef0c72-131b-4578-815e-006701feef64"),
+                            RoleId = new Guid("f037875c-c8d7-4904-bb18-586b988e87ca")
                         });
                 });
 
@@ -728,7 +738,15 @@ namespace Lottery.DB.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Lottery.DB.Entities.Dbo.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Dbo.EntryPrize", b =>

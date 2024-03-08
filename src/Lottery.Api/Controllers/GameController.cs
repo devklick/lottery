@@ -11,17 +11,17 @@ namespace Lottery.Api.Controllers;
 [Authorize(Roles = "GameAdmin,SystemAdmin")]
 [ApiController]
 [Route("[controller]")]
-public class GameController(ILogger<GameController> logger, GameService gameService) : ControllerBase
+public class GameController(ILogger<GameController> logger, GameService gameService) : ApiControllerBase
 {
     private readonly ILogger<GameController> _logger = logger;
     private readonly GameService _gameService = gameService;
 
 
     [HttpPost]
-    public async Task<ActionResult<CreateGameRequest>> CreateGame(CreateGameRequest request)
+    public async Task<ActionResult<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
         var response = await _gameService.CreateGame(request, User);
 
-        return Ok(response.Body);
+        return CreateActionResult(response);
     }
 }

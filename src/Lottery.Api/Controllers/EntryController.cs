@@ -9,15 +9,16 @@ namespace Lottery.Api.Controllers;
 [Authorize(Roles = "BasicUser,GameAdmin,SystemAdmin")]
 [ApiController]
 [Route("[controller]")]
-public class EntryController(ILogger<EntryController> logger, EntryService entryService) : ControllerBase
+public class EntryController(ILogger<EntryController> logger, EntryService entryService) : ApiControllerBase
 {
     private readonly ILogger<EntryController> _logger = logger;
     private readonly EntryService _entryService = entryService;
 
     [HttpPost]
-    public async Task<ActionResult<object>> CreateEntry(CreateEntryRequest request)
+    public async Task<ActionResult<CreateEntryResponse>> CreateEntry(CreateEntryRequest request)
     {
-        await _entryService.CreateEntry(request, User);
-        return Ok();
+        var result = await _entryService.CreateEntry(request, User);
+
+        return CreateActionResult(result);
     }
 }

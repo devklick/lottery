@@ -14,7 +14,7 @@ public class EntrySelection : EntityObject
     [Required, ForeignKey(nameof(GameSelection))]
     public Guid GameSelectionId { get; set; }
 
-    public required Entry Entry { get; set; }
-    public required GameSelection GameSelection { get; set; }
+    public Entry Entry { get; set; }
+    public GameSelection GameSelection { get; set; }
     public int SelectionNumber => GameSelection.SelectionNumber;
 }

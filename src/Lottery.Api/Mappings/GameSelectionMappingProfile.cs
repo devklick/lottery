@@ -14,6 +14,6 @@ public class GameSelectionMappingProfile : AutoMapper.Profile
         CreateMap<CreateGameSelectionRequestBody, DB.Entities.Dbo.GameSelection>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
 
-        CreateMap<DB.Entities.Dbo.GameSelection, CreateGameSelectionResponseBody>();
+        CreateMap<DB.Entities.Dbo.GameSelection, CreateGameSelectionResponse>();
     }
 }

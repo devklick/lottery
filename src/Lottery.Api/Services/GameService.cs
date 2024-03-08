@@ -2,6 +2,7 @@ using System.Security.Claims;
 
 using AutoMapper;
 
+using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Repositories;
 using Lottery.DB.Entities.Dbo;
@@ -12,13 +13,23 @@ namespace Lottery.Api.Services;
 public class GameService(GameRepository gameRepository, UserService userService, IMapper mapper)
 {
     private readonly GameRepository _gameRepository = gameRepository;
-    private readonly UserService _userManager = userService;
+    private readonly UserService _userService = userService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<CreateGameResponse> CreateGame(CreateGameRequest request, ClaimsPrincipal user)
+    public async Task<Result<CreateGameResponse>> CreateGame(CreateGameRequest request, ClaimsPrincipal user)
     {
-        request.Unbound.CreatedById = _userManager.GetUserId(user)
-            ?? throw new Exception("UserId not found");
+        var userIdResult = _userService.GetUserId(user);
+
+        if (userIdResult.Status != ResultStatus.Ok)
+        {
+            return new Result<CreateGameResponse>
+            {
+                Errors = userIdResult.Errors,
+                Status = userIdResult.Status
+            };
+        };
+
+        request.Unbound.CreatedById = userIdResult.Value;
 
         var entity = _mapper.Map<Game>(request);
 
@@ -36,9 +47,10 @@ public class GameService(GameRepository gameRepository, UserService userService,
 
         var game = await _gameRepository.CreateGame(entity);
 
-        return new CreateGameResponse
+        return new Result<CreateGameResponse>
         {
-            Body = _mapper.Map<CreateGameResponseBody>(game)
+            Status = ResultStatus.Ok,
+            Value = _mapper.Map<CreateGameResponse>(game)
         };
     }
 }

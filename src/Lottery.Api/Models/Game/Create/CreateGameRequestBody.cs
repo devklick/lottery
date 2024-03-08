@@ -12,17 +12,20 @@ namespace Lottery.Api.Models.Game.Create;
 public class CreateGameRequestBody
 {
     [Required]
-    public DateTime StartTime { get; set; }
+    public required DateTime StartTime { get; set; }
 
     [Required]
-    public DateTime DrawTime { get; set; }
+    public required DateTime DrawTime { get; set; }
 
     [Required, StringLength(64)]
     public required string Name { get; set; }
 
     [DefaultValue(ItemState.Enabled)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ItemState State { get; set; }
+    public required ItemState State { get; set; }
+
+    [Required]
+    public required int NumbersRequired { get; set; }
 
 
     [Required, UniqueValues<CreateGameSelectionRequestBody>]
