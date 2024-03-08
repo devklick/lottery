@@ -4,9 +4,11 @@ using Lottery.DB.Attributes;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Entities.Ref;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Lottery.DB.Entities.Base;
 
-[SqlTableIndex(nameof(CreatedById))]
+[Index(nameof(CreatedById))]
 /// <summary>
 /// The base object which all entities should extend.
 /// </summary>

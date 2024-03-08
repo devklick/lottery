@@ -44,16 +44,12 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
 
             AddCheckConstraint(entity);
 
-            AddUniqueConstraint(entity);
-
             // foreach property/column
             foreach (var property in entity.GetProperties())
             {
                 ApplyNamingConvention(property);
 
                 AddDefaultConstraint(property);
-
-                AddUniqueConstraint(property, entity);
             }
 
             // foreach foreign key
@@ -119,40 +115,6 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
         if (checkConstraint != null)
         {
             entity.AddCheckConstraint($"ch_{entity.GetSchema()}_{entity.GetTableName()}_{checkConstraint.ConstraintName}", checkConstraint.Sql);
-        }
-    }
-
-    private static void AddUniqueConstraint(IMutableEntityType entity)
-    {
-        var tableLevelUniques = entity.ClrType.GetCustomAttributes<SqlTableUniqueIndexAttribute>();
-
-        if (tableLevelUniques != null)
-        {
-            foreach (var tableLevelUnique in tableLevelUniques)
-            {
-                var props = new List<IMutableProperty>();
-                foreach (string propName in tableLevelUnique.PropertyNames)
-                {
-                    var prop = entity.GetProperties().First(p => p.Name == propName);
-                    props.Add(prop);
-                }
-                entity.AddIndex(props).IsUnique = true;
-
-                if (!string.IsNullOrEmpty(tableLevelUnique.ConstraintName))
-                {
-                    entity.FindIndex(props)?.SetDatabaseName(tableLevelUnique.ConstraintName);
-                }
-            }
-        }
-    }
-
-    private void AddUniqueConstraint(IMutableProperty property, IMutableEntityType entity)
-    {
-        // apply column level unique unique constraints
-        var unique = property.PropertyInfo?.GetCustomAttribute<SqlColumnUniqueConstraintAttribute>();
-        if (unique != null)
-        {
-            entity.AddIndex(property).IsUnique = true;
         }
     }
 
