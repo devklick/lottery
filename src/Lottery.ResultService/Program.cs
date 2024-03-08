@@ -62,7 +62,6 @@ foreach (var game in games)
         // Construct the entry prizes that link a game prize to a player
         entryPrizes.AddRange(winningEntries.Select(we => new EntryPrize
         {
-            GameId = game.Id,
             GamePrizeId = gamePrize.Id,
             EntryId = we.Id,
             CreatedById = adminUserId

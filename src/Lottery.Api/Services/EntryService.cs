@@ -76,6 +76,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
                 GameSelectionId = gs.Id,
                 CreatedById = entry.CreatedById,
                 State = entry.State,
+                EntryId = entry.Id
             });
         }
 

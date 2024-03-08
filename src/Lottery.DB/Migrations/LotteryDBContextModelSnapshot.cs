@@ -28,7 +28,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -76,7 +77,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -91,10 +93,6 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("EntryId")
                         .HasColumnType("uuid")
                         .HasColumnName("entry_id");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("game_id");
 
                     b.Property<Guid>("GamePrizeId")
                         .HasColumnType("uuid")
@@ -125,9 +123,8 @@ namespace Lottery.DB.Migrations
                     b.HasIndex("EntryId")
                         .IsUnique();
 
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("GamePrizeId");
+                    b.HasIndex("GamePrizeId", "EntryId")
+                        .IsUnique();
 
                     b.ToTable("entry_prize", "dbo");
                 });
@@ -137,7 +134,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -179,9 +177,10 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("EntryId");
-
                     b.HasIndex("GameSelectionId");
+
+                    b.HasIndex("EntryId", "GameSelectionId")
+                        .IsUnique();
 
                     b.ToTable("entry_selection", "dbo");
                 });
@@ -191,7 +190,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -251,7 +251,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -297,7 +298,11 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("GameId");
+                    b.HasIndex("GameId", "NumberMatchCount")
+                        .IsUnique();
+
+                    b.HasIndex("GameId", "Position")
+                        .IsUnique();
 
                     b.ToTable("game_prize", "dbo");
                 });
@@ -307,7 +312,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -349,9 +355,10 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("GameId");
-
                     b.HasIndex("SelectionId");
+
+                    b.HasIndex("GameId", "SelectionId")
+                        .IsUnique();
 
                     b.ToTable("game_result", "dbo");
                 });
@@ -361,7 +368,8 @@ namespace Lottery.DB.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
@@ -403,7 +411,8 @@ namespace Lottery.DB.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("GameId");
+                    b.HasIndex("GameId", "SelectionNumber")
+                        .IsUnique();
 
                     b.ToTable("game_selection", "dbo");
                 });
@@ -453,8 +462,8 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4b794a10-0a07-4221-9460-f97848305470"),
-                            ConcurrencyStamp = "d620fa1c65a4415995cbd3d2da3cf6a1",
+                            Id = new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1"),
+                            ConcurrencyStamp = "3dd01622f8534713bf1b09088972cba0",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -462,8 +471,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f037875c-c8d7-4904-bb18-586b988e87ca"),
-                            ConcurrencyStamp = "0de63a4fbb214a3b9e1722d397cbd803",
+                            Id = new Guid("038475aa-b693-4efa-b6cb-99e391b51336"),
+                            ConcurrencyStamp = "6a08ef5bc82945b4bb04808db8482b7e",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -471,8 +480,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("90a235a7-6a26-4798-ae29-a2cd9a7c194c"),
-                            ConcurrencyStamp = "1d1d569fe1f542d6a31dfbc81a83453b",
+                            Id = new Guid("a8e9544f-dc61-4280-9977-41e5297b5db4"),
+                            ConcurrencyStamp = "6593e5babaac4157ae72100aaa92d8d0",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -590,33 +599,33 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586"),
+                            Id = new Guid("7190be09-856e-42ec-a469-d97103347074"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6963be86e3de4cc7b4598623eb75dcee",
+                            ConcurrencyStamp = "098100f248b14d36aa92d90bb47c9e34",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEIHJHV9Ayep4mG5kMkAkCgv7BUrVPdz3ki3ZtxFQF+M6ZEBrc3CBdyLQBKztCkVNg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDRIxY6Rq11+fjU4XzBni+fT6q8ASdxlaX49ryRvqHCosaKlf7Os6/nVXU85c4mrSg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a8441c0bbc4441219baaac0cf0ad38ec",
+                            SecurityStamp = "7853e497039d4b1f919ce9fcd118d021",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
                         new
                         {
-                            Id = new Guid("faef0c72-131b-4578-815e-006701feef64"),
+                            Id = new Guid("44982544-3aab-4626-a180-c6578edd666c"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee5b9fd92abf4c2c90fe1d9133cacce0",
+                            ConcurrencyStamp = "a40674a1181544648cf4082dbad57158",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAELsG6gwr5IdFDuVCa2y4MtDtVQ7qhvcSgLaHArakcssEH9xYRGHvKXEc5qrOpczx2g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGLVQKIdb0ix8K+cfuYiCSisdejmf4Ta+dcjSzvPygT7//zCiJYL3oqt/ems7B0jig==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2921e8a98ce049f28ec21a1e0c375148",
+                            SecurityStamp = "d7bc15f960474ef7ac74e96e916f49c6",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         });
@@ -694,13 +703,13 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586"),
-                            RoleId = new Guid("4b794a10-0a07-4221-9460-f97848305470")
+                            UserId = new Guid("7190be09-856e-42ec-a469-d97103347074"),
+                            RoleId = new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1")
                         },
                         new
                         {
-                            UserId = new Guid("faef0c72-131b-4578-815e-006701feef64"),
-                            RoleId = new Guid("f037875c-c8d7-4904-bb18-586b988e87ca")
+                            UserId = new Guid("44982544-3aab-4626-a180-c6578edd666c"),
+                            RoleId = new Guid("038475aa-b693-4efa-b6cb-99e391b51336")
                         });
                 });
 
@@ -736,7 +745,7 @@ namespace Lottery.DB.Migrations
                         .IsRequired();
 
                     b.HasOne("Lottery.DB.Entities.Dbo.Game", "Game")
-                        .WithMany()
+                        .WithMany("Entries")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -760,12 +769,6 @@ namespace Lottery.DB.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Lottery.DB.Entities.Dbo.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Lottery.DB.Entities.Dbo.GamePrize", "GamePrize")
                         .WithMany("EntryPrizes")
                         .HasForeignKey("GamePrizeId")
@@ -775,8 +778,6 @@ namespace Lottery.DB.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Entry");
-
-                    b.Navigation("Game");
 
                     b.Navigation("GamePrize");
                 });
@@ -944,6 +945,8 @@ namespace Lottery.DB.Migrations
 
             modelBuilder.Entity("Lottery.DB.Entities.Dbo.Game", b =>
                 {
+                    b.Navigation("Entries");
+
                     b.Navigation("Prizes");
 
                     b.Navigation("Selections");

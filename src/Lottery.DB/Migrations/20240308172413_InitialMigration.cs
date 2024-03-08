@@ -188,7 +188,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     start_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     draw_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -216,7 +216,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     game_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -248,7 +248,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     game_id = table.Column<Guid>(type: "uuid", nullable: false),
                     position = table.Column<int>(type: "integer", nullable: false),
                     number_match_count = table.Column<int>(type: "integer", nullable: false),
@@ -282,9 +282,9 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    selection_number = table.Column<int>(type: "integer", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     game_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    selection_number = table.Column<int>(type: "integer", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
@@ -315,8 +315,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     game_prize_id = table.Column<Guid>(type: "uuid", nullable: false),
                     entry_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -343,13 +342,6 @@ namespace Lottery.DB.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_entry_prize_game_game_id",
-                        column: x => x.game_id,
-                        principalSchema: "dbo",
-                        principalTable: "game",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_entry_prize_game_prize_game_prize_id",
                         column: x => x.game_prize_id,
                         principalSchema: "dbo",
@@ -363,7 +355,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     entry_id = table.Column<Guid>(type: "uuid", nullable: false),
                     game_selection_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -403,7 +395,7 @@ namespace Lottery.DB.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     game_id = table.Column<Guid>(type: "uuid", nullable: false),
                     selection_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -444,9 +436,9 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { new Guid("4b794a10-0a07-4221-9460-f97848305470"), "d620fa1c65a4415995cbd3d2da3cf6a1", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
-                    { new Guid("90a235a7-6a26-4798-ae29-a2cd9a7c194c"), "1d1d569fe1f542d6a31dfbc81a83453b", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
-                    { new Guid("f037875c-c8d7-4904-bb18-586b988e87ca"), "0de63a4fbb214a3b9e1722d397cbd803", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" }
+                    { new Guid("038475aa-b693-4efa-b6cb-99e391b51336"), "6a08ef5bc82945b4bb04808db8482b7e", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
+                    { new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1"), "3dd01622f8534713bf1b09088972cba0", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
+                    { new Guid("a8e9544f-dc61-4280-9977-41e5297b5db4"), "6593e5babaac4157ae72100aaa92d8d0", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" }
                 });
 
             migrationBuilder.InsertData(
@@ -455,8 +447,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586"), 0, "6963be86e3de4cc7b4598623eb75dcee", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEEIHJHV9Ayep4mG5kMkAkCgv7BUrVPdz3ki3ZtxFQF+M6ZEBrc3CBdyLQBKztCkVNg==", null, false, "a8441c0bbc4441219baaac0cf0ad38ec", false, "SystemAdmin" },
-                    { new Guid("faef0c72-131b-4578-815e-006701feef64"), 0, "ee5b9fd92abf4c2c90fe1d9133cacce0", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAELsG6gwr5IdFDuVCa2y4MtDtVQ7qhvcSgLaHArakcssEH9xYRGHvKXEc5qrOpczx2g==", null, false, "2921e8a98ce049f28ec21a1e0c375148", false, "GameAdmin" }
+                    { new Guid("44982544-3aab-4626-a180-c6578edd666c"), 0, "a40674a1181544648cf4082dbad57158", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEGLVQKIdb0ix8K+cfuYiCSisdejmf4Ta+dcjSzvPygT7//zCiJYL3oqt/ems7B0jig==", null, false, "d7bc15f960474ef7ac74e96e916f49c6", false, "GameAdmin" },
+                    { new Guid("7190be09-856e-42ec-a469-d97103347074"), 0, "098100f248b14d36aa92d90bb47c9e34", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEDRIxY6Rq11+fjU4XzBni+fT6q8ASdxlaX49ryRvqHCosaKlf7Os6/nVXU85c4mrSg==", null, false, "7853e497039d4b1f919ce9fcd118d021", false, "SystemAdmin" }
                 });
 
             migrationBuilder.InsertData(
@@ -465,8 +457,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "role_id", "user_id" },
                 values: new object[,]
                 {
-                    { new Guid("4b794a10-0a07-4221-9460-f97848305470"), new Guid("bff4790e-4ba7-4249-83f8-0096b9bc8586") },
-                    { new Guid("f037875c-c8d7-4904-bb18-586b988e87ca"), new Guid("faef0c72-131b-4578-815e-006701feef64") }
+                    { new Guid("038475aa-b693-4efa-b6cb-99e391b51336"), new Guid("44982544-3aab-4626-a180-c6578edd666c") },
+                    { new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1"), new Guid("7190be09-856e-42ec-a469-d97103347074") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -539,16 +531,11 @@ namespace Lottery.DB.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_entry_prize_game_id",
+                name: "IX_entry_prize_game_prize_id_entry_id",
                 schema: "dbo",
                 table: "entry_prize",
-                column: "game_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_entry_prize_game_prize_id",
-                schema: "dbo",
-                table: "entry_prize",
-                column: "game_prize_id");
+                columns: new[] { "game_prize_id", "entry_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_entry_selection_created_by_id",
@@ -557,10 +544,11 @@ namespace Lottery.DB.Migrations
                 column: "created_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_entry_selection_entry_id",
+                name: "IX_entry_selection_entry_id_game_selection_id",
                 schema: "dbo",
                 table: "entry_selection",
-                column: "entry_id");
+                columns: new[] { "entry_id", "game_selection_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_entry_selection_game_selection_id",
@@ -581,10 +569,18 @@ namespace Lottery.DB.Migrations
                 column: "created_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_game_prize_game_id",
+                name: "IX_game_prize_game_id_number_match_count",
                 schema: "dbo",
                 table: "game_prize",
-                column: "game_id");
+                columns: new[] { "game_id", "number_match_count" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_game_prize_game_id_position",
+                schema: "dbo",
+                table: "game_prize",
+                columns: new[] { "game_id", "position" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_game_result_created_by_id",
@@ -593,10 +589,11 @@ namespace Lottery.DB.Migrations
                 column: "created_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_game_result_game_id",
+                name: "IX_game_result_game_id_selection_id",
                 schema: "dbo",
                 table: "game_result",
-                column: "game_id");
+                columns: new[] { "game_id", "selection_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_game_result_selection_id",
@@ -611,10 +608,11 @@ namespace Lottery.DB.Migrations
                 column: "created_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_game_selection_game_id",
+                name: "IX_game_selection_game_id_selection_number",
                 schema: "dbo",
                 table: "game_selection",
-                column: "game_id");
+                columns: new[] { "game_id", "selection_number" },
+                unique: true);
         }
 
         /// <inheritdoc />
