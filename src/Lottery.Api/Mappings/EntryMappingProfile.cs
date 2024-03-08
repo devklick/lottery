@@ -1,5 +1,6 @@
 
 using Lottery.Api.Models.Entry.Create;
+using Lottery.Api.Models.Entry.Get;
 
 namespace Lottery.Api.Mappings;
 
@@ -19,6 +20,8 @@ public class EntryMappingProfile : AutoMapper.Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
 
         CreateMap<CreateEntryRequestUnbound, DB.Entities.Dbo.Entry>();
+
+        CreateMap<DB.Entities.Dbo.Entry, GetEntriesResponseItem>();
     }
 
 }

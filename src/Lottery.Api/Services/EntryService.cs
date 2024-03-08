@@ -7,6 +7,7 @@ using Lottery.DB.Entities.Dbo;
 using Lottery.DB;
 using Lottery.Api.Repositories;
 using Lottery.Api.Models.Common;
+using Lottery.Api.Models.Entry.Get;
 
 namespace Lottery.Api.Services;
 
@@ -92,6 +93,33 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         {
             Status = ResultStatus.Ok,
             Value = new CreateEntryResponse()
+        };
+    }
+
+    public async Task<Result<GetEntriesResponse>> GetEntries(GetEntriesRequest request, ClaimsPrincipal user)
+    {
+        var userIdResult = _userService.GetUserId(user);
+        if (userIdResult.Status != ResultStatus.Ok)
+        {
+            return new Result<GetEntriesResponse>
+            {
+                Errors = userIdResult.Errors,
+                Status = userIdResult.Status
+            };
+        }
+
+        var (entries, hasMore) = await _entryRepository.GetEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
+
+        return new Result<GetEntriesResponse>
+        {
+            Status = ResultStatus.Ok,
+            Value = new GetEntriesResponse
+            {
+                Items = _mapper.Map<IEnumerable<GetEntriesResponseItem>>(entries),
+                Limit = request.Query.Limit,
+                Page = request.Query.Page,
+                HasMore = hasMore,
+            }
         };
     }
 }
