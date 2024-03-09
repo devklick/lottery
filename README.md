@@ -1,5 +1,8 @@
 # Lottery
 
+> [!WARNING]
+> Project status: WIP
+> 
 A basic lottery game where users can pick numbers, the results are drawn at random, and the users could win a prize if their numbers come up. 
 
 > [!NOTE]
