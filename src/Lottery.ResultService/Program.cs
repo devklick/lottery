@@ -3,6 +3,7 @@
 using Lottery.DB.Configuration;
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Extensions;
 using Lottery.ResultService.Repositories;
 using Lottery.ResultService.Services;
 
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Hosting;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
-ConfigureEntityFramework(builder);
+builder.ConfigureEntityFramework<LotteryDBContext>();
 
 builder.Services.AddSingleton<ResultRepository>();
 
@@ -72,31 +73,4 @@ foreach (var game in games)
     await repo.AddEntryPrizes(entryPrizes);
 
     await repo.SaveChangesAsync();
-}
-
-static void ConfigureEntityFramework(HostApplicationBuilder builder)
-{
-    builder.Services.Configure<EFMigrationSettings>(
-        builder.Configuration.GetSection(nameof(EFMigrationSettings)));
-
-    builder.Services.AddDbContext<LotteryDBContext>(options =>
-    {
-        var connectionString = builder.Configuration.GetConnectionString("Default")
-            ?? throw new Exception("No default connection string found");
-
-        var dbPassword = builder.Configuration["ConnectionStrings:Default:Password"];
-
-        if (!string.IsNullOrWhiteSpace(dbPassword))
-        {
-            connectionString = connectionString.TrimEnd();
-            connectionString += $";Password={dbPassword};";
-        }
-        options.UseNpgsql(connectionString, sqlOps =>
-        {
-            var settings = builder.Configuration.GetSection(nameof(EFMigrationSettings)).Get<EFMigrationSettings>()
-                ?? throw new Exception("No EFMigrationSettings found");
-
-            sqlOps.MigrationsHistoryTable(tableName: settings.TableName, schema: settings.SchemaName);
-        });
-    });
 }

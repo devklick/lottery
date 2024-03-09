@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     [DbContext(typeof(LotteryDBContext))]
-    [Migration("20240308172413_InitialMigration")]
+    [Migration("20240309204234_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -465,8 +465,8 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1"),
-                            ConcurrencyStamp = "3dd01622f8534713bf1b09088972cba0",
+                            Id = new Guid("99ba2bd3-adaf-425d-8821-b058edece297"),
+                            ConcurrencyStamp = "46e333b49ece4f389298ea91b12432a0",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -474,8 +474,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("038475aa-b693-4efa-b6cb-99e391b51336"),
-                            ConcurrencyStamp = "6a08ef5bc82945b4bb04808db8482b7e",
+                            Id = new Guid("60035509-33bd-4211-a03e-56bada2f988c"),
+                            ConcurrencyStamp = "a240f08cf0ab4a0abe9c005966a90ebb",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -483,8 +483,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a8e9544f-dc61-4280-9977-41e5297b5db4"),
-                            ConcurrencyStamp = "6593e5babaac4157ae72100aaa92d8d0",
+                            Id = new Guid("454cb8ba-d30a-40df-b10f-77ea543d8fce"),
+                            ConcurrencyStamp = "bed41775673545bfb430695ebb7f9ba1",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -602,33 +602,33 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7190be09-856e-42ec-a469-d97103347074"),
+                            Id = new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "098100f248b14d36aa92d90bb47c9e34",
+                            ConcurrencyStamp = "6aabc0e901cd49ae95e543444b90d705",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDRIxY6Rq11+fjU4XzBni+fT6q8ASdxlaX49ryRvqHCosaKlf7Os6/nVXU85c4mrSg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENBBabskE/7nWegUI3Mc8TziBgXTXySkMsR5sx2gEpggWARGDJpwhv7MM/dM8RsJjA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7853e497039d4b1f919ce9fcd118d021",
+                            SecurityStamp = "33ae630160dc456785c9c7591c7095f0",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
                         new
                         {
-                            Id = new Guid("44982544-3aab-4626-a180-c6578edd666c"),
+                            Id = new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a40674a1181544648cf4082dbad57158",
+                            ConcurrencyStamp = "8f3730f604684db7b5526d39648ea121",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGLVQKIdb0ix8K+cfuYiCSisdejmf4Ta+dcjSzvPygT7//zCiJYL3oqt/ems7B0jig==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBZBqZ2wvYIrhP1z0JBdsAYbO14AlFUcGELa1TrPb5P8b34eNWr3GT1QGbg2MIajqA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d7bc15f960474ef7ac74e96e916f49c6",
+                            SecurityStamp = "2ae872a663584769bfd90b2826a43fab",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         });
@@ -706,13 +706,13 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("7190be09-856e-42ec-a469-d97103347074"),
-                            RoleId = new Guid("98249e3a-084d-49cb-9bc5-280381b9bbf1")
+                            UserId = new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20"),
+                            RoleId = new Guid("99ba2bd3-adaf-425d-8821-b058edece297")
                         },
                         new
                         {
-                            UserId = new Guid("44982544-3aab-4626-a180-c6578edd666c"),
-                            RoleId = new Guid("038475aa-b693-4efa-b6cb-99e391b51336")
+                            UserId = new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc"),
+                            RoleId = new Guid("60035509-33bd-4211-a03e-56bada2f988c")
                         });
                 });
 

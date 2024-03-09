@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-
-using Lottery.DB.Configuration;
-using Lottery.DB.Context;
 using Microsoft.AspNetCore.Identity;
-using Lottery.DB.Entities.Idt;
+
 using Lottery.Api.Services;
 using Lottery.Api.Repositories;
+
+using Lottery.DB.Context;
+using Lottery.DB.Entities.Idt;
+using Lottery.DB.Extensions;
 
 namespace Lottery.Api;
 
@@ -17,7 +17,8 @@ public class Program
 
         // Add services to the container.
 
-        ConfigureEntityFramework(builder);
+        builder.ConfigureEntityFramework<LotteryDBContext>();
+        ConfigureIdentity(builder);
         ConfigureAutoMapper(builder);
         ConfigureServices(builder);
 
@@ -45,6 +46,16 @@ public class Program
         app.Run();
     }
 
+    private static void ConfigureIdentity(WebApplicationBuilder builder)
+    {
+        builder.Services.AddIdentity<AppUser, AppRole>()
+            .AddEntityFrameworkStores<LotteryDBContext>()
+            .AddDefaultTokenProviders();
+
+        builder.Services.Configure<IdentityOptions>(
+            builder.Configuration.GetSection("IdentityOptions"));
+    }
+
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<UserService>();
@@ -58,39 +69,5 @@ public class Program
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)
     {
         builder.Services.AddAutoMapper(typeof(Program));
-    }
-
-    private static void ConfigureEntityFramework(WebApplicationBuilder builder)
-    {
-        builder.Services.Configure<EFMigrationSettings>(
-            builder.Configuration.GetSection(nameof(EFMigrationSettings)));
-
-        builder.Services.AddDbContext<LotteryDBContext>(options =>
-        {
-            var connectionString = builder.Configuration.GetConnectionString("Default")
-                ?? throw new Exception("No default connection string found");
-
-            var dbPassword = builder.Configuration["ConnectionStrings:Default:Password"];
-
-            if (!string.IsNullOrWhiteSpace(dbPassword))
-            {
-                connectionString = connectionString.TrimEnd();
-                connectionString += $";Password={dbPassword};";
-            }
-            options.UseNpgsql(connectionString, sqlOps =>
-            {
-                var settings = builder.Configuration.GetSection(nameof(EFMigrationSettings)).Get<EFMigrationSettings>()
-                    ?? throw new Exception("No EFMigrationSettings found");
-
-                sqlOps.MigrationsHistoryTable(tableName: settings.TableName, schema: settings.SchemaName);
-            });
-        });
-
-        builder.Services.AddIdentity<AppUser, AppRole>()
-            .AddEntityFrameworkStores<LotteryDBContext>()
-            .AddDefaultTokenProviders();
-
-        builder.Services.Configure<IdentityOptions>(
-            builder.Configuration.GetSection("IdentityOptions"));
     }
 }
