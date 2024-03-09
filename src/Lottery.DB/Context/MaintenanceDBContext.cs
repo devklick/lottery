@@ -33,7 +33,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
         var hasher = new PasswordHasher<AppUser>();
 
         // grab SA password - this should be in secrets file and added to config
-        var saPass = _config["LotteryDBContext:SystemAdminPassword"];
+        var saPass = _config["MaintenanceDBContext:SystemAdminPassword"];
         if (saPass.IsNullOrEmpty())
         {
             throw new InvalidOperationException(
@@ -41,7 +41,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
         }
 
         // grab SU password - this should be in secrets file and added to config
-        var gaPass = _config["LotteryDBContext:GameAdminPassword"];
+        var gaPass = _config["MaintenanceDBContext:GameAdminPassword"];
         if (gaPass.IsNullOrEmpty())
         {
             throw new InvalidOperationException(
