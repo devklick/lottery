@@ -436,9 +436,9 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { new Guid("454cb8ba-d30a-40df-b10f-77ea543d8fce"), "bed41775673545bfb430695ebb7f9ba1", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
-                    { new Guid("60035509-33bd-4211-a03e-56bada2f988c"), "a240f08cf0ab4a0abe9c005966a90ebb", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
-                    { new Guid("99ba2bd3-adaf-425d-8821-b058edece297"), "46e333b49ece4f389298ea91b12432a0", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" }
+                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "57243978457441d9a0c29e2b7475a403", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
+                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "f9ee4815c87c4114a1cb25d0a3457b89", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
+                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "86d75ee367f54aa09f1125bb9c9cffdb", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" }
                 });
 
             migrationBuilder.InsertData(
@@ -447,8 +447,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc"), 0, "8f3730f604684db7b5526d39648ea121", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEBZBqZ2wvYIrhP1z0JBdsAYbO14AlFUcGELa1TrPb5P8b34eNWr3GT1QGbg2MIajqA==", null, false, "2ae872a663584769bfd90b2826a43fab", false, "GameAdmin" },
-                    { new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20"), 0, "6aabc0e901cd49ae95e543444b90d705", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAENBBabskE/7nWegUI3Mc8TziBgXTXySkMsR5sx2gEpggWARGDJpwhv7MM/dM8RsJjA==", null, false, "33ae630160dc456785c9c7591c7095f0", false, "SystemAdmin" }
+                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "c1a4755b1ae847a6b663a1be644bc6af", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEI0Yrcn8SSVQi+u6vVcfVCh3cu6NOcJrPlAyEfgQa/weCN/LbxIBUROdVCevHXQinQ==", null, false, "e2710e3321e541d7b4e67c703aaabcc7", false, "GameAdmin" },
+                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "f8b71d1cb2a349baaf1d3c30d17df8ca", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEHR1Lni7hUCsTs7onJhvfWjABm/7CUMVuwU0IBegUfHxESVE/jZSjLkJ903sH840lQ==", null, false, "a3385577bce24f4cb53c22b59c9930e3", false, "SystemAdmin" }
                 });
 
             migrationBuilder.InsertData(
@@ -457,8 +457,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "role_id", "user_id" },
                 values: new object[,]
                 {
-                    { new Guid("60035509-33bd-4211-a03e-56bada2f988c"), new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc") },
-                    { new Guid("99ba2bd3-adaf-425d-8821-b058edece297"), new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20") }
+                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8") },
+                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb") }
                 });
 
             migrationBuilder.CreateIndex(

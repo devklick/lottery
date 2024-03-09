@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Lottery.DB.Migrations
 {
-    [DbContext(typeof(LotteryDBContext))]
-    partial class LotteryDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MaintenanceDBContext))]
+    partial class MaintenanceDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -462,8 +462,8 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("99ba2bd3-adaf-425d-8821-b058edece297"),
-                            ConcurrencyStamp = "46e333b49ece4f389298ea91b12432a0",
+                            Id = new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"),
+                            ConcurrencyStamp = "57243978457441d9a0c29e2b7475a403",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -471,8 +471,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("60035509-33bd-4211-a03e-56bada2f988c"),
-                            ConcurrencyStamp = "a240f08cf0ab4a0abe9c005966a90ebb",
+                            Id = new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"),
+                            ConcurrencyStamp = "f9ee4815c87c4114a1cb25d0a3457b89",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -480,8 +480,8 @@ namespace Lottery.DB.Migrations
                         },
                         new
                         {
-                            Id = new Guid("454cb8ba-d30a-40df-b10f-77ea543d8fce"),
-                            ConcurrencyStamp = "bed41775673545bfb430695ebb7f9ba1",
+                            Id = new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"),
+                            ConcurrencyStamp = "86d75ee367f54aa09f1125bb9c9cffdb",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -599,33 +599,33 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20"),
+                            Id = new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6aabc0e901cd49ae95e543444b90d705",
+                            ConcurrencyStamp = "f8b71d1cb2a349baaf1d3c30d17df8ca",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAENBBabskE/7nWegUI3Mc8TziBgXTXySkMsR5sx2gEpggWARGDJpwhv7MM/dM8RsJjA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHR1Lni7hUCsTs7onJhvfWjABm/7CUMVuwU0IBegUfHxESVE/jZSjLkJ903sH840lQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "33ae630160dc456785c9c7591c7095f0",
+                            SecurityStamp = "a3385577bce24f4cb53c22b59c9930e3",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
                         new
                         {
-                            Id = new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc"),
+                            Id = new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8f3730f604684db7b5526d39648ea121",
+                            ConcurrencyStamp = "c1a4755b1ae847a6b663a1be644bc6af",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBZBqZ2wvYIrhP1z0JBdsAYbO14AlFUcGELa1TrPb5P8b34eNWr3GT1QGbg2MIajqA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI0Yrcn8SSVQi+u6vVcfVCh3cu6NOcJrPlAyEfgQa/weCN/LbxIBUROdVCevHXQinQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2ae872a663584769bfd90b2826a43fab",
+                            SecurityStamp = "e2710e3321e541d7b4e67c703aaabcc7",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         });
@@ -703,13 +703,13 @@ namespace Lottery.DB.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("8d11b2eb-13e5-4d98-82e1-70e28c2b9c20"),
-                            RoleId = new Guid("99ba2bd3-adaf-425d-8821-b058edece297")
+                            UserId = new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"),
+                            RoleId = new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f")
                         },
                         new
                         {
-                            UserId = new Guid("233a1fed-e3d9-49ec-a50b-9ec38553d3bc"),
-                            RoleId = new Guid("60035509-33bd-4211-a03e-56bada2f988c")
+                            UserId = new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"),
+                            RoleId = new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea")
                         });
                 });
 

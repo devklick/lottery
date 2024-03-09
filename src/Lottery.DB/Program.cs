@@ -13,6 +13,6 @@ using Microsoft.Extensions.Hosting;
 */
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.ConfigureEntityFramework<LotteryDBContext>();
+builder.ConfigureEntityFramework<MaintenanceDBContext>();
 builder.Configuration.AddUserSecrets<Program>();
 builder.Build();
