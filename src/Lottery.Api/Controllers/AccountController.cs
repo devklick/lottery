@@ -30,6 +30,13 @@ public class AccountController(ILogger<AccountController> logger, SignInManager<
         return result.Succeeded ? Ok() : Unauthorized();
     }
 
+    [HttpPost("signOut")]
+    public new async Task<ActionResult> SignOut()
+    {
+        await _signInManager.SignOutAsync();
+        return base.SignOut();
+    }
+
     [HttpPost("signUp")]
     public async Task<ActionResult<SignUpResponse>> SignUp(SignUpRequest request)
     {
