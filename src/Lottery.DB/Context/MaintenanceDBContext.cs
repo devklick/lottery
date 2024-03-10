@@ -91,8 +91,6 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
         {
             systemAdmin = GetRequiredConfigValue("MaintenanceDBContext:SystemAdminPassword"),
             gameAdmin = GetRequiredConfigValue("MaintenanceDBContext:GameAdminPassword"),
-            resultService = GetRequiredConfigValue("MaintenanceDBContext:ResultServicePassword"),
-            api = GetRequiredConfigValue("MaintenanceDBContext:ApiPassword")
         };
 
         builder.Entity<AppUser>().HasData([
@@ -136,7 +134,8 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 SecurityStamp = Guid.NewGuid().ToString("N"),
                 ConcurrencyStamp = Guid.NewGuid().ToString("N"),
                 AccountType = AccountType.Service,
-            }, userPasswords.api),
+            }, null), // no app account passwords for service accounts, 
+            // as we dont want to be able to log in as this account in the app
 
             // result service
             CreateUser(new AppUser{
@@ -150,7 +149,8 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 SecurityStamp = Guid.NewGuid().ToString("N"),
                 ConcurrencyStamp = Guid.NewGuid().ToString("N"),
                 AccountType = AccountType.Service,
-            }, userPasswords.resultService),
+            }, null), // no app account passwords for service accounts, 
+            // as we dont want to be able to log in as this account in the app
         ]);
 
         builder.Entity<AppUserRole>().HasData([
@@ -161,9 +161,13 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
         ]);
     }
 
-    private AppUser CreateUser(AppUser user, string password)
+    private AppUser CreateUser(AppUser user, string? password = null)
     {
-        user.PasswordHash = _hasher.HashPassword(user, password);
+        if (!password.IsNullOrEmpty())
+        {
+            user.PasswordHash = _hasher.HashPassword(user, password);
+        }
+
         return user;
     }
 }

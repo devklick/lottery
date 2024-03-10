@@ -23,6 +23,7 @@ namespace Lottery.DB.Migrations
                 name: "dbo");
 
             migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:Enum:account_type", "user,service")
                 .Annotation("Npgsql:Enum:item_state", "enabled,disabled");
 
             migrationBuilder.CreateTable(
@@ -48,6 +49,7 @@ namespace Lottery.DB.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    account_type = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -438,9 +440,10 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "57243978457441d9a0c29e2b7475a403", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
-                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "f9ee4815c87c4114a1cb25d0a3457b89", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
-                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "86d75ee367f54aa09f1125bb9c9cffdb", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" }
+                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "ab02ef94ec384cc49049fc2a5c5b3061", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
+                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "3cea94e0ff784364b49c9df292555af0", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
+                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "ed2350457c1b4c18afc9d13c23ed5a05", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
+                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), "cf7a8e8a2eef4e13b6dfeeeed3064cda", "Role to be assumed by user accounts used by backend services.", "Service Account", "ServiceAccount", "SERVICEACCOUNT" }
                 });
 
             migrationBuilder.InsertData(
@@ -449,8 +452,18 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "c1a4755b1ae847a6b663a1be644bc6af", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEI0Yrcn8SSVQi+u6vVcfVCh3cu6NOcJrPlAyEfgQa/weCN/LbxIBUROdVCevHXQinQ==", null, false, "e2710e3321e541d7b4e67c703aaabcc7", false, "GameAdmin" },
-                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "f8b71d1cb2a349baaf1d3c30d17df8ca", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEHR1Lni7hUCsTs7onJhvfWjABm/7CUMVuwU0IBegUfHxESVE/jZSjLkJ903sH840lQ==", null, false, "a3385577bce24f4cb53c22b59c9930e3", false, "SystemAdmin" }
+                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "0c057e3ddbb746aa9fd1ad3f9b98488d", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEPkZPfF6vAdFP7EW+fw9L7JDwvGLMYtp2AMuTgnRudV7tBRtVxrBdOAPm2mAOwNtXA==", null, false, "d2761ece200c4ead95f643a5227218a5", false, "GameAdmin" },
+                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "6cd1f1703ac548e2a9295d2568fdc229", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEDwIZYUsECFbX8jyI6oujyQNsZphVSpLCXTaBoW8ta2Td2yhrkBMUQuLx4R8CoRdfw==", null, false, "421123fe685b4be1a9b63c6d809583e5", false, "SystemAdmin" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "idt",
+                table: "app_user",
+                columns: new[] { "id", "access_failed_count", "account_type", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
+                values: new object[,]
+                {
+                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ff152f04ba8649f196c20b5f090b7659", "Lottery.Api@Lottery.Game", true, false, null, "LOTTERY.API@LOTTERY.GAME", "LOTTERY.API", null, null, false, "bc1b6b3b3982424f8f5e93d05c4eeb44", false, "Lottery.Api" },
+                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "b0851a4bec7c489aaf7a37f311a6a946", "Lottery.ResultService@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE@LOTTERY.GAME", "LOTTERY.RESULTSERVICE", null, null, false, "d440692d809e4e2f921e06722aed9ef3", false, "Lottery.ResultService" }
                 });
 
             migrationBuilder.InsertData(
@@ -460,7 +473,9 @@ namespace Lottery.DB.Migrations
                 values: new object[,]
                 {
                     { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8") },
-                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb") }
+                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb") },
+                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), new Guid("a3564302-1a9e-4917-8a48-1a70f211279e") },
+                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -751,4 +766,6 @@ namespace Lottery.DB.Migrations
             ");
         }
     }
+
+
 }
