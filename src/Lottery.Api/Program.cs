@@ -6,6 +6,7 @@ using Lottery.Api.Repositories;
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Extensions;
+using Lottery.Api.Services.Options;
 
 namespace Lottery.Api;
 
@@ -26,6 +27,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.Configure<UserServiceOptions>(
+            builder.Configuration.GetSection(UserServiceOptions.Name));
 
         var app = builder.Build();
 
