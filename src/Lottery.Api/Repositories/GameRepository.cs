@@ -2,15 +2,14 @@
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
+using Lottery.DB.Repository;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Lottery.Api.Repositories;
 
-public class GameRepository(LotteryDBContext db)
+public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
 {
-    private readonly LotteryDBContext _db = db;
-
     public async Task<Game> CreateGame(Game game)
     {
         var result = await _db.Games.AddAsync(game);

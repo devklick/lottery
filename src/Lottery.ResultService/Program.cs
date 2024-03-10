@@ -24,7 +24,7 @@ var serviceScope = host.Services.CreateScope();
 var repo = serviceScope.ServiceProvider.GetRequiredService<ResultRepository>();
 
 var games = await repo.GetGamesToResult();
-var adminUserId = await repo.GetSystemAdminUserId();
+var adminUserId = await repo.GetServiceUserId();
 
 foreach (var game in games)
 {

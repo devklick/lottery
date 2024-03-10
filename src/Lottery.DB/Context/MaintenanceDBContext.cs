@@ -125,11 +125,11 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
             // api
             CreateUser(new AppUser{
                 Id = userIds.api,
-                Email = "Lottery.Api@Lottery.Game",
-                NormalizedEmail = "LOTTERY.API@LOTTERY.GAME",
+                Email = "Lottery.Api.User@Lottery.Game",
+                NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
                 EmailConfirmed = true,
-                UserName = "Lottery.Api",
-                NormalizedUserName = "LOTTERY.API",
+                UserName = "Lottery.Api.User",
+                NormalizedUserName = "LOTTERY.API.USER",
                 LockoutEnabled = false,
                 SecurityStamp = Guid.NewGuid().ToString("N"),
                 ConcurrencyStamp = Guid.NewGuid().ToString("N"),
@@ -140,11 +140,11 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
             // result service
             CreateUser(new AppUser{
                 Id = userIds.resultService,
-                Email = "Lottery.ResultService@Lottery.Game",
-                NormalizedEmail = "LOTTERY.RESULTSERVICE@LOTTERY.GAME",
+                Email = "Lottery.ResultService.User@Lottery.Game",
+                NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
                 EmailConfirmed = true,
-                UserName = "Lottery.ResultService",
-                NormalizedUserName = "LOTTERY.RESULTSERVICE",
+                UserName = "Lottery.ResultService.User",
+                NormalizedUserName = "LOTTERY.RESULTSERVICE.USER",
                 LockoutEnabled = false,
                 SecurityStamp = Guid.NewGuid().ToString("N"),
                 ConcurrencyStamp = Guid.NewGuid().ToString("N"),

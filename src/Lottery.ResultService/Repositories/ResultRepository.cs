@@ -1,23 +1,15 @@
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Repository;
 using Lottery.ResultService.Models;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Lottery.ResultService.Repositories;
 
-public class ResultRepository(LotteryDBContext db)
+public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
 {
-    private readonly LotteryDBContext _db = db;
-
     public async Task SaveChangesAsync() => await _db.SaveChangesAsync();
-
-    public async Task<Guid> GetSystemAdminUserId()
-    {
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == "SystemAdmin");
-
-        return user == null ? throw new Exception("SystemAdmin user not found") : user.Id;
-    }
 
     public async Task<List<Game>> GetGamesToResult()
     {
