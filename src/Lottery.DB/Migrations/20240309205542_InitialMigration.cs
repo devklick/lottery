@@ -617,22 +617,53 @@ namespace Lottery.DB.Migrations
                 unique: true);
 
             // Create role for API
-            migrationBuilder.Sql($"CREATE ROLE \"Lottery.Api.Role\";");
-            migrationBuilder.Sql($"GRANT CONNECT ON DATABASE lottery TO \"Lottery.Api.Role\";");
-            migrationBuilder.Sql($"GRANT USAGE ON SCHEMA dbo,idt TO \"Lottery.Api.Role\";");
-            migrationBuilder.Sql($"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO \"Lottery.Api.Role\";");
+            migrationBuilder.Sql($@"
+                DO
+                $do$
+                BEGIN
+                IF NOT EXISTS (
+                    SELECT FROM pg_catalog.pg_roles
+                    WHERE  rolname = 'Lottery.Api.Role')
+                    
+                    THEN
+                        CREATE ROLE ""Lottery.Api.Role"";
+                        GRANT CONNECT ON DATABASE lottery TO ""Lottery.Api.Role"";
+                        GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.Api.Role"";
+                        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.Api.Role"";
+                    
+                END IF;
+                END
+                $do$;
+            ");
+
             // Create user for API
-            migrationBuilder.Sql($"CREATE USER \"Lottery.Api.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS")}';");
+            // migrationBuilder.Sql($"CREATE USER \"Lottery.Api.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS")}';");
+            IdempotentCreateUser(migrationBuilder, "Lottery.Api.User", GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS"));
             // Assign role to user
             migrationBuilder.Sql($"GRANT \"Lottery.Api.Role\" TO \"Lottery.Api.User\";");
 
             // Create role for result service
-            migrationBuilder.Sql($"CREATE ROLE \"Lottery.ResultService.Role\";");
-            migrationBuilder.Sql($"GRANT CONNECT ON DATABASE lottery TO \"Lottery.ResultService.Role\";");
-            migrationBuilder.Sql($"GRANT USAGE ON SCHEMA dbo,idt TO \"Lottery.ResultService.Role\";");
-            migrationBuilder.Sql($"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO \"Lottery.ResultService.Role\";");
+            migrationBuilder.Sql($@"
+                DO
+                $do$
+                BEGIN
+                IF NOT EXISTS (
+                    SELECT FROM pg_catalog.pg_roles
+                    WHERE  rolname = 'Lottery.ResultService.Role')
+                    
+                    THEN
+                        CREATE ROLE ""Lottery.ResultService.Role"";
+                        GRANT CONNECT ON DATABASE lottery TO ""Lottery.ResultService.Role"";
+                        GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
+                        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
+                    
+                END IF;
+                END
+                $do$;
+            ");
             // Create user for result service
-            migrationBuilder.Sql($"CREATE USER \"Lottery.ResultService.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS")}'");
+            // migrationBuilder.Sql($"CREATE USER \"Lottery.ResultService.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS")}'");
+            IdempotentCreateUser(migrationBuilder, "Lottery.ResultService.User", GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS"));
             // Assign role to user
             migrationBuilder.Sql($"GRANT \"Lottery.ResultService.Role\" TO \"Lottery.ResultService.User\";");
         }
@@ -700,5 +731,24 @@ namespace Lottery.DB.Migrations
         private string GetRequiredEnvVar(string name)
             => Environment.GetEnvironmentVariable(name)
             ?? throw new KeyNotFoundException($"No environment with name {name} could be found");
+
+        private void IdempotentCreateUser(MigrationBuilder migrationBuilder, string username, string password)
+        {
+            migrationBuilder.Sql($@"
+                DO
+                $do$
+                BEGIN
+                IF NOT EXISTS (
+                    SELECT FROM pg_catalog.pg_user
+                    WHERE  usename = '{username}')
+                    
+                    THEN
+                        CREATE ROLE ""{username}"" LOGIN PASSWORD '{password}';
+                    
+                END IF;
+                END
+                $do$;
+            ");
+        }
     }
 }

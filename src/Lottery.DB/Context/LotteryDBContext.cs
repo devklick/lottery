@@ -34,7 +34,7 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
     {
         base.OnModelCreating(builder);
 
-        builder.HasPostgresEnum<ItemState>();
+        builder.HasPostgresEnum<ItemState>().HasPostgresEnum<AccountType>();
 
         foreach (var entity in builder.Model.GetEntityTypes())
         {
@@ -142,4 +142,7 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
 
         return base.SaveChanges();
     }
+
+    protected string GetRequiredConfigValue(string key)
+        => _config[key] ?? throw new KeyNotFoundException($"No config value with key {key} could be found");
 }
