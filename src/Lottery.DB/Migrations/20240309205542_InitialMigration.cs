@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Microsoft.EntityFrameworkCore.Migrations;
+
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -613,6 +615,26 @@ namespace Lottery.DB.Migrations
                 table: "game_selection",
                 columns: new[] { "game_id", "selection_number" },
                 unique: true);
+
+            // Create role for API
+            migrationBuilder.Sql($"CREATE ROLE \"Lottery.Api.Role\";");
+            migrationBuilder.Sql($"GRANT CONNECT ON DATABASE lottery TO \"Lottery.Api.Role\";");
+            migrationBuilder.Sql($"GRANT USAGE ON SCHEMA dbo,idt TO \"Lottery.Api.Role\";");
+            migrationBuilder.Sql($"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO \"Lottery.Api.Role\";");
+            // Create user for API
+            migrationBuilder.Sql($"CREATE USER \"Lottery.Api.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS")}';");
+            // Assign role to user
+            migrationBuilder.Sql($"GRANT \"Lottery.Api.Role\" TO \"Lottery.Api.User\";");
+
+            // Create role for result service
+            migrationBuilder.Sql($"CREATE ROLE \"Lottery.ResultService.Role\";");
+            migrationBuilder.Sql($"GRANT CONNECT ON DATABASE lottery TO \"Lottery.ResultService.Role\";");
+            migrationBuilder.Sql($"GRANT USAGE ON SCHEMA dbo,idt TO \"Lottery.ResultService.Role\";");
+            migrationBuilder.Sql($"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO \"Lottery.ResultService.Role\";");
+            // Create user for result service
+            migrationBuilder.Sql($"CREATE USER \"Lottery.ResultService.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS")}'");
+            // Assign role to user
+            migrationBuilder.Sql($"GRANT \"Lottery.ResultService.Role\" TO \"Lottery.ResultService.User\";");
         }
 
         /// <inheritdoc />
@@ -674,5 +696,9 @@ namespace Lottery.DB.Migrations
                 name: "app_user",
                 schema: "idt");
         }
+
+        private string GetRequiredEnvVar(string name)
+            => Environment.GetEnvironmentVariable(name)
+            ?? throw new KeyNotFoundException($"No environment with name {name} could be found");
     }
 }

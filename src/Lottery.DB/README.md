@@ -58,10 +58,18 @@ dotnet user-secrets set \
 
 Now that you have your database running and your secrets set up, you should be able to deploy the schema & seed data to the database. To do this, you can execute the `database update` command from the root directory:
 
+> [!NOTE]
+> We need to set some environment variables before executing the `dotnet ef` command.
+> These variables are the passwords that the respective application will use when
+> connecting to the database. Replace `PASSWORD_HERE` with whatever password you want
+> to use for each of the applications to connect to the DB.
+
 ```
-dotnet ef database update \
-    --project Lottery.DB \
-    --context MaintenanceDBContext
+export LOTTERY_API_DB_USER_PASS="PASSWORD_HERE" \
+    LOTTERY_RESULT_SRV_DB_USER_PASS="PASSWORD_HERE"; \
+    dotnet ef database update \
+        --project ./src/Lottery.DB \
+        --context MaintenanceDBContext
 ```
 
 > [!NOTE]
@@ -69,4 +77,4 @@ dotnet ef database update \
 > be used when invoking the `dotnet ef` tool. We do this by specifying the `--context` argument 
 > along with the name of the DBContext, `MaintenanceDBContext`.
 
-This may take a couple of seconds to complete. Once complete, you can check your postgres instance for a newly created database called `scene_it` and browse the tables that have been created in it.
+This may take a couple of seconds to complete. Once complete, you can check your postgres instance for a newly created database called `lottery` and browse the tables that have been created in it.

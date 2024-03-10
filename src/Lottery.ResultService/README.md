@@ -28,13 +28,8 @@ Now that app secrets are enabled, you need to add the secrets.
 
 <ins>Connection Password</ins>
 
-> [!NOTE]
-> The long term plan is to have all applications within 
-> this stack using their own bespoke account to connect to 
-> the database. However for now, we'll just have them all 
-> using the main postgres account. As such, 
-
-Before executing the following, replace `PASSWORD_HERE` with the password for accessing postgres. If you run a postgres docker image, as per the [main README](../../README.md), it's the password you used in the `docker run` command.
+Before executing the following, replace `PASSWORD_HERE` with the password for accessing postgres. 
+This is the password you specified as the `LOTTERY_RESULT_SRV_DB_USER_PASS` environment variable when following the [README in Lottery.DB](../Lottery.DB/README.md).
 
 ```
 dotnet user-secrets set \
