@@ -18,6 +18,17 @@ public class Program
 
         // Add services to the container.
 
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddCors(options =>
+                    {
+                        options.AddDefaultPolicy(policy =>
+                        {
+                            policy.WithOrigins("https://localhost:3000").AllowAnyMethod();
+                        });
+                    });
+        }
+
         builder.ConfigureEntityFramework<LotteryDBContext>();
         ConfigureIdentity(builder);
         ConfigureAutoMapper(builder);
@@ -38,12 +49,12 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseCors();
         }
 
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 
