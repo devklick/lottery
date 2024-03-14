@@ -639,13 +639,11 @@ namespace Lottery.DB.Migrations
                 IF NOT EXISTS (
                     SELECT FROM pg_catalog.pg_roles
                     WHERE  rolname = 'Lottery.Api.Role')
-                    
                     THEN
                         CREATE ROLE ""Lottery.Api.Role"";
                         GRANT CONNECT ON DATABASE lottery TO ""Lottery.Api.Role"";
                         GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.Api.Role"";
                         GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.Api.Role"";
-                    
                 END IF;
                 END
                 $do$;
@@ -665,13 +663,11 @@ namespace Lottery.DB.Migrations
                 IF NOT EXISTS (
                     SELECT FROM pg_catalog.pg_roles
                     WHERE  rolname = 'Lottery.ResultService.Role')
-                    
                     THEN
                         CREATE ROLE ""Lottery.ResultService.Role"";
                         GRANT CONNECT ON DATABASE lottery TO ""Lottery.ResultService.Role"";
                         GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
                         GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
-                    
                 END IF;
                 END
                 $do$;
@@ -756,10 +752,8 @@ namespace Lottery.DB.Migrations
                 IF NOT EXISTS (
                     SELECT FROM pg_catalog.pg_user
                     WHERE  usename = '{username}')
-                    
                     THEN
-                        CREATE ROLE ""{username}"" LOGIN PASSWORD '{password}';
-                    
+                        CREATE USER ""{username}"" WITH PASSWORD '{password}';
                 END IF;
                 END
                 $do$;
