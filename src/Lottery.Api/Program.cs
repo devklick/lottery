@@ -69,6 +69,8 @@ public class Program
 
         builder.Services.Configure<IdentityOptions>(
             builder.Configuration.GetSection("IdentityOptions"));
+
+        builder.Services.AddTransient<PasswordHasher<AppUser>>();
     }
 
     private static void ConfigureServices(WebApplicationBuilder builder)

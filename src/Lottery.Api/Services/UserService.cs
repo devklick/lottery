@@ -12,11 +12,12 @@ using Microsoft.Extensions.Options;
 
 namespace Lottery.Api.Services;
 
-public class UserService(UserManager<AppUser> userManager, IMapper mapper, IOptions<UserServiceOptions> options)
+public class UserService(UserManager<AppUser> userManager, IMapper mapper, IOptions<UserServiceOptions> options, PasswordHasher<AppUser> passwordHasher)
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly IMapper _mapper = mapper;
     private readonly IOptions<UserServiceOptions> _options = options;
+    private readonly PasswordHasher<AppUser> _passwordHasher = passwordHasher;
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
     {
@@ -43,16 +44,29 @@ public class UserService(UserManager<AppUser> userManager, IMapper mapper, IOpti
         var appUser = _mapper.Map<AppUser>(request);
 
         appUser.EmailConfirmed = _options.Value.AutoConfirmNewAccounts;
+        appUser.PasswordHash = _passwordHasher.HashPassword(appUser, request.Body.Password);
 
-        var result = await _userManager.CreateAsync(appUser);
+        var userResult = await _userManager.CreateAsync(appUser);
 
-        return result.Succeeded ? new Result<SignUpResponse>
+        if (!userResult.Succeeded)
+        {
+            return new Result<SignUpResponse>
+            {
+                Status = ResultStatus.ServerError,
+                Errors = userResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
+            };
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(appUser, "BasicUser");
+
+
+        return roleResult.Succeeded ? new Result<SignUpResponse>
         {
             Status = ResultStatus.Ok,
         } : new Result<SignUpResponse>
         {
             Status = ResultStatus.ServerError,
-            Errors = result.Errors.Select(s => new Error { Message = s.Description }).ToList()
+            Errors = roleResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
         };
     }
 }
