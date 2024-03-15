@@ -19,6 +19,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { useUserStore } from "../../stores/userStore";
 
 interface SignInProps {}
 
@@ -32,10 +33,16 @@ function SignIn({}: SignInProps) {
   });
 
   const navigate = useNavigate();
+  const userStore = useUserStore();
+
+  function onSignInSuccess(response: SignInResponse) {
+    userStore.login(response.userType, response.sessionExpiry);
+    navigate("/home");
+  }
 
   const mutation = useMutation<SignInResponse, unknown, SignInRequest>({
     mutationFn: async (request) => await accountService.signIn(request),
-    onSuccess: () => navigate("/home"),
+    onSuccess: onSignInSuccess,
   });
 
   function FieldError({ name }: { name: keyof SignInRequest }) {

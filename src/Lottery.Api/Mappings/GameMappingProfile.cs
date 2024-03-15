@@ -1,4 +1,5 @@
 using Lottery.Api.Models.Game.Create;
+using Lottery.DB.Entities.Dbo;
 
 namespace Lottery.Api.Mappings;
 

@@ -21,12 +21,12 @@ public class Program
         if (builder.Environment.IsDevelopment())
         {
             builder.Services.AddCors(options =>
-                    {
-                        options.AddDefaultPolicy(policy =>
-                        {
-                            policy.WithOrigins("https://localhost:3000").AllowAnyMethod();
-                        });
-                    });
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("https://localhost:3000").AllowAnyMethod();
+                });
+            });
         }
 
         builder.ConfigureEntityFramework<LotteryDBContext>();

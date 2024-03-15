@@ -1,0 +1,32 @@
+import { create } from "zustand";
+
+type UserType = "Guest" | "Basic" | "Admin";
+
+interface UserStore {
+  authenticated: boolean;
+  sessionExpiry: Date;
+  userType: UserType;
+
+  login(userType: UserType, sessionExpiry: Date): void;
+  logout(): void;
+  isUserType(userType: UserType): boolean;
+}
+
+export const useUserStore = create<UserStore>()((set, get) => ({
+  authenticated: false,
+  userType: "Guest",
+  sessionExpiry: new Date(0),
+  login(userType, sessionExpiry) {
+    set({ authenticated: true, userType, sessionExpiry });
+  },
+  logout() {
+    set({
+      authenticated: false,
+      userType: "Guest",
+      sessionExpiry: new Date(0),
+    });
+  },
+  isUserType(userType) {
+    return get().userType === userType;
+  },
+}));

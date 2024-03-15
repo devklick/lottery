@@ -31,6 +31,10 @@ const routes: Array<RouteObject> = [
         path: "/games",
         element: <pages.Games.Page />,
       },
+      {
+        path: "/games/create",
+        element: <pages.Games.CreateGame.Page />,
+      },
     ],
   },
 ];

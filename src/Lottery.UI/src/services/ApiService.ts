@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-function isBasicError(value: unknown): value is BasicError {
+export function isBasicError(value: unknown): value is BasicError {
   return !!value && typeof value === "object" && "errors" in value;
 }
 
@@ -25,7 +25,7 @@ type AsyncResult<SuccessData> = Promise<Result<SuccessData>>;
 type StatusCodeHandler = () => void;
 
 type PostOptions = Partial<{
-  useCredentials: boolean;
+  withCredentials: boolean;
   onStatusCode: Record<number, StatusCodeHandler>;
 }>;
 
@@ -56,7 +56,9 @@ export class ApiService implements ApiServiceDefinition {
       Response,
       AxiosResponse<Response | BasicError>,
       Request
-    >(url, request);
+    >(url, request, {
+      withCredentials: options?.withCredentials,
+    });
 
     options?.onStatusCode && options.onStatusCode[response.status]?.();
 

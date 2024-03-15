@@ -37,7 +37,7 @@ public abstract class EntityObject
     /// the insert will fail due to a missing foreign key relationship.
     /// </summary> 
     [Required]
-    public required Guid CreatedById { get; set; }
+    public Guid CreatedById { get; set; }
 
     /// <summary>
     /// The current state of the entity. 

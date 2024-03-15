@@ -5,29 +5,28 @@ using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Lottery.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AccountController(ILogger<AccountController> logger, SignInManager<AppUser> signInManager, UserService userService) : ApiControllerBase
+public class AccountController(
+    ILogger<AccountController> logger,
+    SignInManager<AppUser> signInManager,
+    UserService userService, IOptions<CookiePolicyOptions> cookieOptions) : ApiControllerBase
 {
     private readonly ILogger<AccountController> _logger = logger;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
     private readonly UserService _userService = userService;
+    private readonly IOptions<CookiePolicyOptions> _cookieOptions = cookieOptions;
 
     [HttpPost("signIn")]
     public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)
     {
-        if (User != null && _signInManager.IsSignedIn(User))
-        {
-            return Ok();
-        }
+        var result = await _userService.SignIn(request);
 
-        var result = await _signInManager.PasswordSignInAsync(
-            request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);
-
-        return result.Succeeded ? Ok() : Unauthorized();
+        return CreateActionResult(result);
     }
 
     [HttpPost("signOut")]

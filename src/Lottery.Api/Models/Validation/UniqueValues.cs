@@ -16,7 +16,7 @@ public class UniqueValues<TValue> : ValidationAttribute
             return new ValidationResult("Value does not represent a collection", [validationContext.MemberName!]);
         }
 
-        var list = (List<TValue>)value;
+        var list = (ICollection<TValue>)value;
 
         if (list.HasDuplicate(out _))
         {

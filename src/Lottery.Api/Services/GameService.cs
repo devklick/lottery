@@ -33,11 +33,15 @@ public class GameService(GameRepository gameRepository, UserService userService,
 
         var entity = _mapper.Map<Game>(request);
 
-        entity.Selections.ForEach(s =>
+        for (int i = 1; i <= request.Body.MaxSelections; i++)
         {
-            s.CreatedById = entity.CreatedById;
-            s.State = entity.State;
-        });
+            entity.Selections.Add(new GameSelection
+            {
+                SelectionNumber = i,
+                CreatedById = entity.CreatedById,
+                State = entity.State,
+            });
+        }
 
         entity.Prizes.ForEach(p =>
         {

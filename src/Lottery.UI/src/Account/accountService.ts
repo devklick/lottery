@@ -16,7 +16,7 @@ export function createAccountService({
     const result = await api.post<SignUpRequest, SignUpResponse>(
       "/account/signUp",
       request,
-      { useCredentials: true }
+      { withCredentials: true }
     );
 
     return result;
@@ -26,9 +26,12 @@ export function createAccountService({
     const result = await api.post<SignInRequest, SignInResponse>(
       "/account/signIn",
       request,
-      { useCredentials: true }
+      { withCredentials: true }
     );
-    return result;
+
+    if (result.success) return result.data;
+
+    throw result.error;
   };
 
   return { signIn, signUp };

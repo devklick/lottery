@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import routes from "./routes.tsx";
 
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import "./index.css";
 
 const router = createBrowserRouter(routes);

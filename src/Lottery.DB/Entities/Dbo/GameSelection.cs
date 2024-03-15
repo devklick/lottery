@@ -19,7 +19,7 @@ public class GameSelection : EntityObject
     /// The primary key of the game that this selection relates to.
     /// </summary>
     [Required]
-    public required Guid GameId { get; set; }
+    public Guid GameId { get; set; }
 
     /// <summary>
     /// The number that players can pick.

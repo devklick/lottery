@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 using Lottery.Api.Models.GamePrize.Create;
@@ -24,12 +25,18 @@ public class CreateGameRequestBody
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public required ItemState State { get; set; }
 
-    [Required]
-    public required int NumbersRequired { get; set; }
+    /// <summary>
+    /// The numbers of selections to generate for this game. 
+    /// </summary>
+    [Required, Range(0, 100)]
+    public required int MaxSelections { get; set; }
 
+    /// <summary>
+    /// The number of selections a player must have when entering the game
+    /// </summary>
+    [Required, CompareWithOther(ComparisonType.LessThanOrEqual, nameof(MaxSelections))]
+    public required int SelectionsRequiredForEntry { get; set; }
 
-    [Required, UniqueValues<CreateGameSelectionRequestBody>]
-    public required List<CreateGameSelectionRequestBody> Selections { get; set; }
 
     [Required]
     public required List<CreateGamePrizeRequestBody> Prizes { get; set; }

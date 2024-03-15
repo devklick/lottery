@@ -12,7 +12,7 @@ public class CreateGameResponse
 
     public required string Name { get; set; }
 
-    public required int NumbersRequired { get; set; }
+    public required int SelectionsRequiredForEntry { get; set; }
 
     public required List<CreateGameSelectionResponse> Selections { get; set; }
     public required List<CreateGamePrizeResponse> Prizes { get; set; }
