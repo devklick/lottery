@@ -7,7 +7,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import accountService from "../../../services/accountService";
+import accountService from "../accountService";
 import {
   Button,
   Checkbox,
@@ -55,13 +55,9 @@ function SignIn({}: SignInProps) {
         <FieldError name="password" />
 
         <Group>
-          <Checkbox
-            placeholder="Stay signed in"
-            {...register("staySignedIn")}
-          />
+          <Checkbox {...register("staySignedIn")} />
           <InputLabel>Stay signed in</InputLabel>
         </Group>
-
         <FieldError name="staySignedIn" />
 
         <Button variant="filled" type="submit">

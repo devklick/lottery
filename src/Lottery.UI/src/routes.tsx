@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 import App from "./App.tsx";
-import pages from "./pages/index.ts";
+import pages from "./pages.ts";
 
 const routes: Array<RouteObject> = [
   {

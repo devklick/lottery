@@ -14,7 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
-import accountService from "../../../services/accountService";
+import accountService from "../accountService";
 import { useNavigate } from "react-router-dom";
 
 interface SignUpProps {}
