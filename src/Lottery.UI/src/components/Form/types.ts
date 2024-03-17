@@ -17,7 +17,7 @@ import {
   SwitchProps as _SwitchProps,
 } from "@mantine/core";
 import { DateInputProps as _DateInputProps } from "@mantine/dates";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 export type Option<OtherProps = {}> = {
   label: ReactNode;
@@ -72,6 +72,7 @@ export type ControllerProps =
   | ({ control: "switch" } & SwitchProps)
   | ({ control: "switch-group" } & SwitchGroupProps)
   | ({ control: "text-area" } & TextareaProps)
-  | ({ control: "text-input" } & TextInputProps);
+  | ({ control: "text-input" } & TextInputProps)
+  | ({ control: "custom-element" } & { element: React.ReactNode });
 
 export type WithName<T> = T & { name: string };

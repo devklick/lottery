@@ -1,7 +1,6 @@
 import { Group, Radio, Stack } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { RadioGroupProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function RadioGroup(props: WithName<RadioGroupProps>) {
   const {
@@ -18,17 +17,13 @@ function RadioGroup(props: WithName<RadioGroupProps>) {
     formState: { defaultValues },
   } = useController({ name });
 
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
-
   const { onChange, ...restField } = field;
 
   return (
     <Radio.Group
       id={name}
       label={label}
-      error={error}
+      error={fieldError?.message?.toString()}
       onChange={(value) => {
         onChange(value ?? defaultValues?.[name]);
       }}

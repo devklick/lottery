@@ -1,7 +1,6 @@
 import { NumberInput as MantineNumberInput } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { NumberInputProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function NumberInput(props: WithName<NumberInputProps>) {
   const { label, name, ...rest } = props;
@@ -10,10 +9,6 @@ function NumberInput(props: WithName<NumberInputProps>) {
     fieldState: { error: fieldError },
     formState: { defaultValues },
   } = useController({ name });
-
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
 
   const { onChange, ...restField } = field;
 
@@ -31,7 +26,7 @@ function NumberInput(props: WithName<NumberInputProps>) {
           onChange(value);
         }
       }}
-      error={error}
+      error={fieldError?.message?.toString()}
       {...rest}
       {...restField}
     />

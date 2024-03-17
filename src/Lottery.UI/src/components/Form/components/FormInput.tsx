@@ -10,6 +10,7 @@ import Select from "./Select";
 import SwitchGroup from "./SwitchGroup";
 import Textarea from "./Textarea";
 import TextInput from "./TextInput";
+import Switch from "./Switch";
 
 type FormFieldProps = ControllerProps & {
   name: string;
@@ -33,12 +34,16 @@ function FormInput(props: FormFieldProps) {
       return <RadioGroup {...props} />;
     case "select":
       return <Select {...props} />;
+    case "switch":
+      return <Switch {...props} />;
     case "switch-group":
       return <SwitchGroup {...props} />;
     case "text-area":
       return <Textarea {...props} />;
     case "text-input":
       return <TextInput {...props} />;
+    case "custom-element":
+      return props.element;
     default:
       return null;
   }

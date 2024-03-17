@@ -1,7 +1,6 @@
 import { Input, PinInput as _PinInput } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { PinInputProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function PinInput(props: WithName<PinInputProps>) {
   const {
@@ -22,15 +21,11 @@ function PinInput(props: WithName<PinInputProps>) {
     fieldState: { error: fieldError },
   } = useController({ name });
 
-  const errorMessage = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
-
   return (
     <Input.Wrapper
       id={name}
       label={label}
-      error={errorMessage}
+      error={fieldError?.message?.toString()}
       {...{
         description,
         descriptionProps,
@@ -42,7 +37,7 @@ function PinInput(props: WithName<PinInputProps>) {
         inputWrapperOrder,
       }}
     >
-      <_PinInput id={name} error={!!errorMessage} {...rest} {...field} />
+      <_PinInput id={name} error={!!fieldError?.message} {...rest} {...field} />
     </Input.Wrapper>
   );
 }

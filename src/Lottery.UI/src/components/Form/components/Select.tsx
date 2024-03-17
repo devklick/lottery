@@ -1,7 +1,6 @@
 import { Select as MantineSelect } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { SelectProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function Select(props: WithName<SelectProps>) {
   const { label, options, name, ...rest } = props;
@@ -11,10 +10,6 @@ function Select(props: WithName<SelectProps>) {
     fieldState: { error: fieldError },
     formState: { defaultValues },
   } = useController({ name });
-
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
 
   const { onChange, ...restField } = field;
 
@@ -26,7 +21,7 @@ function Select(props: WithName<SelectProps>) {
       label={label}
       onChange={(value) => onChange(value ?? defaultValues?.[name])}
       allowDeselect
-      error={error}
+      error={fieldError?.message?.toString()}
       {...rest}
       data={options}
       {...restField}

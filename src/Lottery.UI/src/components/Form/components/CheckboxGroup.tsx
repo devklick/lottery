@@ -7,7 +7,6 @@ import {
 } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { CheckboxGroupProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function CheckboxGroup(props: WithName<CheckboxGroupProps>) {
   const {
@@ -24,10 +23,6 @@ function CheckboxGroup(props: WithName<CheckboxGroupProps>) {
     formState: { defaultValues },
   } = useController({ name });
 
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
-
   const { onChange, ...restField } = field;
 
   return (
@@ -35,7 +30,7 @@ function CheckboxGroup(props: WithName<CheckboxGroupProps>) {
       id={name}
       label={label}
       onChange={(value) => onChange(value ?? defaultValues?.[name])}
-      error={error}
+      error={fieldError?.message?.toString()}
       {...rest}
       {...restField}
     >

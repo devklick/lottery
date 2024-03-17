@@ -1,7 +1,6 @@
 import { Group, Stack, Switch } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { SwitchGroupProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function SwitchGroup(props: WithName<SwitchGroupProps>) {
   const {
@@ -18,17 +17,13 @@ function SwitchGroup(props: WithName<SwitchGroupProps>) {
     formState: { defaultValues },
   } = useController({ name });
 
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
-
   const { onChange, ...restField } = field;
 
   return (
     <Switch.Group
       id={name}
       label={label}
-      error={error}
+      error={fieldError?.message?.toString()}
       onChange={(value) => {
         onChange(value ?? defaultValues?.[name]);
       }}

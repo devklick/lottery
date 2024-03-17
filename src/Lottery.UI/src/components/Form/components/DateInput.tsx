@@ -1,7 +1,6 @@
 import { DateInput as MantineDateInput } from "@mantine/dates";
 import { useController } from "react-hook-form";
 import { DateInputProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function DatePickerInput(props: WithName<DateInputProps>) {
   const { label, name, ...rest } = props;
@@ -10,17 +9,14 @@ function DatePickerInput(props: WithName<DateInputProps>) {
     fieldState: { error: fieldError },
   } = useController({ name });
 
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
-
   return (
     <MantineDateInput
       id={name}
       label={label}
-      error={error}
+      error={fieldError?.message?.toString()}
       {...rest}
       {...field}
+      type={undefined} // disables the native date picker
     />
   );
 }

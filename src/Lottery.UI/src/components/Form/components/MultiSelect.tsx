@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { MultiSelect as _MultiSelect } from "@mantine/core";
 import { useController } from "react-hook-form";
 import { MultiSelectProps, WithName } from "../types";
-import ErrorMessage from "./ErrorMessage";
 
 function MultiSelect(props: WithName<MultiSelectProps>) {
   const { label, name, ...rest } = props;
@@ -12,10 +10,6 @@ function MultiSelect(props: WithName<MultiSelectProps>) {
     fieldState: { error: fieldError },
     formState: { defaultValues },
   } = useController({ name });
-
-  const error = fieldError ? (
-    <ErrorMessage>{fieldError.message?.toString()}</ErrorMessage>
-  ) : undefined;
 
   const { onChange, ...restField } = field;
 
@@ -27,15 +21,7 @@ function MultiSelect(props: WithName<MultiSelectProps>) {
       onChange={(value) => {
         onChange(value ?? defaultValues?.[value]);
       }}
-      error={error}
-      // creatable
-      // getCreateLabel={(query) => `+ ${query}`}
-      // onCreate={(query) => {
-      //   const capitalized = query.charAt(0).toUpperCase() + query.substring(1);
-      //   const item = { label: capitalized, value: query };
-      //   setOptions((prev) => [...prev, item]);
-      //   return item;
-      // }}
+      error={fieldError?.message?.toString()}
       {...rest}
       {...restField}
     />
