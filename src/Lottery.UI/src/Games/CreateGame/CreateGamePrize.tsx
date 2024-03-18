@@ -6,6 +6,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { Group, NumberInput } from "@mantine/core";
 import { CloseButton } from "@mantine/core";
+import { useEffect } from "react";
 
 interface CreateGamePrizeProps {
   prizeNo: number;
@@ -31,23 +32,16 @@ function CreateGamePrize({
     },
   });
 
+  useEffect(() => {
+    onChange(prizeNo, form.values);
+  }, [form.values]);
+
   return (
     <Group key={prizeNo}>
-      <NumberInput
-        label="Position"
-        {...form.getInputProps("position")}
-        onChange={() => {
-          onChange(prizeNo, form.values);
-          form.getInputProps("position").onChange();
-        }}
-      />
+      <NumberInput label="Position" {...form.getInputProps("position")} />
       <NumberInput
         label="Matching Numbers"
         {...form.getInputProps("numberMatchCount")}
-        onChange={() => {
-          onChange(prizeNo, form.values);
-          form.getInputProps("numberMatchCount").onChange();
-        }}
       />
       {canRemovePrize && <CloseButton onClick={() => removePrize(prizeNo)} />}
     </Group>

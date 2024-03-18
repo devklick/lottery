@@ -5,18 +5,12 @@ import {
   CreateGamePrizeRequest,
   CreateGamePrizesRequest,
 } from "./createGame.schema";
-import { useUserStore } from "../../stores/userStore";
 
 interface CreateGamePrizesProps {
   onChange: (prizes: CreateGamePrizesRequest) => void;
 }
 
 function CreateGamePrizes({ onChange }: CreateGamePrizesProps) {
-  const user = useUserStore();
-  useEffect(() => {
-    if (!user.isUserType("Admin")) {
-    }
-  }, [user]);
   const [prizes, setPrizes] = useState<
     Array<CreateGamePrizeRequest & { prizeNo: number }>
   >([{ prizeNo: 1, position: 1, numberMatchCount: 1 }]);
@@ -33,8 +27,6 @@ function CreateGamePrizes({ onChange }: CreateGamePrizesProps) {
   }, [prizes]);
 
   function removePrize(prizeNo: number) {
-    console.log(prizes);
-    console.log("Removing prize number", prizeNo);
     const index = prizes.findIndex((p) => p.prizeNo === prizeNo);
     if (index >= 0) {
       const newPrizes = [...prizes];
@@ -46,7 +38,6 @@ function CreateGamePrizes({ onChange }: CreateGamePrizesProps) {
   }
 
   function handlePrizeChanged(prizeNo: number, prize: CreateGamePrizeRequest) {
-    console.log("Prize", prizeNo, "changed", prize);
     const index = prizes.findIndex((p) => p.prizeNo === prizeNo);
     if (index < 0) return;
     const newPrizes = [...prizes];
