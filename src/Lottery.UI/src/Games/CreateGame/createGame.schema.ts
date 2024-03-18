@@ -3,7 +3,7 @@ import { z } from "zod";
 const stateSchema = z.enum(["Enabled", "Disabled"]);
 
 export const createGamePrizeRequestSchema = z.object({
-  position: z.number().positive(),
+  position: z.number().positive().min(1),
   numberMatchCount: z.number().positive(),
 });
 
@@ -14,30 +14,12 @@ export const createGamePrizesRequestSchema = z.array(
 export const createGameRequestSchema = z
   .object({
     startTime: z.date(),
-    // .superRefine((value, ctx) => {
-    //   if (value == null) {
-    //     ctx.addIssue({
-    //       code: "custom",
-    //       message: "Required",
-    //     });
-    //   }
-    // })
     drawTime: z.date(),
-    // .nullable()
-    // .superRefine((value, ctx) => {
-    //   if (value == null) {
-    //     ctx.addIssue({
-    //       code: "custom",
-    //       message: "Required",
-    //     });
-    //   }
-    // })
-    name: z.string(),
+    name: z.string().min(3).max(64),
     state: stateSchema.default("Enabled"),
-    maxSelections: z.number().positive().max(100),
-    selectionsRequiredForEntry: z.number().positive(),
-    prizes: z.any(),
-    // prizes: createGamePrizesSchema
+    maxSelections: z.number().positive().min(3).max(100),
+    selectionsRequiredForEntry: z.number().positive().min(3).max(100),
+    prizes: createGamePrizesRequestSchema,
   })
   .refine((data) => data.selectionsRequiredForEntry <= data.maxSelections, {
     path: ["selectionsRequiredForEntry"],

@@ -3,9 +3,9 @@ import { z } from "zod";
 export const userTypeSchema = z.enum(["Guest", "Basic", "Admin"]);
 
 export const signInRequestSchema = z.object({
-  username: z.string(),
-  password: z.string(),
-  staySignedIn: z.boolean(),
+  username: z.string().min(1, "Must contain a value"),
+  password: z.string().min(1, "Must contain a value"),
+  staySignedIn: z.boolean().optional().default(true),
 });
 
 export const signInResponseSchema = z.object({

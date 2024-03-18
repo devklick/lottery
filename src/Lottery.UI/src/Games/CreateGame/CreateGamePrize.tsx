@@ -25,6 +25,7 @@ function CreateGamePrize({
 }: CreateGamePrizeProps) {
   const form = useForm<CreateGamePrizeRequest>({
     validate: zodResolver(createGamePrizeRequestSchema),
+    validateInputOnChange: true,
     initialValues: {
       numberMatchCount: 1,
       position: 1,
@@ -35,6 +36,10 @@ function CreateGamePrize({
   useEffect(() => {
     onChange(prizeNo, form.values);
   }, [form.values]);
+
+  useEffect(() => {
+    console.log(form.errors);
+  });
 
   return (
     <Group key={prizeNo}>

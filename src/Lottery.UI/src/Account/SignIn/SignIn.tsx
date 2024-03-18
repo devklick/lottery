@@ -1,10 +1,10 @@
-import { useForm } from "react-hook-form";
+import { useForm } from "@mantine/form";
 import {
   SignInRequest,
   SignInResponse,
   signInRequestSchema,
 } from "./signIn.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "mantine-form-zod-resolver";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
@@ -12,7 +12,6 @@ import {
   Button,
   Checkbox,
   Group,
-  InputError,
   InputLabel,
   PasswordInput,
   Stack,
@@ -24,12 +23,15 @@ import { useUserStore } from "../../stores/userStore";
 interface SignInProps {}
 
 function SignIn({}: SignInProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInRequest>({
-    resolver: zodResolver(signInRequestSchema),
+  const initialValues: SignInRequest = {
+    password: "",
+    username: "",
+    staySignedIn: true,
+  };
+  const form = useForm<SignInRequest>({
+    validate: zodResolver(signInRequestSchema),
+    initialValues,
+    validateInputOnChange: true,
   });
 
   const navigate = useNavigate();
@@ -45,27 +47,25 @@ function SignIn({}: SignInProps) {
     onSuccess: onSignInSuccess,
   });
 
-  function FieldError({ name }: { name: keyof SignInRequest }) {
-    const message = errors[name]?.message;
-    return message && <InputError>{message}</InputError>;
-  }
-
   return (
-    <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
+    <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
       <Stack gap={24}>
         <Title>Sign In</Title>
 
-        <TextInput placeholder="Username" {...register("username")} />
-        <FieldError name="username" />
+        <TextInput placeholder="Username" {...form.getInputProps("username")} />
 
-        <PasswordInput placeholder="Password" {...register("password")} />
-        <FieldError name="password" />
+        <PasswordInput
+          placeholder="Password"
+          {...form.getInputProps("password")}
+        />
 
         <Group>
-          <Checkbox {...register("staySignedIn")} />
+          <Checkbox
+            {...form.getInputProps("staySignedIn")}
+            defaultChecked={initialValues.staySignedIn}
+          />
           <InputLabel>Stay signed in</InputLabel>
         </Group>
-        <FieldError name="staySignedIn" />
 
         <Button variant="filled" type="submit">
           Submit
