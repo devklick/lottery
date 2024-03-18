@@ -1,6 +1,8 @@
 import { RouteObject } from "react-router-dom";
-import App from "./App.tsx";
-import pages from "./pages.ts";
+import App from "../App.tsx";
+import pages from "../pages.ts";
+import ProtectedRoute from "./ProtectedRoute.tsx";
+import Unauthorized from "../Account/Unauthorized/Unauthorized.tsx";
 
 const routes: Array<RouteObject> = [
   {
@@ -33,7 +35,18 @@ const routes: Array<RouteObject> = [
       },
       {
         path: "/games/create",
-        element: <pages.Games.CreateGame.Page />,
+        element: (
+          <ProtectedRoute
+            permittedUserTypes={["Admin"]}
+            notPermittedErrorMessage="You do not have permission to create games"
+          >
+            <pages.Games.CreateGame.Page />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "account/unauthorized",
+        element: <Unauthorized />,
       },
     ],
   },

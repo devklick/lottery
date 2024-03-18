@@ -5,12 +5,18 @@ import {
   CreateGamePrizeRequest,
   CreateGamePrizesRequest,
 } from "./createGame.schema";
+import { useUserStore } from "../../stores/userStore";
 
 interface CreateGamePrizesProps {
   onChange: (prizes: CreateGamePrizesRequest) => void;
 }
 
 function CreateGamePrizes({ onChange }: CreateGamePrizesProps) {
+  const user = useUserStore();
+  useEffect(() => {
+    if (!user.isUserType("Admin")) {
+    }
+  }, [user]);
   const [prizes, setPrizes] = useState<
     Array<CreateGamePrizeRequest & { prizeNo: number }>
   >([{ prizeNo: 1, position: 1, numberMatchCount: 1 }]);
