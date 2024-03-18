@@ -18,7 +18,8 @@ export function createGameService({
   ): Promise<CreateGameResponse> => {
     const result = await api.post<CreateGameRequest, CreateGameResponse>(
       "/game",
-      request
+      request,
+      { withCredentials: true }
     );
     if (result.success) return result.data;
     throw result.error;
