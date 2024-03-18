@@ -7,7 +7,7 @@ import {
 import gameService from "../gameService";
 import { useNavigate } from "react-router-dom";
 
-import { DateInput } from "@mantine/dates";
+import { DateTimePicker } from "@mantine/dates";
 import CreateGamePrizes from "./CreateGamePrizes";
 import {
   Button,
@@ -18,9 +18,9 @@ import {
   Title,
 } from "@mantine/core";
 
-import { FormProvider, useForm } from "react-hook-form";
+import { DefaultValues, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AllStates, State, States } from "../../common/schemas";
+import { AllStates, State } from "../../common/schemas";
 
 interface CreateGameProps {}
 
@@ -47,6 +47,20 @@ function getDate(now: Date, daysToAdd: number) {
 */
 
 function CreateGame({}: CreateGameProps) {
+  const now = new Date();
+  const defaultStartTime = getDate(now, 1);
+  const defaultDrawTime = getDate(now, 7);
+
+  const defaultValues: DefaultValues<CreateGameRequest> = {
+    name: `Lottery Game - ${now.toDateString()}`,
+    state: "Enabled",
+    startTime: defaultStartTime,
+    drawTime: defaultDrawTime,
+    maxSelections: 50,
+    selectionsRequiredForEntry: 5,
+    prizes: [],
+  };
+
   const navigate = useNavigate();
 
   const mutation = useMutation<CreateGameResponse, unknown, CreateGameRequest>({
@@ -56,11 +70,8 @@ function CreateGame({}: CreateGameProps) {
 
   const form = useForm<CreateGameRequest>({
     resolver: zodResolver(createGameRequestSchema),
+    defaultValues,
   });
-
-  const now = new Date();
-  const defaultStartTime = getDate(now, 1);
-  const defaultDrawTime = getDate(now, 7);
 
   return (
     <FormProvider {...form}>
@@ -73,58 +84,68 @@ function CreateGame({}: CreateGameProps) {
             <TextInput
               label="Name"
               {...form.register("name")}
-              defaultValue={`Lottery Game - ${new Date().toDateString()}`}
+              defaultValue={defaultValues.name}
+              error={form.formState.errors.name?.message?.toString()}
               withAsterisk
             />
           </Grid.Col>
-          <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Grid.Col key={"state"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
             <Select
               label="State"
               {...form.register("state")}
+              defaultValue={defaultValues.state}
+              error={form.formState.errors.state?.message?.toString()}
               onChange={(v) => form.setValue("state", v as State)}
               data={AllStates.map((s) => ({ value: s, label: s }))}
-              defaultValue={States.Enabled}
               withAsterisk
               allowDeselect={false}
             />
           </Grid.Col>
-          <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-            <DateInput
+          <Grid.Col key={"startTime"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            <DateTimePicker
               label="Start Time"
-              valueFormat="DD/MM/YYYY HH:mm:ss"
-              defaultValue={defaultStartTime}
               {...form.register("startTime")}
+              defaultValue={defaultValues.startTime}
+              error={form.formState.errors.startTime?.message?.toString()}
               onChange={(v) => form.setValue("startTime", v as Date)}
             />
           </Grid.Col>
-          <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-            <DateInput
+          <Grid.Col key={"drawTime"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            <DateTimePicker
               label="Draw Time"
-              valueFormat="DD/MM/YYYY HH:mm:ss"
-              defaultValue={defaultDrawTime}
               {...form.register("drawTime")}
+              defaultValue={defaultValues.drawTime}
+              error={form.formState.errors.drawTime?.message?.toString()}
               onChange={(v) => form.setValue("drawTime", v as Date)}
             />
           </Grid.Col>
-          <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Grid.Col
+            key={"maxSelections"}
+            span={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+          >
             <NumberInput
               label="Selections in game"
               {...form.register("maxSelections")}
+              error={form.formState.errors.maxSelections?.message?.toString()}
               onChange={(v) => form.setValue("maxSelections", Number(v))}
-              defaultValue={50}
+              defaultValue={defaultValues.maxSelections}
               min={3}
               max={100}
               withAsterisk
             />
           </Grid.Col>
-          <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Grid.Col
+            key={"selectionsRequiredForEntry"}
+            span={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+          >
             <NumberInput
               label="Selections per entry"
               {...form.register("selectionsRequiredForEntry")}
+              error={form.formState.errors.selectionsRequiredForEntry?.message?.toString()}
               onChange={(v) =>
                 form.setValue("selectionsRequiredForEntry", Number(v))
               }
-              defaultValue={5}
+              defaultValue={defaultValues.selectionsRequiredForEntry}
               min={3}
               max={100}
               withAsterisk
