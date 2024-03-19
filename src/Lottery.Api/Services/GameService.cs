@@ -4,6 +4,7 @@ using AutoMapper;
 
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Repositories;
 using Lottery.DB.Entities.Dbo;
 
@@ -55,6 +56,23 @@ public class GameService(GameRepository gameRepository, UserService userService,
         {
             Status = ResultStatus.Ok,
             Value = _mapper.Map<CreateGameResponse>(game)
+        };
+    }
+
+    public async Task<Result<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
+    {
+        var (games, hasMore) = await _gameRepository.SearchGames(request.Query.Page, request.Query.Limit);
+
+        return new Result<SearchGamesResonse>
+        {
+            Status = ResultStatus.Ok,
+            Value = new SearchGamesResonse
+            {
+                Items = _mapper.Map<IEnumerable<SearchGamesResponseItem>>(games),
+                Limit = request.Query.Limit,
+                Page = request.Query.Page,
+                HasMore = hasMore,
+            }
         };
     }
 }
