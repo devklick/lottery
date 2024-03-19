@@ -22,18 +22,17 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
     public async Task<Game?> GetGame(Guid gameId)
         => await _db.Games.Include(g => g.Selections).FirstOrDefaultAsync(g => g.Id == gameId);
 
-    public async Task<(IEnumerable<Game> Games, bool HasMore)> SearchGames(int page, int limit)
+    public async Task<(IEnumerable<Game> Games, int Total)> SearchGames(int page, int limit)
     {
-        var games = await _db.Games
+        var query = _db.Games
             .Include(x => x.Selections)
             .Include(x => x.Prizes)
-            .OrderByDescending(e => e.CreatedOnUtc)
-            .Skip((page - 1) * limit)
-            .Take(limit + 1)
-            .ToListAsync();
+            .OrderByDescending(e => e.CreatedOnUtc);
 
-        return (games.Take(limit), games.Count > limit);
+        var total = await query.CountAsync();
+        var games = await query.Skip((page - 1) * limit)
+            .Take(limit).ToListAsync();
+
+        return (games, total);
     }
-
-
 }

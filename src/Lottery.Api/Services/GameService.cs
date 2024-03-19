@@ -61,7 +61,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
 
     public async Task<Result<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
     {
-        var (games, hasMore) = await _gameRepository.SearchGames(request.Query.Page, request.Query.Limit);
+        var (games, total) = await _gameRepository.SearchGames(request.Query.Page, request.Query.Limit);
 
         return new Result<SearchGamesResonse>
         {
@@ -71,7 +71,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
                 Items = _mapper.Map<IEnumerable<SearchGamesResponseItem>>(games),
                 Limit = request.Query.Limit,
                 Page = request.Query.Page,
-                HasMore = hasMore,
+                Total = total,
             }
         };
     }

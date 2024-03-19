@@ -15,16 +15,17 @@ public class EntryRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCont
         return result.Entity;
     }
 
-    public async Task<(IEnumerable<Entry> Entries, bool HasMore)> GetEntries(Guid userId, int page, int limit)
+    public async Task<(IEnumerable<Entry> Entries, int Total)> GetEntries(Guid userId, int page, int limit)
     {
-        var entries = await _db.Entries
+        var query = _db.Entries
             .Where(e => e.CreatedById == userId)
-            .OrderByDescending(e => e.CreatedOnUtc)
-            .Skip((page - 1) * limit)
-            .Take(limit + 1)
-            .ToListAsync();
+            .OrderByDescending(e => e.CreatedOnUtc);
 
-        return (entries.Take(limit), entries.Count > limit);
+        var total = await query.CountAsync();
+        var entries = await query.Skip((page - 1) * limit)
+            .Take(limit).ToListAsync();
+
+        return (entries, total);
     }
 
 }

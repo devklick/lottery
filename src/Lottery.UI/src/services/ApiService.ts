@@ -29,11 +29,21 @@ type PostOptions = Partial<{
   onStatusCode: Record<number, StatusCodeHandler>;
 }>;
 
+type GetOptions = Partial<{
+  onStatusCode: Record<number, StatusCodeHandler>;
+}>;
+
 export interface ApiServiceDefinition {
   post<Request, Response>(
     url: string,
     request: Request,
     options?: PostOptions
+  ): AsyncResult<Response>;
+
+  get<Query, Response>(
+    url: string,
+    query: Query,
+    options?: GetOptions
   ): AsyncResult<Response>;
 }
 
@@ -59,6 +69,38 @@ export class ApiService implements ApiServiceDefinition {
     >(url, request, {
       withCredentials: options?.withCredentials,
     });
+
+    options?.onStatusCode && options.onStatusCode[response.status]?.();
+
+    if (
+      response.status.toString().startsWith("2") &&
+      !isBasicError(response.data)
+    ) {
+      return {
+        success: true,
+        data: response.data,
+      };
+    }
+
+    return {
+      success: false,
+      error: isBasicError(response.data)
+        ? response.data
+        : { errors: [{ message: "Unknown error info received" }] },
+    };
+  }
+
+  async get<Query, Response>(
+    url: string,
+    query: Query,
+    options: GetOptions
+  ): AsyncResult<Response> {
+    const response = await this.api.get<Response, AxiosResponse<Response>>(
+      url,
+      {
+        params: query,
+      }
+    );
 
     options?.onStatusCode && options.onStatusCode[response.status]?.();
 

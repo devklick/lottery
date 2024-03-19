@@ -47,12 +47,12 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         }
 
         // Make sure the correct number of selections are present on the entry
-        if (request.Body.Selections.Count != game.NumbersRequired)
+        if (request.Body.Selections.Count != game.SelectionsRequiredForEntry)
         {
             return new Result<CreateEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Expected {game.NumbersRequired} selections, found {request.Body.Selections.Count}" }]
+                Errors = [new() { Message = $"Expected {game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
             };
         }
 
@@ -108,7 +108,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
-        var (entries, hasMore) = await _entryRepository.GetEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
+        var (entries, total) = await _entryRepository.GetEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
 
         return new Result<GetEntriesResponse>
         {
@@ -118,7 +118,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
                 Items = _mapper.Map<IEnumerable<GetEntriesResponseItem>>(entries),
                 Limit = request.Query.Limit,
                 Page = request.Query.Page,
-                HasMore = hasMore,
+                Total = total,
             }
         };
     }

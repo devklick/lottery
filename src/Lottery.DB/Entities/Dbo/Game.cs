@@ -41,7 +41,7 @@ public class Game : EntityObject
     /// when the game is resulted.
     /// </summary>
     [Required]
-    public required int NumbersRequired { get; set; }
+    public required int SelectionsRequiredForEntry { get; set; }
 
     #region Navigation Properties
     /// <summary>

@@ -8,7 +8,7 @@ public class SearchGamesResponseItem
     public required string Name { get; set; }
     public required DateTime StartTime { get; set; }
     public required DateTime DrawTime { get; set; }
-    public required int NumbersRequired { get; set; }
+    public required int SelectionsRequiredForEntry { get; set; }
     public required List<SearchGameSelectionResponseItem> Selections { get; set; }
     public required List<SearchGamePrizeResponseItem> Prizes { get; set; }
 }
