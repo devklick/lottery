@@ -45,6 +45,10 @@ const routes: Array<RouteObject> = [
         ),
       },
       {
+        path: "/games/:id",
+        element: <pages.Games.GameDetail.Page />,
+      },
+      {
         path: "account/unauthorized",
         element: <Unauthorized />,
       },

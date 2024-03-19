@@ -9,6 +9,7 @@ import {
   Pagination,
   Paper,
   Select,
+  Title,
 } from "@mantine/core";
 import GameCard from "./GameCard";
 
@@ -25,8 +26,9 @@ function Games({}: GamesProps) {
 
   return (
     <Container pos="relative">
+      <Title>Lottery Games</Title>
       <Paper shadow="xl" p="xl">
-        <Flex wrap={"wrap"} gap={"lg"} justify={"center"} flex={"1 1 0"}>
+        <Flex wrap={"wrap"} gap={"lg"} justify={"center"}>
           {(
             query.data?.items ??
             Array(limit).fill({
