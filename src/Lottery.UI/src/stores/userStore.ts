@@ -30,9 +30,7 @@ export const useUserStore = create<UserStore>()(
         });
       },
       isUserType(userType) {
-        const actualUserType = get().userType;
-        console.log("Checking user type:", actualUserType);
-        return actualUserType === userType;
+        return get().userType === userType;
       },
     }),
     {

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import {
+  CreateGamePrizeRequest,
   CreateGameRequest,
   CreateGameResponse,
   createGameRequestSchema,
@@ -8,12 +9,14 @@ import gameService from "../gameService";
 import { useNavigate } from "react-router-dom";
 
 import { DateTimePicker } from "@mantine/dates";
-import CreateGamePrizes from "./CreateGamePrizes";
 import {
+  ActionIcon,
   Button,
   Grid,
+  Group,
   NumberInput,
   Select,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -21,6 +24,7 @@ import {
 import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { AllStates } from "../../common/schemas";
+import { IconTrash } from "@tabler/icons-react";
 
 interface CreateGameProps {}
 
@@ -46,7 +50,7 @@ function CreateGame({}: CreateGameProps) {
     drawTime: defaultDrawTime,
     maxSelections: 50,
     selectionsRequiredForEntry: 5,
-    prizes: [],
+    prizes: [{ position: 1, numberMatchCount: 5 }],
   };
 
   const navigate = useNavigate();
@@ -114,8 +118,60 @@ function CreateGame({}: CreateGameProps) {
             withAsterisk
           />
         </Grid.Col>
-        <Grid.Col span={12}>
-          <CreateGamePrizes onChange={(v) => form.setFieldValue("prizes", v)} />
+        <Grid.Col key={"prizes"} span={12}>
+          <Title size={"h2"}>Prizes</Title>
+          <Grid maw={500} mx="auto">
+            <Grid.Col key={"prize-position-header"} mt={"xs"} span={5}>
+              <Text fw={500} size="sm">
+                Position
+              </Text>
+            </Grid.Col>
+            <Grid.Col key={"prize-numberMatchCount-header"} mt={"xs"} span={5}>
+              <Text fw={500} size="sm">
+                Matching Numbers
+              </Text>
+            </Grid.Col>
+
+            {form.values.prizes.map((_, index) => (
+              <>
+                <Grid.Col key={`prize-${index}-position`} mt={"xs"} span={5}>
+                  <NumberInput
+                    {...form.getInputProps(`prizes.${index}.position`)}
+                  />
+                </Grid.Col>
+                <Grid.Col
+                  key={`prize-${index}-numberMatchCount`}
+                  mt={"xs"}
+                  span={5}
+                >
+                  <NumberInput
+                    {...form.getInputProps(`prizes.${index}.numberMatchCount`)}
+                  />
+                </Grid.Col>
+                <Grid.Col key={`prize-${index}-remove`} mt={"xs"} span={2}>
+                  <ActionIcon
+                    onClick={() => form.removeListItem("prizes", index)}
+                    color="red"
+                    disabled={form.values.prizes.length <= 1}
+                  >
+                    <IconTrash />
+                  </ActionIcon>
+                </Grid.Col>
+              </>
+            ))}
+          </Grid>
+          <Group justify="center" mt={"md"}>
+            <Button
+              onClick={() =>
+                form.insertListItem("prizes", {
+                  numberMatchCount: 1,
+                  position: 1,
+                } as CreateGamePrizeRequest)
+              }
+            >
+              Add new prize
+            </Button>
+          </Group>
         </Grid.Col>
 
         <Grid.Col
