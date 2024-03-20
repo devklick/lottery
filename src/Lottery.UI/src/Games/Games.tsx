@@ -53,10 +53,13 @@ function Games({}: GamesProps) {
   });
 
   return (
-    <Container pos="relative">
+    <Container>
       <Title>Lottery Games</Title>
 
-      <Paper shadow="xl" p="xl">
+      <Paper
+        shadow="xl"
+        p={{ xl: "xl", lg: "xl", mx: "xl", sm: "xl", xs: "xs" }}
+      >
         <GameFilters
           initialValues={filters}
           onUpdateClicked={(filters) => setFilters(filters)}
