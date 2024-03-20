@@ -7,6 +7,7 @@ using Lottery.DB.Context;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Extensions;
 using Lottery.Api.Services.Options;
+using Lottery.Api.Repositories.Game;
 
 namespace Lottery.Api;
 

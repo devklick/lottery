@@ -13,22 +13,52 @@ import {
   Title,
 } from "@mantine/core";
 import GameCard from "./GameCard";
+import GameFilters from "./GameFilters";
+import { SearchGamesRequestFilter } from "./games.schema";
 
 interface GamesProps {}
 
 function Games({}: GamesProps) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const [filters, setFilters] = useState<SearchGamesRequestFilter>({
+    gameStates: ["CanEnter", "Future"],
+    sortBy: "DrawTime",
+    sortDirection: "Desc",
+    name: "",
+  });
 
   const query = useQuery({
-    queryKey: ["game", "search", page, limit],
-    queryFn: () => gameService.searchGames({ limit, page }),
+    queryKey: [
+      "game",
+      "search",
+      page,
+      limit,
+      filters.gameStates,
+      filters.name,
+      filters.sortBy,
+      filters.sortDirection,
+    ],
+    queryFn: () =>
+      gameService.searchGames({
+        limit,
+        page,
+        gameStates: filters.gameStates,
+        sortBy: filters.sortBy,
+        sortDirection: filters.sortDirection,
+        name: filters.name,
+      }),
   });
 
   return (
     <Container pos="relative">
       <Title>Lottery Games</Title>
+
       <Paper shadow="xl" p="xl">
+        <GameFilters
+          initialValues={filters}
+          onUpdateClicked={(filters) => setFilters(filters)}
+        />
         <Grid
           gutter={{ base: 5, xs: "md", md: "xl", xl: 50 }}
           justify={"center"}
@@ -52,7 +82,7 @@ function Games({}: GamesProps) {
       <Center w={"100%"} mx={5} mt={50}>
         <Flex gap={"lg"} align={"center"}>
           <Pagination
-            total={Math.ceil((query.data?.total ?? 0) / limit)}
+            total={Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1)}
             value={page}
             onChange={setPage}
           />

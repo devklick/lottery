@@ -99,6 +99,9 @@ export class ApiService implements ApiServiceDefinition {
       url,
       {
         params: query,
+        paramsSerializer: {
+          indexes: true,
+        },
       }
     );
 

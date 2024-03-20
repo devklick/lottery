@@ -8,6 +8,7 @@ using Lottery.DB;
 using Lottery.Api.Repositories;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Entry.Get;
+using Lottery.Api.Repositories.Game;
 
 namespace Lottery.Api.Services;
 

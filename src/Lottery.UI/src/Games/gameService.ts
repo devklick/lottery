@@ -2,11 +2,13 @@ import { ApiService, ApiServiceDefinition } from "../services/ApiService";
 import {
   CreateGameRequest,
   CreateGameResponse,
+  createGameResponseSchema,
+} from "./CreateGame/createGame.schema";
+import {
   SearchGamesRequest,
   SearchGamesResponse,
-  createGameResponseSchema,
   searchGamesResponseSchema,
-} from "./CreateGame/createGame.schema";
+} from "./games.schema";
 
 interface GameService {
   createGame(request: CreateGameRequest): Promise<CreateGameResponse>;

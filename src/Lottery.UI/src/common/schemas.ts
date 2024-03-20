@@ -20,5 +20,15 @@ export const pagedResponseSchema = pagedRequestSchema.extend({
   total: z.number(),
 });
 
+export const SortDirections = {
+  Asc: "Asc",
+  Desc: "Desc",
+} as const;
+
+export const allSortDirecttions = Object.keys(SortDirections);
+
+export const sortDirectionSchema = z.nativeEnum(SortDirections);
+
+export type SortDirection = z.infer<typeof sortDirectionSchema>;
 export type PagedRequest = z.infer<typeof pagedRequestSchema>;
 export type PagedResponse = z.infer<typeof pagedResponseSchema>;

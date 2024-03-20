@@ -6,7 +6,9 @@ using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Repositories;
+using Lottery.Api.Repositories.Game;
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Repository;
 
 
 namespace Lottery.Api.Services;
@@ -61,7 +63,14 @@ public class GameService(GameRepository gameRepository, UserService userService,
 
     public async Task<Result<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
     {
-        var (games, total) = await _gameRepository.SearchGames(request.Query.Page, request.Query.Limit);
+
+        var (games, total) = await _gameRepository.SearchGames(
+            request.Query.Page,
+            request.Query.Limit,
+            name: request.Query.Name,
+            request.Query.GameStates.Select(s => (SearchGamesInState)s).ToList(),
+            sortBy: (DB.Repository.SearchGamesSortCriteria)request.Query.SortBy,
+            sortDirection: (DB.Repository.Common.SortDirection)request.Query.SortBy);
 
         return new Result<SearchGamesResonse>
         {
