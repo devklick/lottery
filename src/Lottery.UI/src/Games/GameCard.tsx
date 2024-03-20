@@ -21,7 +21,7 @@ function formatDate(date: Date) {
 function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
   const navigate = useNavigate();
   return (
-    <Card withBorder shadow="sm" padding="lg" radius="md">
+    <Card withBorder shadow="sm" padding="lg" radius="md" w={"100%"} h={"100%"}>
       <Skeleton visible={loading} radius={"xl"}>
         <Text fw={"bold"} size="xl" mt="md">
           {name}
@@ -32,8 +32,8 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
           {formatDate(startTime)} - {formatDate(drawTime)}
         </Text>
       </Skeleton>
-      <Skeleton visible={loading}>
-        <Flex justify={"right"}>
+      <Flex justify={"flex-end"} align={"flex-end"} h={"100%"} w={"100%"}>
+        <Skeleton visible={loading}>
           <Button
             color="green"
             mt="md"
@@ -42,8 +42,8 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
           >
             Play
           </Button>
-        </Flex>
-      </Skeleton>
+        </Skeleton>
+      </Flex>
     </Card>
   );
 }

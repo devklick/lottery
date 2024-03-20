@@ -6,6 +6,7 @@ import {
   Center,
   Container,
   Flex,
+  Grid,
   Pagination,
   Paper,
   Select,
@@ -28,7 +29,11 @@ function Games({}: GamesProps) {
     <Container pos="relative">
       <Title>Lottery Games</Title>
       <Paper shadow="xl" p="xl">
-        <Flex wrap={"wrap"} gap={"lg"} justify={"center"}>
+        <Grid
+          gutter={{ base: 5, xs: "md", md: "xl", xl: 50 }}
+          justify={"center"}
+          grow
+        >
           {(
             query.data?.items ??
             Array(limit).fill({
@@ -37,9 +42,11 @@ function Games({}: GamesProps) {
               drawTime: new Date(),
             } as SearchGamesResponseItem)
           ).map((game, i) => (
-            <GameCard key={i} {...game} loading={query.isLoading} />
+            <Grid.Col span={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}>
+              <GameCard key={i} {...game} loading={query.isLoading} />
+            </Grid.Col>
           ))}
-        </Flex>
+        </Grid>
       </Paper>
 
       <Center w={"100%"} mx={5} mt={50}>
