@@ -53,7 +53,6 @@ function Layout({}: LayoutProps) {
                   </Menu.Item>
                   <Menu.Divider />
                   <Menu.Label>Application</Menu.Label>
-                  {/* TODO: Fix clicking on Switch to change theme */}
                   <Menu.Item
                     onClick={toggleColorScheme}
                     leftSection={
@@ -61,7 +60,7 @@ function Layout({}: LayoutProps) {
                         onLabel={<IconSun />}
                         offLabel={<IconMoon />}
                         checked={computedColorScheme === "light"}
-                        onChange={toggleColorScheme}
+                        style={{ pointerEvents: "none" }}
                       />
                     }
                   >{`Theme`}</Menu.Item>
