@@ -18,7 +18,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useUserStore } from "../../stores/userStore";
+import { useUserStore } from "../../stores/user.store";
 
 interface SignInProps {}
 

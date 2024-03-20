@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect } from "react";
 import { UserType } from "../Account/SignIn/signIn.schema";
-import { useUserStore } from "../stores/userStore";
+import { useUserStore } from "../stores/user.store";
 import { useNavigate } from "react-router-dom";
 
 interface ProtectedRouteProps {

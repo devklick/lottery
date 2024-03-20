@@ -1,13 +1,13 @@
 import { RouteObject } from "react-router-dom";
-import App from "../App.tsx";
 import pages from "../pages.ts";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import Unauthorized from "../Account/Unauthorized/Unauthorized.tsx";
+import Layout from "../Layout/Layout.tsx";
 
 const routes: Array<RouteObject> = [
   {
     path: "/",
-    element: <App />,
+    element: <Layout />,
     children: [
       {
         index: true,

@@ -1,11 +1,26 @@
-import { AppShell, Burger, Group, UnstyledButton } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Group,
+  Menu,
+  Switch,
+  UnstyledButton,
+  useComputedColorScheme,
+  useMantineColorScheme,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
+import { IconLogin, IconSun, IconMoon } from "@tabler/icons-react";
+import { useUserStore } from "../stores/user.store";
 
 interface LayoutProps {}
+
 function Layout({}: LayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const nav = useNavigate();
+  const user = useUserStore();
+  const { toggleColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme();
   return (
     <AppShell
       header={{ height: 60 }}
@@ -26,9 +41,32 @@ function Layout({}: LayoutProps) {
               <UnstyledButton onClick={() => nav("/games")}>
                 <span>Games</span>
               </UnstyledButton>
-              <UnstyledButton onClick={() => nav("/account")}>
-                <span>Account</span>
-              </UnstyledButton>
+              <Menu trigger="hover" openDelay={100} closeDelay={400}>
+                <Menu.Target>
+                  <UnstyledButton onClick={() => nav("/account")}>
+                    <span onClick={() => nav("/account")}>Account</span>
+                  </UnstyledButton>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item leftSection={<IconLogin />}>
+                    {user.authenticated ? "Log Out" : "Log In"}
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Label>Application</Menu.Label>
+                  {/* TODO: Fix clicking on Switch to change theme */}
+                  <Menu.Item
+                    onClick={toggleColorScheme}
+                    leftSection={
+                      <Switch
+                        onLabel={<IconSun />}
+                        offLabel={<IconMoon />}
+                        checked={computedColorScheme === "light"}
+                        onChange={toggleColorScheme}
+                      />
+                    }
+                  >{`Theme`}</Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
             </Group>
           </Group>
         </Group>
