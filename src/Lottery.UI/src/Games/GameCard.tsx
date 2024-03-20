@@ -1,16 +1,13 @@
 import {
-  ActionIcon,
-  Affix,
   Button,
   Card,
-  Flex,
   Group,
-  List,
   Menu,
   Skeleton,
   Stack,
   Text,
   rem,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconBriefcase, IconEdit, IconRotate2 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -33,10 +30,9 @@ function formatDate(date: Date) {
   });
 }
 
-function GameCardManageOptions({}: {}) {}
-
 function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
   const navigate = useNavigate();
+  const theme = useMantineTheme();
   const { isUserType } = useUserStore();
   return (
     <Card withBorder shadow="xl" radius="lg">
@@ -81,7 +77,7 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
                   <Menu.Target>
                     <Button
                       fullWidth
-                      color="red"
+                      color={theme.colors.violet[9]}
                       leftSection={<IconBriefcase size={rem(18)} />}
                     >
                       Manage
@@ -110,34 +106,6 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
       </Card.Section>
     </Card>
   );
-
-  // return (
-  //   <Card withBorder shadow="sm" padding="lg" radius="md" w={"100%"} h={"100%"}>
-  //     <IconBurger />
-  //     <Skeleton visible={loading} radius={"xl"}>
-  //       <Text fw={"bold"} size="xl" mt="md">
-  //         {name}
-  //       </Text>
-  //     </Skeleton>
-  //     <Skeleton visible={loading} radius={"xl"}>
-  //       <Text>
-  //         {formatDate(startTime)} - {formatDate(drawTime)}
-  //       </Text>
-  //     </Skeleton>
-  //     <Flex justify={"flex-end"} align={"flex-end"} h={"100%"} w={"100%"}>
-  //       <Skeleton visible={loading}>
-  //         <Button
-  //           color="green"
-  //           mt="md"
-  //           radius="md"
-  //           onClick={() => navigate(`/games/${id}`)}
-  //         >
-  //           Play
-  //         </Button>
-  //       </Skeleton>
-  //     </Flex>
-  //   </Card>
-  // );
 }
 
 export default GameCard;
