@@ -28,6 +28,12 @@ public class Game : EntityObject
     public required DateTime DrawTime { get; set; }
 
     /// <summary>
+    /// The date and time at which the game was resulted.
+    /// If the game has not yet been resulted, this will be null.
+    /// </summary>
+    public DateTime? ResultedAt { get; set; }
+
+    /// <summary>
     /// The name allocated to the game.
     /// </summary>
     [Required, StringLength(64)]

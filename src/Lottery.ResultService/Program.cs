@@ -72,5 +72,7 @@ foreach (var game in games)
     // Store the entry prizes
     await repo.AddEntryPrizes(entryPrizes);
 
+    game.ResultedAt = DateTime.UtcNow;
+
     await repo.SaveChangesAsync();
 }
