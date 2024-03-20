@@ -12,6 +12,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
 import { IconLogin, IconSun, IconMoon } from "@tabler/icons-react";
 import { useUserStore } from "../stores/user.store";
+import accountService from "../Account/accountService";
 
 interface LayoutProps {}
 
@@ -21,6 +22,17 @@ function Layout({}: LayoutProps) {
   const user = useUserStore();
   const { toggleColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme();
+
+  async function handleClickLogInOrOut() {
+    if (user.authenticated) {
+      await accountService.signOut();
+      user.logout();
+      nav("/");
+    } else {
+      nav("/account/signIn");
+    }
+  }
+
   return (
     <AppShell
       header={{ height: 60 }}
@@ -35,8 +47,7 @@ function Layout({}: LayoutProps) {
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
-            {/* <MantineLogo size={30} /> */}
-            <div />
+            <Group></Group>
             <Group ml="xl" gap={20} visibleFrom="sm">
               <UnstyledButton onClick={() => nav("/games")}>
                 <span>Games</span>
@@ -48,7 +59,10 @@ function Layout({}: LayoutProps) {
                   </UnstyledButton>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item leftSection={<IconLogin />}>
+                  <Menu.Item
+                    leftSection={<IconLogin />}
+                    onClick={handleClickLogInOrOut}
+                  >
                     {user.authenticated ? "Log Out" : "Log In"}
                   </Menu.Item>
                   <Menu.Divider />

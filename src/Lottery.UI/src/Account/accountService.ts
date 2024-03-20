@@ -5,6 +5,7 @@ import { ApiService, ApiServiceDefinition } from "../services/ApiService";
 interface AccountService {
   signIn(request: SignInRequest): Promise<SignInResponse>;
   signUp(request: SignUpRequest): Promise<SignUpResponse>;
+  signOut(): Promise<void>;
 }
 
 export function createAccountService({
@@ -34,7 +35,13 @@ export function createAccountService({
     throw result.error;
   };
 
-  return { signIn, signUp };
+  const signOut: AccountService["signOut"] = async () => {
+    await api.post("/account/signOut", undefined, {
+      withCredentials: true,
+    });
+  };
+
+  return { signIn, signUp, signOut };
 }
 
 export default createAccountService({

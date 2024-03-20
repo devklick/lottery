@@ -34,9 +34,9 @@ type GetOptions = Partial<{
 }>;
 
 export interface ApiServiceDefinition {
-  post<Request, Response>(
+  post<Request = unknown, Response = unknown>(
     url: string,
-    request: Request,
+    request?: Request,
     options?: PostOptions
   ): AsyncResult<Response>;
 
@@ -57,9 +57,9 @@ export class ApiService implements ApiServiceDefinition {
     this.api = axios.create({ baseURL: params.baseUrl });
   }
 
-  async post<Request, Response>(
+  async post<Request = unknown, Response = unknown>(
     url: string,
-    request: Request,
+    request?: Request,
     options?: PostOptions
   ): AsyncResult<Response> {
     const response = await this.api.post<
