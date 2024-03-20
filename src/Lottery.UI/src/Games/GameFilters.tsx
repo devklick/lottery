@@ -24,12 +24,18 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import {
+  LabelledGameStates,
+  LabelledSortByValues,
   SearchGamesRequestFilter,
   allGameStates,
   allSortByValues,
   searchGamesRequestFilterSchema,
 } from "./games.schema";
-import { allSortDirecttions } from "../common/schemas";
+import {
+  SortDirection,
+  allSortDirections,
+  allSortDirectionsWithLabel,
+} from "../common/schemas";
 
 interface GameFiltersProps {
   initialValues: SearchGamesRequestFilter;
@@ -44,40 +50,42 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
     initialValues,
   });
 
+  const colProps = {span: {xl: 6, lg: 6, md: 6, sm: 6, xs: 12}};
+
   return (
     <Container>
       <Collapse in={opened}>
         <form onSubmit={form.onSubmit((data) => onUpdateClicked(data))}>
           <Grid>
-            <Grid.Col key={"name"} span={12}>
+            <Grid.Col key={"name"} {...colProps}>
               <TextInput
                 label="Game Name"
                 {...form.getInputProps("name")}
                 style={{ textAlign: "left" }}
               />
             </Grid.Col>
-            <Grid.Col key={"status"}>
+            <Grid.Col key={"status"} {...colProps}>
               <MultiSelect
                 label="Game States"
                 {...form.getInputProps("gameStates")}
                 style={{ textAlign: "left" }}
-                data={allGameStates}
+                data={Object.values(LabelledGameStates)}
               />
             </Grid.Col>
-            <Grid.Col key="sortby">
+            <Grid.Col key="sortby" {...colProps}>
               <Select
                 label="Order By"
                 {...form.getInputProps("sortBy")}
                 style={{ textAlign: "left" }}
-                data={allSortByValues}
+                data={Object.values(LabelledSortByValues)}
               />
             </Grid.Col>
-            <Grid.Col key="sortdir">
+            <Grid.Col key="sortdir" {...colProps}>
               <Select
                 label="Order Direction"
                 {...form.getInputProps("sortDirection")}
                 style={{ textAlign: "left" }}
-                data={allSortDirecttions}
+                data={Object.values(allSortDirectionsWithLabel)}
               />
             </Grid.Col>
           </Grid>

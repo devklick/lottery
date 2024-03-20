@@ -6,22 +6,43 @@ import {
 } from "../common/schemas";
 
 export const GameStates = {
-  Future: "Future",
-  CanEnter: "CanEnter",
-  Resulted: "Resulted",
+  Future: "future",
+  CanEnter: "canEnter",
+  Resulted: "resulted",
 } as const;
 
 export const allGameStates = Object.keys(GameStates);
 
 export const gameStateSchema = z.nativeEnum(GameStates);
+export type GameState = z.infer<typeof gameStateSchema>;
+
+export const LabelledGameStates: Record<
+  GameState,
+  { label: string; value: GameState }
+> = {
+  canEnter: { label: "Current Games", value: "canEnter" },
+  future: { label: "Future Games", value: "future" },
+  resulted: { label: "Past Games", value: "resulted" },
+};
 
 export const SortByValues = {
-  DrawTime: "DrawTime",
-  StartTime: "StartTime",
+  DrawTime: "drawTime",
+  StartTime: "startTime",
 } as const;
+
 export const allSortByValues = Object.keys(SortByValues);
 
 export const sortBySchema = z.nativeEnum(SortByValues);
+
+export type SortBy = z.infer<typeof sortBySchema>;
+
+export const LabelledSortByValues: Record<
+  SortBy,
+  { label: string; value: SortBy }
+> = {
+  drawTime: { label: "Draw Time", value: "drawTime" },
+  startTime: { label: "Start Time", value: "startTime" },
+};
 
 export const searchGamesRequestFilterSchema = z.object({
   gameStates: z.array(gameStateSchema),
@@ -66,5 +87,3 @@ export type SearchGamesResponseItem = z.infer<
   typeof searchGamesResponseItemSchema
 >;
 export type SearchGamesResponse = z.infer<typeof searchGamesResponseSchema>;
-export type GameState = z.infer<typeof gameStateSchema>;
-export type SortBy = z.infer<typeof sortBySchema>;

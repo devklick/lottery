@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "./gameService";
-import { SearchGamesResponseItem } from "./CreateGame/createGame.schema";
 import {
   Center,
   Container,
@@ -14,7 +13,10 @@ import {
 } from "@mantine/core";
 import GameCard from "./GameCard";
 import GameFilters from "./GameFilters";
-import { SearchGamesRequestFilter } from "./games.schema";
+import {
+  SearchGamesRequestFilter,
+  SearchGamesResponseItem,
+} from "./games.schema";
 
 interface GamesProps {}
 
@@ -22,9 +24,9 @@ function Games({}: GamesProps) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [filters, setFilters] = useState<SearchGamesRequestFilter>({
-    gameStates: ["CanEnter", "Future"],
-    sortBy: "DrawTime",
-    sortDirection: "Desc",
+    gameStates: ["canEnter", "future"],
+    sortBy: "drawTime",
+    sortDirection: "desc",
     name: "",
   });
 

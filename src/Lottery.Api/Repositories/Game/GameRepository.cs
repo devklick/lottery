@@ -35,9 +35,10 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
             .Include(x => x.Prizes)
             .AsQueryable();
 
+        // TODO: This wont use the index. Best looking into collation
         if (name != null)
         {
-            query = query.Where(g => g.Name.Contains(name));
+            query = query.Where(g => EF.Functions.ILike(g.Name, $"%{name}%"));
         }
 
         // TODO: Figure a better, more extendable way of building this criteria
