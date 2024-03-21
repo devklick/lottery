@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { pagedResponseSchema } from "../../common/schemas";
 
 const stateSchema = z.enum(["Enabled", "Disabled"]);
 
@@ -14,8 +13,8 @@ export const createGamePrizesRequestSchema = z.array(
 
 export const createGameRequestSchema = z
   .object({
-    startTime: z.string().pipe(z.coerce.date()),
-    drawTime: z.string().pipe(z.coerce.date()),
+    startTime: z.date().or(z.string()).pipe(z.coerce.date()),
+    drawTime: z.date().or(z.string()).pipe(z.coerce.date()),
     name: z.string().min(3).max(64),
     state: stateSchema.default("Enabled"),
     maxSelections: z.number().positive().min(3).max(100),

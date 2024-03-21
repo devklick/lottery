@@ -13,8 +13,10 @@ import {
   ActionIcon,
   Button,
   Grid,
+  GridColProps,
   Group,
   NumberInput,
+  Paper,
   Select,
   Text,
   TextInput,
@@ -66,136 +68,142 @@ function CreateGame({}: CreateGameProps) {
     initialValues: initialValues,
   });
 
+  const colProps: GridColProps = {
+    span: { xs: 12, sm: 6, md: 6, lg: 6 },
+    style: { textAlign: "left" },
+  };
+
   return (
-    // <FormProvider {...form}>
-    <form onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}>
-      <Title>Create Game</Title>
-      <Grid justify="center" gutter={"xl"}>
-        <Grid.Col key={"name"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <TextInput
-            label="Name"
-            {...form.getInputProps("name")}
-            withAsterisk
-          />
-        </Grid.Col>
-        <Grid.Col key={"state"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <Select
-            label="State"
-            {...form.getInputProps("state")}
-            data={AllStates.map((s) => ({ value: s, label: s }))}
-            withAsterisk
-            allowDeselect={false}
-          />
-        </Grid.Col>
-        <Grid.Col key={"startTime"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <DateTimePicker
-            label="Start Time"
-            {...form.getInputProps("startTime")}
-            withAsterisk
-          />
-        </Grid.Col>
-        <Grid.Col key={"drawTime"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <DateTimePicker
-            label="Draw Time"
-            {...form.getInputProps("drawTime")}
-            withAsterisk
-          />
-        </Grid.Col>
-        <Grid.Col key={"maxSelections"} span={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <NumberInput
-            label="Selections in game"
-            {...form.getInputProps("maxSelections")}
-            withAsterisk
-          />
-        </Grid.Col>
-        <Grid.Col
-          key={"selectionsRequiredForEntry"}
-          span={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-        >
-          <NumberInput
-            label="Selections per entry"
-            {...form.getInputProps("selectionsRequiredForEntry")}
-            withAsterisk
-          />
-        </Grid.Col>
-        <Grid.Col key={"prizes"} span={12}>
-          <Title size={"h2"}>Prizes</Title>
-          <Grid maw={500} mx="auto">
-            <Grid.Col key={"prize-position-header"} mt={"xs"} span={5}>
-              <Text fw={500} size="sm">
-                Position
-              </Text>
-            </Grid.Col>
-            <Grid.Col key={"prize-numberMatchCount-header"} mt={"xs"} span={5}>
-              <Text fw={500} size="sm">
-                Matching Numbers
-              </Text>
-            </Grid.Col>
+    <Paper shadow="xl" p={"lg"}>
+      <form
+        onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
+      >
+        <Title>Create Game</Title>
+        <Grid justify="center" gutter={"xl"}>
+          <Grid.Col key={"name"} {...colProps}>
+            <TextInput
+              label="Name"
+              {...form.getInputProps("name")}
+              withAsterisk
+            />
+          </Grid.Col>
+          <Grid.Col key={"state"} {...colProps}>
+            <Select
+              label="State"
+              {...form.getInputProps("state")}
+              data={AllStates.map((s) => ({ value: s, label: s }))}
+              withAsterisk
+              allowDeselect={false}
+            />
+          </Grid.Col>
+          <Grid.Col key={"startTime"} {...colProps}>
+            <DateTimePicker
+              label="Start Time"
+              {...form.getInputProps("startTime")}
+              withAsterisk
+            />
+          </Grid.Col>
+          <Grid.Col key={"drawTime"} {...colProps}>
+            <DateTimePicker
+              label="Draw Time"
+              {...form.getInputProps("drawTime")}
+              withAsterisk
+            />
+          </Grid.Col>
+          <Grid.Col key={"maxSelections"} {...colProps}>
+            <NumberInput
+              label="Selections in game"
+              {...form.getInputProps("maxSelections")}
+              withAsterisk
+            />
+          </Grid.Col>
+          <Grid.Col key={"selectionsRequiredForEntry"} {...colProps}>
+            <NumberInput
+              label="Selections per entry"
+              {...form.getInputProps("selectionsRequiredForEntry")}
+              withAsterisk
+            />
+          </Grid.Col>
+          <Grid.Col key={"prizes"} span={12}>
+            <Title size={"h2"}>Prizes</Title>
+            <Grid maw={500} mx="auto">
+              <Grid.Col
+                key={"prize-position-header"}
+                mt={"xs"}
+                {...colProps}
+                span={6}
+              >
+                <Text fw={500} size="sm">
+                  Position
+                </Text>
+              </Grid.Col>
+              <Grid.Col
+                key={"prize-numberMatchCount-header"}
+                mt={"xs"}
+                {...colProps}
+                span={6}
+              >
+                <Text fw={500} size="sm">
+                  Matching Numbers
+                </Text>
+              </Grid.Col>
 
-            {form.values.prizes.map((_, index) => (
-              <>
-                <Grid.Col key={`prize-${index}-position`} mt={"xs"} span={5}>
-                  <NumberInput
-                    {...form.getInputProps(`prizes.${index}.position`)}
-                  />
-                </Grid.Col>
-                <Grid.Col
-                  key={`prize-${index}-numberMatchCount`}
-                  mt={"xs"}
-                  span={5}
-                >
-                  <NumberInput
-                    {...form.getInputProps(`prizes.${index}.numberMatchCount`)}
-                  />
-                </Grid.Col>
-                <Grid.Col key={`prize-${index}-remove`} mt={"xs"} span={2}>
-                  <ActionIcon
-                    onClick={() => form.removeListItem("prizes", index)}
-                    color="red"
-                    disabled={form.values.prizes.length <= 1}
+              {form.values.prizes.map((_, index) => (
+                <>
+                  <Grid.Col key={`prize-${index}-position`} mt={"xs"} span={6}>
+                    <NumberInput
+                      {...form.getInputProps(`prizes.${index}.position`)}
+                      leftSection={
+                        <ActionIcon
+                          variant="transparent"
+                          onClick={() => form.removeListItem("prizes", index)}
+                          disabled={form.values.prizes.length <= 1}
+                        >
+                          <IconTrash />
+                        </ActionIcon>
+                      }
+                    />
+                  </Grid.Col>
+                  <Grid.Col
+                    key={`prize-${index}-numberMatchCount`}
+                    mt={"xs"}
+                    span={6}
                   >
-                    <IconTrash />
-                  </ActionIcon>
-                </Grid.Col>
-              </>
-            ))}
-          </Grid>
-          <Group justify="center" mt={"md"}>
-            <Button
-              onClick={() =>
-                form.insertListItem("prizes", {
-                  numberMatchCount: 1,
-                  position: 1,
-                } as CreateGamePrizeRequest)
-              }
-            >
-              Add new prize
-            </Button>
-          </Group>
-        </Grid.Col>
+                    <NumberInput
+                      {...form.getInputProps(
+                        `prizes.${index}.numberMatchCount`
+                      )}
+                    />
+                  </Grid.Col>
+                </>
+              ))}
+            </Grid>
+            <Group justify="center" mt={"md"}>
+              <Button
+                onClick={() =>
+                  form.insertListItem("prizes", {
+                    numberMatchCount: 1,
+                    position: 1,
+                  } as CreateGamePrizeRequest)
+                }
+              >
+                Add new prize
+              </Button>
+            </Group>
+          </Grid.Col>
 
-        <Grid.Col
-          span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
-        >
-          <Button type="submit" loading={mutation.isPending} fullWidth>
-            {mutation.isPending ? "Submitting" : "Submit"}
-          </Button>
-        </Grid.Col>
-        <Grid.Col
-          span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
-        >
-          <Button
-            fullWidth
-            onClick={() => {
-              console.log(form.values);
-            }}
+          <Grid.Col
+            span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
           >
-            Log Form Values
-          </Button>
-        </Grid.Col>
-      </Grid>
-    </form>
-    // </FormProvider>
+            <Group mt={50}>
+              <Button type="submit" loading={mutation.isPending} fullWidth>
+                {mutation.isPending ? "Submitting" : "Submit"}
+              </Button>
+            </Group>
+          </Grid.Col>
+        </Grid>
+      </form>
+    </Paper>
   );
 }
 

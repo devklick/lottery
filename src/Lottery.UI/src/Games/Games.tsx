@@ -59,6 +59,7 @@ function Games({}: GamesProps) {
       <Paper
         shadow="xl"
         p={{ xl: "xl", lg: "xl", mx: "xl", sm: "xl", xs: "xs" }}
+        m={{ xl: "xl", lg: "xl", mx: "xl", sm: "xl", xs: "xs" }}
       >
         <GameFilters
           initialValues={filters}
