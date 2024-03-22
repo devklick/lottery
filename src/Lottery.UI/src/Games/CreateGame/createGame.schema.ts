@@ -25,15 +25,15 @@ export const createGameRequestSchema = z
     path: ["selectionsRequiredForEntry"],
     message: "Cannot be greater than the maximum selections",
   })
-  .superRefine(({ prizes, maxSelections }, ctx) => {
+  .superRefine(({ prizes, selectionsRequiredForEntry }, ctx) => {
     prizes.forEach(({ numberMatchCount }, i) => {
-      if (numberMatchCount > maxSelections) {
+      if (numberMatchCount > selectionsRequiredForEntry) {
         ctx.addIssue({
           type: "number",
           code: z.ZodIssueCode.too_big,
-          maximum: maxSelections,
+          maximum: selectionsRequiredForEntry,
           inclusive: true,
-          message: "Cannot be greater than the maximum selections",
+          message: "Cannot be greater than the number of selections per entry",
           path: ["prizes", i, "numberMatchCount"],
         });
       }
@@ -45,7 +45,7 @@ export const createGameResponseSchema = z.object({
   startTime: z.string().pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
   name: z.string(),
-  selectionsRequiredForEntry: z.string(),
+  selectionsRequiredForEntry: z.number(),
   selections: z.array(
     z.object({
       id: z.string().uuid(),
