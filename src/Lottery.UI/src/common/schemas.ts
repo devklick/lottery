@@ -1,15 +1,23 @@
-import { record, z } from "zod";
+import { z } from "zod";
 
 export const States = {
   Enabled: "Enabled",
   Disabled: "Disabled",
 } as const;
 
-export const AllStates = Object.keys(States);
+export const allStates = Object.keys(States);
 
 export const stateSchema = z.nativeEnum(States);
 
 export type State = z.infer<typeof stateSchema>;
+
+export const allStatesWithLabel: Record<
+  State,
+  { label: string; value: State }
+> = {
+  Disabled: { label: "Disabled", value: "Disabled" },
+  Enabled: { label: "Enabled", value: "Enabled" },
+};
 
 export const pagedRequestSchema = z.object({
   page: z.number().min(1),
@@ -19,6 +27,9 @@ export const pagedRequestSchema = z.object({
 export const pagedResponseSchema = pagedRequestSchema.extend({
   total: z.number(),
 });
+
+export type PagedRequest = z.infer<typeof pagedRequestSchema>;
+export type PagedResponse = z.infer<typeof pagedResponseSchema>;
 
 export const SortDirections = {
   Asc: "asc",
@@ -38,6 +49,3 @@ export const allSortDirectionsWithLabel: Record<
   asc: { label: "Ascending", value: "asc" },
   desc: { label: "Descending", value: "desc" },
 };
-
-export type PagedRequest = z.infer<typeof pagedRequestSchema>;
-export type PagedResponse = z.infer<typeof pagedResponseSchema>;

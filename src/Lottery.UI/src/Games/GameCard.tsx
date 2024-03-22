@@ -23,10 +23,9 @@ interface GameCardProps {
 
 function formatDate(date: Date) {
   return date.toLocaleString("en-GB", {
-    weekday: "short",
     year: "numeric",
     month: "short",
-    day: "numeric",
+    day: "2-digit",
   });
 }
 
@@ -35,7 +34,7 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
   const theme = useMantineTheme();
   const { isUserType } = useUserStore();
   return (
-    <Card withBorder shadow="xl" radius="lg">
+    <Card withBorder shadow="xl" radius="lg" h={"100%"}>
       <Card.Section withBorder inheritPadding py={"xs"}>
         <Group>
           <Skeleton visible={loading}>
@@ -44,7 +43,7 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
         </Group>
       </Card.Section>
 
-      <Card.Section withBorder inheritPadding py={"xs"}>
+      <Card.Section h={"100%"} withBorder inheritPadding py={"xs"}>
         <Stack py={"xs"} gap={"xs"} align="start">
           <Skeleton visible={loading}>
             <Group>
@@ -62,7 +61,7 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
       </Card.Section>
 
       <Card.Section withBorder inheritPadding py={"xs"}>
-        <Stack>
+        <Stack h={"100%"} justify="flex-end">
           <Skeleton visible={loading}>
             <Group>
               <Button fullWidth onClick={() => navigate(`/games/${id}`)}>

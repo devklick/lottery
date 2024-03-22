@@ -1,41 +1,25 @@
 import {
   Badge,
-  Box,
   Button,
   Collapse,
   Container,
   Divider,
-  Flex,
   Grid,
   Group,
-  Modal,
   MultiSelect,
-  Paper,
   Select,
-  Text,
   TextInput,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconFilter,
-  IconFilterOff,
-  IconMinus,
-  IconPlus,
-} from "@tabler/icons-react";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import {
   LabelledGameStates,
   LabelledSortByValues,
   SearchGamesRequestFilter,
-  allGameStates,
-  allSortByValues,
   searchGamesRequestFilterSchema,
 } from "./games.schema";
-import {
-  SortDirection,
-  allSortDirections,
-  allSortDirectionsWithLabel,
-} from "../common/schemas";
+import { allSortDirectionsWithLabel } from "../common/schemas";
 
 interface GameFiltersProps {
   initialValues: SearchGamesRequestFilter;
@@ -50,10 +34,10 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
     initialValues,
   });
 
-  const colProps = {span: {xl: 6, lg: 6, md: 6, sm: 6, xs: 12}};
+  const colProps = { span: { xl: 6, lg: 6, md: 6, sm: 6, xs: 12 } };
 
   return (
-    <Container>
+    <Container p={0}>
       <Collapse in={opened}>
         <form onSubmit={form.onSubmit((data) => onUpdateClicked(data))}>
           <Grid>
@@ -102,7 +86,11 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
             <Badge
               ml={5}
               rightSection={
-                opened ? <IconMinus size={12} /> : <IconPlus size={12} />
+                opened ? (
+                  <IconChevronUp size={12} />
+                ) : (
+                  <IconChevronDown size={12} />
+                )
               }
             >
               Filters
