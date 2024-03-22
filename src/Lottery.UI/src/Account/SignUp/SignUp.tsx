@@ -5,7 +5,15 @@ import {
   SignUpResponse,
   signUpRequestSchema,
 } from "./signUp.schema";
-import { Button, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Paper,
+  PasswordInput,
+  Stack,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
 import { useNavigate } from "react-router-dom";
@@ -26,29 +34,35 @@ function SignUp({}: SignUpProps) {
   });
 
   return (
-    <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
-      <Stack gap={24}>
-        <Title>Sign Up</Title>
+    <Container p={0} maw={300}>
+      <Title>Sign Up</Title>
+      <Paper shadow="xl" p={24} radius={10}>
+        <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
+          <Stack gap={24}>
+            <TextInput placeholder="Email" {...form.getInputProps("email")} />
 
-        <TextInput placeholder="Email" {...form.getInputProps("email")} />
+            <TextInput
+              placeholder="Username"
+              {...form.getInputProps("username")}
+            />
 
-        <TextInput placeholder="Username" {...form.getInputProps("username")} />
+            <PasswordInput
+              placeholder="Password"
+              {...form.getInputProps("password")}
+            />
 
-        <PasswordInput
-          placeholder="Password"
-          {...form.getInputProps("password")}
-        />
+            <PasswordInput
+              placeholder="Confirm Password"
+              {...form.getInputProps("confirmPassword")}
+            />
 
-        <PasswordInput
-          placeholder="Confirm Password"
-          {...form.getInputProps("confirmPassword")}
-        />
-
-        <Button variant="filled" type="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
+            <Button variant="filled" type="submit">
+              Submit
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+    </Container>
   );
 }
 

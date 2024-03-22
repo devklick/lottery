@@ -11,8 +11,10 @@ import accountService from "../accountService";
 import {
   Button,
   Checkbox,
+  Container,
   Group,
   InputLabel,
+  Paper,
   PasswordInput,
   Stack,
   TextInput,
@@ -48,30 +50,36 @@ function SignIn({}: SignInProps) {
   });
 
   return (
-    <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
-      <Stack gap={24}>
-        <Title>Sign In</Title>
+    <Container p={0} maw={300}>
+      <Title>Sign In</Title>
+      <Paper shadow="xl" p={24} radius={10}>
+        <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
+          <Stack gap={24}>
+            <TextInput
+              placeholder="Username"
+              {...form.getInputProps("username")}
+            />
 
-        <TextInput placeholder="Username" {...form.getInputProps("username")} />
+            <PasswordInput
+              placeholder="Password"
+              {...form.getInputProps("password")}
+            />
 
-        <PasswordInput
-          placeholder="Password"
-          {...form.getInputProps("password")}
-        />
+            <Group>
+              <Checkbox
+                {...form.getInputProps("staySignedIn")}
+                defaultChecked={initialValues.staySignedIn}
+              />
+              <InputLabel>Stay signed in</InputLabel>
+            </Group>
 
-        <Group>
-          <Checkbox
-            {...form.getInputProps("staySignedIn")}
-            defaultChecked={initialValues.staySignedIn}
-          />
-          <InputLabel>Stay signed in</InputLabel>
-        </Group>
-
-        <Button variant="filled" type="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
+            <Button variant="filled" type="submit">
+              Submit
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+    </Container>
   );
 }
 

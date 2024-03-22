@@ -54,13 +54,14 @@ function Header({
                   <span>Games</span>
                 </UnstyledButton>
               </Menu.Target>
-              <Menu.Dropdown>
-                {userAuthenticated && userType == "Admin" && (
+
+              {userAuthenticated && userType == "Admin" && (
+                <Menu.Dropdown>
                   <Menu.Item onClick={() => navigate("/games/create")}>
                     Create Game
                   </Menu.Item>
-                )}
-              </Menu.Dropdown>
+                </Menu.Dropdown>
+              )}
             </Menu>
             <Menu
               trigger="hover"
