@@ -24,7 +24,10 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
     }
 
     public async Task<GameEntity?> GetGame(Guid gameId)
-        => await _db.Games.Include(g => g.Selections).FirstOrDefaultAsync(g => g.Id == gameId);
+        => await _db.Games
+            .Include(g => g.Selections)
+            .Include(g => g.Prizes)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
 
     public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(int page, int limit, string? name = null, List<SearchGamesInState>? states = default, SearchGamesSortCriteria sortBy = SearchGamesSortCriteria.DrawTime, SortDirection sortDirection = SortDirection.Asc)
     {

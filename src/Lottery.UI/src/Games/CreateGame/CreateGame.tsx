@@ -28,6 +28,7 @@ import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { allStatesWithLabel } from "../../common/schemas";
 import { IconTrash } from "@tabler/icons-react";
+import React from "react";
 
 interface CreateGameProps {}
 
@@ -48,7 +49,7 @@ function CreateGame({}: CreateGameProps) {
 
   const initialValues: CreateGameRequest = {
     name: `Lottery Game - ${now.toDateString()}`,
-    state: "Enabled",
+    state: "enabled",
     startTime: defaultStartTime,
     drawTime: defaultDrawTime,
     maxSelections: 50,
@@ -82,14 +83,14 @@ function CreateGame({}: CreateGameProps) {
           onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
           <Grid justify="center" gutter={"xl"}>
-            <Grid.Col key={"name"} {...colProps}>
+            <Grid.Col key={"name-col"} {...colProps}>
               <TextInput
                 label="Name"
                 {...form.getInputProps("name")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"state"} {...colProps}>
+            <Grid.Col key={"state-col"} {...colProps}>
               <Select
                 label="State"
                 {...form.getInputProps("state")}
@@ -98,37 +99,39 @@ function CreateGame({}: CreateGameProps) {
                 allowDeselect={false}
               />
             </Grid.Col>
-            <Grid.Col key={"startTime"} {...colProps}>
+            <Grid.Col key={"startTime-col"} {...colProps}>
               <DateTimePicker
                 label="Start Time"
                 {...form.getInputProps("startTime")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"drawTime"} {...colProps}>
+            <Grid.Col key={"drawTime-col"} {...colProps}>
               <DateTimePicker
                 label="Draw Time"
                 {...form.getInputProps("drawTime")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"maxSelections"} {...colProps}>
+            <Grid.Col key={"maxSelections-col"} {...colProps}>
               <NumberInput
                 label="Selections in game"
                 {...form.getInputProps("maxSelections")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"selectionsRequiredForEntry"} {...colProps}>
+            <Grid.Col key={"selectionsRequiredForEntry-col"} {...colProps}>
               <NumberInput
                 label="Selections per entry"
                 {...form.getInputProps("selectionsRequiredForEntry")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"prizes"} span={12}>
-              <Title size={"h2"}>Prizes</Title>
-              <Grid maw={500} mx="auto">
+            <Grid.Col key={"prizes-col"} span={12}>
+              <Title key={"prizes-title"} size={"h2"}>
+                Prizes
+              </Title>
+              <Grid key={"prizes-grid"} maw={500} mx="auto">
                 <Grid.Col
                   key={"prize-position-header"}
                   mt={"xs"}
@@ -145,13 +148,13 @@ function CreateGame({}: CreateGameProps) {
                   {...colProps}
                   span={6}
                 >
-                  <Text fw={500} size="sm">
+                  <Text key={"some key"} fw={500} size="sm">
                     Matching Numbers
                   </Text>
                 </Grid.Col>
 
                 {form.values.prizes.map((_, index) => (
-                  <>
+                  <React.Fragment key={`prize-${index}`}>
                     <Grid.Col
                       key={`prize-${index}-position`}
                       mt={"xs"}
@@ -181,7 +184,7 @@ function CreateGame({}: CreateGameProps) {
                         )}
                       />
                     </Grid.Col>
-                  </>
+                  </React.Fragment>
                 ))}
               </Grid>
               <Group justify="center" mt={"md"}>
@@ -199,6 +202,7 @@ function CreateGame({}: CreateGameProps) {
             </Grid.Col>
 
             <Grid.Col
+              key={"submit-col"}
               span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
             >
               <Group mt={50}>

@@ -42,7 +42,7 @@ export interface ApiServiceDefinition {
 
   get<Query, Response>(
     url: string,
-    query: Query,
+    query?: Query,
     options?: GetOptions
   ): AsyncResult<Response>;
 }
@@ -92,8 +92,8 @@ export class ApiService implements ApiServiceDefinition {
 
   async get<Query, Response>(
     url: string,
-    query: Query,
-    options: GetOptions
+    query?: Query,
+    options?: GetOptions
   ): AsyncResult<Response> {
     const response = await this.api.get<Response, AxiosResponse<Response>>(
       url,

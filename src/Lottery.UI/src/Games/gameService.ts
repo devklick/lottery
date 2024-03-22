@@ -5,6 +5,11 @@ import {
   createGameResponseSchema,
 } from "./CreateGame/createGame.schema";
 import {
+  GetGameRequest,
+  GetGameResponse,
+  getGameResponseSchema,
+} from "./GameDetail/game.schema";
+import {
   SearchGamesRequest,
   SearchGamesResponse,
   searchGamesResponseSchema,
@@ -13,6 +18,7 @@ import {
 interface GameService {
   createGame(request: CreateGameRequest): Promise<CreateGameResponse>;
   searchGames(request: SearchGamesRequest): Promise<SearchGamesResponse>;
+  getGame(request: GetGameRequest): Promise<GetGameResponse>;
 }
 
 export function createGameService({
@@ -53,7 +59,21 @@ export function createGameService({
     throw valid.error.errors.map((e) => e.message);
   };
 
-  return { createGame, searchGames };
+  const getGame: GameService["getGame"] = async (request) => {
+    const result = await api.get(`/game/${request.route.id}`);
+    if (!result.success) throw result.error;
+
+    const valid = getGameResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    console.log(valid.error);
+    throw new Error(valid.error.errors.map((e) => e.message).join("."));
+  };
+
+  return { createGame, searchGames, getGame };
 }
 
 export default createGameService({

@@ -4,6 +4,7 @@ using AutoMapper;
 
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Repositories;
 using Lottery.Api.Repositories.Game;
@@ -83,5 +84,22 @@ public class GameService(GameRepository gameRepository, UserService userService,
                 Total = total,
             }
         };
+    }
+
+    public async Task<Result<GetGameResponse>> GetGame(GetGameRequest request)
+    {
+        var game = await _gameRepository.GetGame(request.Route.Id);
+
+        return game == null
+            ? new Result<GetGameResponse>
+            {
+                Status = ResultStatus.NotFound,
+                Errors = [new() { Message = "Game not found" }]
+            }
+            : new Result<GetGameResponse>
+            {
+                Status = ResultStatus.Ok,
+                Value = _mapper.Map<GetGameResponse>(game)
+            };
     }
 }

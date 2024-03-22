@@ -1,4 +1,5 @@
 using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Services;
 
@@ -15,6 +16,14 @@ public class GameController(ILogger<GameController> logger, GameService gameServ
     private readonly ILogger<GameController> _logger = logger;
     private readonly GameService _gameService = gameService;
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<GetGameResponse>> GetGame(GetGameRequest request)
+    {
+
+        var response = await _gameService.GetGame(request);
+
+        return CreateActionResult(response);
+    }
 
     [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost]

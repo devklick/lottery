@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Lottery.DB.Entities.Base;
 
@@ -67,5 +68,43 @@ public class Game : EntityObject
     /// The entries that were submitted against this game.
     /// </summary>
     public List<Entry> Entries { get; set; } = [];
+
     #endregion
+
+    #region Helpers
+    /// <summary>
+    /// Helper to indicate what state the game is in
+    /// </summary>
+    public GameStatus GameStatus
+    {
+        get
+        {
+            if (StartTime > DateTime.UtcNow) return GameStatus.Future;
+            if (DrawTime > DateTime.UtcNow) return GameStatus.Open;
+            if (!ResultedAt.HasValue) return GameStatus.Closed;
+            return GameStatus.Resulted;
+        }
+    }
+    #endregion
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum GameStatus
+{
+    /// <summary>
+    /// Not yet open, meaning unable to accept entries
+    /// </summary>
+    Future,
+    /// <summary>
+    /// Open and able to accept entries
+    /// </summary>
+    Open,
+    /// <summary>
+    /// No longer able to accept entries, but results not yet drawn
+    /// </summary>
+    Closed,
+    /// <summary>
+    /// Closed and results drawn. Will not move from this state.
+    /// </summary>
+    Resulted
 }

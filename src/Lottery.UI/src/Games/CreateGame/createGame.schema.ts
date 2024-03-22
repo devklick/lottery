@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-const stateSchema = z.enum(["Enabled", "Disabled"]);
+import { stateSchema } from "../../common/schemas";
 
 export const createGamePrizeRequestSchema = z.object({
   position: z.number().positive().min(1),
@@ -16,7 +15,7 @@ export const createGameRequestSchema = z
     startTime: z.date().or(z.string()).pipe(z.coerce.date()),
     drawTime: z.date().or(z.string()).pipe(z.coerce.date()),
     name: z.string().min(3).max(64),
-    state: stateSchema.default("Enabled"),
+    state: stateSchema.default("enabled"),
     maxSelections: z.number().positive().min(3).max(100),
     selectionsRequiredForEntry: z.number().positive().min(3).max(100),
     prizes: createGamePrizesRequestSchema,

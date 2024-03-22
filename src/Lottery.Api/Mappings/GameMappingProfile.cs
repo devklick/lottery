@@ -1,4 +1,5 @@
 using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
 
 
@@ -28,5 +29,6 @@ public class GameMappingProfile : AutoMapper.Profile
     private void MapModelsForGet()
     {
         CreateMap<DB.Entities.Dbo.Game, SearchGamesResponseItem>();
+        CreateMap<DB.Entities.Dbo.Game, GetGameResponse>();
     }
 }
