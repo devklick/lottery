@@ -8,14 +8,16 @@ import {
   Grid,
   Group,
   MantineColor,
+  Overlay,
   Paper,
   Skeleton,
   Text,
   Title,
 } from "@mantine/core";
 import { GetGameResponse } from "./game.schema";
-import { useEffect } from "react";
+import React from "react";
 import { GameState } from "../../common/schemas";
+import { IconTrophyFilled } from "@tabler/icons-react";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -72,7 +74,6 @@ function GameDetail({}: GameDetailProps) {
     refetchInterval: 0,
   });
 
-  // TODO: Update when status returned from API
   const status = getStatusBadge(query.data?.gameStatus);
 
   const startTime = (
@@ -97,6 +98,46 @@ function GameDetail({}: GameDetailProps) {
     </>
   );
 
+  function getPrizePositionGroup(position: number, color: string) {
+    return (
+      <Group justify="center" style={{ position: "relative" }}>
+        <IconTrophyFilled size={30} color={color} />
+        <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
+          {position}
+        </Overlay>
+      </Group>
+    );
+  }
+
+  function getPrizePosition(position: number) {
+    switch (position) {
+      case 1:
+        return getPrizePositionGroup(position, "gold");
+      case 2:
+        return getPrizePositionGroup(position, "silver");
+      case 3:
+        return getPrizePositionGroup(position, "brown");
+      default:
+        return getPrizePositionGroup(position, "blue");
+    }
+  }
+
+  const prizes = (query.data?.prizes ?? placeholders.prizes)
+    .sort((a, b) => a.position - b.position)
+    .map((prize, index) => (
+      <React.Fragment key={`prize-${index}`}>
+        <Grid.Col key={`prize-${index}-position`} span={6}>
+          {getPrizePosition(prize.position)}
+        </Grid.Col>
+        <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
+          {`${prize.numberMatchCount}/${
+            query.data?.selectionsRequiredForEntry ??
+            placeholders.selectionsRequiredForEntry
+          }`}
+        </Grid.Col>
+      </React.Fragment>
+    ));
+
   return (
     <Container p={0}>
       <Group justify="center">
@@ -117,6 +158,10 @@ function GameDetail({}: GameDetailProps) {
           </Grid.Col>
           <Grid.Col span={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
             <Group>{closeTime}</Group>
+          </Grid.Col>
+          <Grid.Col span={12} maw={500} mx="auto">
+            <Title size={"h2"}>Prizes</Title>
+            <Grid>{prizes}</Grid>
           </Grid.Col>
         </Grid>
       </Paper>
