@@ -1,5 +1,5 @@
 using Lottery.Api.Models.Entry.Create;
-using Lottery.Api.Models.Entry.Get;
+using Lottery.Api.Models.Entry.Search;
 using Lottery.Api.Services;
 
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +24,9 @@ public class EntryController(ILogger<EntryController> logger, EntryService entry
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetEntriesResponse>> GetEntries(GetEntriesRequest request)
+    public async Task<ActionResult<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request)
     {
-        var result = await _entryService.GetEntries(request, User);
+        var result = await _entryService.SearchEntries(request, User);
 
         return CreateActionResult(result);
     }

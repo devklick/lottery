@@ -31,6 +31,7 @@ type PostOptions = Partial<{
 
 type GetOptions = Partial<{
   onStatusCode: Record<number, StatusCodeHandler>;
+  withCredentials: boolean;
 }>;
 
 export interface ApiServiceDefinition {
@@ -99,6 +100,7 @@ export class ApiService implements ApiServiceDefinition {
       url,
       {
         params: query,
+        withCredentials: options?.withCredentials,
         paramsSerializer: {
           indexes: true,
         },

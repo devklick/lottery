@@ -1,6 +1,8 @@
 import {
   Button,
+  Collapse,
   Grid,
+  Group,
   MantineStyleProp,
   Stack,
   Text,
@@ -12,6 +14,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { CreateEntryRequest, CreateEntryResponse } from "./game.schema";
 import gameService from "../gameService";
+import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { useUserStore } from "../../stores/user.store";
 
 interface CreateEntryProps {
   gameId: string;
@@ -25,8 +30,10 @@ function CreateEntry({
   selectionsRequired,
 }: CreateEntryProps) {
   const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+  const [opened, { toggle }] = useDisclosure(false);
   const theme = useMantineTheme();
   const colorScheme = useComputedColorScheme();
+  const user = useUserStore();
   const mutation = useMutation<
     CreateEntryResponse,
     unknown,
@@ -87,38 +94,48 @@ function CreateEntry({
     });
   }
 
-  const header =
-    selectionsRequired - selectedIds.length ? (
-      <Text span>{`${
-        selectionsRequired - selectedIds.length
-      } out of ${selectionsRequired} remaining`}</Text>
-    ) : (
-      <Button h={24.8} onClick={handleSubmitEntry}>
-        {mutation.isPending ? "Submitting" : "Submit"}
-      </Button>
-    );
+  const header = !user.authenticated ? (
+    "Sign in to pick your numbers"
+  ) : selectionsRequired - selectedIds.length ? (
+    <Text span>{`${
+      selectionsRequired - selectedIds.length
+    } out of ${selectionsRequired} remaining`}</Text>
+  ) : (
+    <Button h={24.8} onClick={handleSubmitEntry}>
+      {mutation.isPending ? "Submitting" : "Submit"}
+    </Button>
+  );
 
   return (
     <Stack justify="center" align="center" mt={50}>
-      <Title size={"h2"}>{`Pick your numbers`}</Title>
-      {header}
-      <Grid maw={500} justify="center">
-        {selections
-          ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
-          .map((selection) => (
-            <Grid.Col
-              key={`grid-selection-${selection.selectionNumber}`}
-              span={2}
-              onClick={() => handleSelected(selection.id)}
-            >
-              <Stack style={{ ...getSelectionStyle(selection.id) }}>
-                <Text span style={{ lineHeight: 1, paddingTop: 5 }}>
-                  {selection.selectionNumber}
-                </Text>
-              </Stack>
-            </Grid.Col>
-          ))}
-      </Grid>
+      <Group style={{ alignSelf: "start" }} onClick={toggle}>
+        <Title size={"h2"}>{`Pick your numbers`}</Title>
+        {opened ? <IconChevronUp /> : <IconChevronDown />}
+      </Group>
+      <Collapse in={opened}>
+        <Stack>
+          {header}
+          {user.authenticated && (
+            <Grid maw={500} justify="center">
+              {selections
+                ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
+                .map((selection) => (
+                  <Grid.Col
+                    key={`grid-selection-${selection.selectionNumber}`}
+                    span={2}
+                    onClick={() => handleSelected(selection.id)}
+                  >
+                    <Stack style={{ ...getSelectionStyle(selection.id) }}>
+                      <Text span style={{ lineHeight: 1, paddingTop: 5 }}>
+                        {selection.selectionNumber}
+                      </Text>
+                    </Stack>
+                  </Grid.Col>
+                ))}
+            </Grid>
+          )}
+        </Stack>
+      </Collapse>
     </Stack>
   );
 }

@@ -19,6 +19,7 @@ import React from "react";
 import { GameState } from "../../common/schemas";
 import { IconTrophyFilled } from "@tabler/icons-react";
 import CreateEntry from "./CreateEntry";
+import YourEntries from "./YourEntries";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -186,6 +187,8 @@ function GameDetail({}: GameDetailProps) {
             </Group>
           </Grid.Col>
         </Grid>
+
+        <YourEntries />
 
         <CreateEntry
           gameId={id!}

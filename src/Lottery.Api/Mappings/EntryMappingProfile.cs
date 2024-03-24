@@ -1,6 +1,6 @@
 
 using Lottery.Api.Models.Entry.Create;
-using Lottery.Api.Models.Entry.Get;
+using Lottery.Api.Models.Entry.Search;
 
 namespace Lottery.Api.Mappings;
 
@@ -21,7 +21,7 @@ public class EntryMappingProfile : AutoMapper.Profile
 
         CreateMap<CreateEntryRequestUnbound, DB.Entities.Dbo.Entry>();
 
-        CreateMap<DB.Entities.Dbo.Entry, GetEntriesResponseItem>();
+        CreateMap<DB.Entities.Dbo.Entry, SearchEntriesResponseItem>();
     }
 
 }

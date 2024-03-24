@@ -7,7 +7,7 @@ using Lottery.DB.Entities.Dbo;
 using Lottery.DB;
 using Lottery.Api.Repositories;
 using Lottery.Api.Models.Common;
-using Lottery.Api.Models.Entry.Get;
+using Lottery.Api.Models.Entry.Search;
 using Lottery.Api.Repositories.Game;
 
 namespace Lottery.Api.Services;
@@ -97,26 +97,26 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         };
     }
 
-    public async Task<Result<GetEntriesResponse>> GetEntries(GetEntriesRequest request, ClaimsPrincipal user)
+    public async Task<Result<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request, ClaimsPrincipal user)
     {
         var userIdResult = _userService.GetUserId(user);
         if (userIdResult.Status != ResultStatus.Ok)
         {
-            return new Result<GetEntriesResponse>
+            return new Result<SearchEntriesResponse>
             {
                 Errors = userIdResult.Errors,
                 Status = userIdResult.Status
             };
         }
 
-        var (entries, total) = await _entryRepository.GetEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
+        var (entries, total) = await _entryRepository.SearchEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
 
-        return new Result<GetEntriesResponse>
+        return new Result<SearchEntriesResponse>
         {
             Status = ResultStatus.Ok,
-            Value = new GetEntriesResponse
+            Value = new SearchEntriesResponse
             {
-                Items = _mapper.Map<IEnumerable<GetEntriesResponseItem>>(entries),
+                Items = _mapper.Map<IEnumerable<SearchEntriesResponseItem>>(entries),
                 Limit = request.Query.Limit,
                 Page = request.Query.Page,
                 Total = total,

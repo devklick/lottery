@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { gameStateSchema } from "../../common/schemas";
+import {
+  gameStateSchema,
+  pagedRequestSchema,
+  pagedResponseSchema,
+} from "../../common/schemas";
 
 const getGameRequestRouteSchema = z.object({
   id: z.string().uuid(),
@@ -55,3 +59,37 @@ export type CreateEntryRequestBody = z.infer<
 >;
 export type CreateEntryRequest = z.infer<typeof createEntryRequestSchema>;
 export type CreateEntryResponse = z.infer<typeof createEntryResponseSchema>;
+
+export const getEntriesRequestQuerySchema = pagedRequestSchema.extend({});
+export const getEntriesRequestSchema = z.object({
+  query: getEntriesRequestQuerySchema,
+});
+export const getEntriesResponseItemSchema = z.object({
+  gameId: z.string().uuid(),
+  id: z.string().uuid(),
+  selections: z.array(
+    z.object({
+      id: z.string().uuid(),
+      selectionNumber: z.number(),
+    })
+  ),
+  prize: z
+    .object({
+      id: z.string().uuid(),
+      position: z.number(),
+      numberMatchCount: z.number(),
+    })
+    .nullable(),
+});
+export const getEntriesResponseSchema = pagedResponseSchema.extend({
+  items: z.array(getEntriesResponseItemSchema),
+});
+
+export type GetEntriesRequestQuery = z.infer<
+  typeof getEntriesRequestQuerySchema
+>;
+export type GetEntriesRequest = z.infer<typeof getEntriesRequestSchema>;
+export type GetEntriesResponseItem = z.infer<
+  typeof getEntriesResponseItemSchema
+>;
+export type GetEntriesResponse = z.infer<typeof getEntriesResponseSchema>;
