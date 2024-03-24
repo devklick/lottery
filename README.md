@@ -2,8 +2,8 @@
 
 > [!WARNING]
 > Project status: WIP
-> 
-A basic lottery game where users can pick numbers, the results are drawn at random, and the users could win a prize if their numbers come up. 
+>
+> A basic lottery game where users can pick numbers, the results are drawn at random, and the users could win a prize if their numbers come up.
 
 > [!NOTE]
 > This is not an actual game where players can submit genuine monetary bets and win actual prizes, and there is no plan to make it this way. It's intended purely for education and fun.
@@ -12,9 +12,9 @@ A basic lottery game where users can pick numbers, the results are drawn at rand
 
 ### Setting up the database
 
-The application uses a PostgreSQL database for the data store. As such, you'll need to have a Postgres instance accessible from the machine you're running the application on. The quickest and easiest way to get up and running is to run Postgres in a Docker container. 
+The application uses a PostgreSQL database for the data store. As such, you'll need to have a Postgres instance accessible from the machine you're running the application on. The quickest and easiest way to get up and running is to run Postgres in a Docker container.
 
-Before running the following, replace `PASSWORD_HERE` with the password you want to use to access the postgres instance. If you want, you can also change `postgres-local` with another value - this is the name you are giving to the container container.
+Before running the following, replace `PASSWORD_HERE` with the password you want to use to access the postgres instance. If you want, you can also change `postgres-local` with another value - this is the name you are giving to the docker container.
 
 ```
 docker run \
