@@ -6,7 +6,6 @@ import {
   Text,
   Title,
   useComputedColorScheme,
-  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
