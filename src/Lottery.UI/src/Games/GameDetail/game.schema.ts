@@ -34,3 +34,24 @@ export const getGameResponseSchema = z.object({
 
 export type GetGameRequest = z.infer<typeof getGameRequestSchema>;
 export type GetGameResponse = z.infer<typeof getGameResponseSchema>;
+
+export const createEntryRequestBodySchema = z.object({
+  gameId: z.string().uuid(),
+  selections: z.array(
+    z.object({
+      selectionNumber: z.number(),
+    })
+  ),
+});
+
+export const createEntryRequestSchema = z.object({
+  body: createEntryRequestBodySchema,
+});
+
+export const createEntryResponseSchema = z.object({});
+
+export type CreateEntryRequestBody = z.infer<
+  typeof createEntryRequestBodySchema
+>;
+export type CreateEntryRequest = z.infer<typeof createEntryRequestSchema>;
+export type CreateEntryResponse = z.infer<typeof createEntryResponseSchema>;

@@ -18,6 +18,7 @@ import { GetGameResponse } from "./game.schema";
 import React from "react";
 import { GameState } from "../../common/schemas";
 import { IconTrophyFilled } from "@tabler/icons-react";
+import CreateEntry from "./CreateEntry";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -59,6 +60,36 @@ function getStatusBadge(status: GameState | undefined) {
   return <Badge color={getStatusColor(s)}>{s}</Badge>;
 }
 
+function getPrizePositionGroup(
+  position: number,
+  color: MantineColor,
+  loading: boolean
+) {
+  return (
+    <Skeleton visible={loading}>
+      <Group justify="center" style={{ position: "relative" }}>
+        <IconTrophyFilled size={30} color={color} />
+        <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
+          {loading ? "" : position}
+        </Overlay>
+      </Group>
+    </Skeleton>
+  );
+}
+
+function getPrizePosition(position: number, loading: boolean) {
+  switch (position) {
+    case 1:
+      return getPrizePositionGroup(position, "gold", loading);
+    case 2:
+      return getPrizePositionGroup(position, "silver", loading);
+    case 3:
+      return getPrizePositionGroup(position, "brown", loading);
+    default:
+      return getPrizePositionGroup(position, "blue", loading);
+  }
+}
+
 interface Params extends Record<string, string | undefined> {
   id: string;
 }
@@ -98,42 +129,25 @@ function GameDetail({}: GameDetailProps) {
     </>
   );
 
-  function getPrizePositionGroup(position: number, color: string) {
-    return (
-      <Group justify="center" style={{ position: "relative" }}>
-        <IconTrophyFilled size={30} color={color} />
-        <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
-          {position}
-        </Overlay>
-      </Group>
-    );
-  }
-
-  function getPrizePosition(position: number) {
-    switch (position) {
-      case 1:
-        return getPrizePositionGroup(position, "gold");
-      case 2:
-        return getPrizePositionGroup(position, "silver");
-      case 3:
-        return getPrizePositionGroup(position, "brown");
-      default:
-        return getPrizePositionGroup(position, "blue");
-    }
-  }
+  const loading = query.isLoading;
 
   const prizes = (query.data?.prizes ?? placeholders.prizes)
     .sort((a, b) => a.position - b.position)
     .map((prize, index) => (
       <React.Fragment key={`prize-${index}`}>
         <Grid.Col key={`prize-${index}-position`} span={6}>
-          {getPrizePosition(prize.position)}
+          {getPrizePosition(prize.position, loading)}
         </Grid.Col>
+
         <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
-          {`${prize.numberMatchCount}/${
-            query.data?.selectionsRequiredForEntry ??
-            placeholders.selectionsRequiredForEntry
-          }`}
+          <Skeleton visible={loading}>
+            <Text>
+              {`${prize.numberMatchCount}/${
+                query.data?.selectionsRequiredForEntry ??
+                placeholders.selectionsRequiredForEntry
+              }`}
+            </Text>
+          </Skeleton>
         </Grid.Col>
       </React.Fragment>
     ));
@@ -141,29 +155,43 @@ function GameDetail({}: GameDetailProps) {
   return (
     <Container p={0}>
       <Group justify="center">
-        <Skeleton visible={query.isLoading} maw={"50%"}>
+        <Skeleton visible={loading} maw={"50%"}>
           <Title>{query.data?.name ?? placeholders.name}</Title>
         </Skeleton>
       </Group>
 
       <Paper shadow="xl" p={24} radius={10}>
         <Group justify="end">
-          <Skeleton w={100} visible={query.isLoading}>
+          <Skeleton w={100} visible={loading}>
             {status}
           </Skeleton>
         </Group>
         <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           <Grid.Col span={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-            <Group>{startTime}</Group>
+            <Skeleton visible={loading}>
+              <Group>{startTime}</Group>
+            </Skeleton>
           </Grid.Col>
           <Grid.Col span={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-            <Group>{closeTime}</Group>
+            <Skeleton visible={loading}>
+              <Group>{closeTime}</Group>
+            </Skeleton>
           </Grid.Col>
           <Grid.Col span={12} maw={500} mx="auto">
-            <Title size={"h2"}>Prizes</Title>
-            <Grid>{prizes}</Grid>
+            <Group>
+              <Skeleton visible={loading}>
+                <Title size={"h2"}>Prizes</Title>
+              </Skeleton>
+              <Grid w={"100%"}>{prizes}</Grid>
+            </Group>
           </Grid.Col>
         </Grid>
+
+        <CreateEntry
+          gameId={id!}
+          selections={query.data?.selections!}
+          selectionsRequired={query.data?.selectionsRequiredForEntry!}
+        />
       </Paper>
     </Container>
   );
