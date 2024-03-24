@@ -9,7 +9,6 @@ import {
   Grid,
   Group,
   MantineColor,
-  Overlay,
   Paper,
   Skeleton,
   Text,
@@ -18,7 +17,6 @@ import {
 import { GetGameResponse } from "./game.schema";
 import React from "react";
 import { GameState } from "../../common/schemas";
-import { IconTrophyFilled } from "@tabler/icons-react";
 import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
 import Trophy from "../../components/Trophy/Trophy";
@@ -31,6 +29,11 @@ const placeholders: GetGameResponse = {
   selectionsRequiredForEntry: 5,
   startTime: new Date(),
   gameStatus: "future",
+  results: [
+    { id: "result-1", selectionNumber: 1 },
+    { id: "result-2", selectionNumber: 2 },
+    { id: "result-3", selectionNumber: 3 },
+  ],
   prizes: [
     { id: "prize-1", position: 1, numberMatchCount: 5 },
     { id: "prize-2", position: 3, numberMatchCount: 4 },
@@ -62,36 +65,6 @@ function getStatusBadge(status: GameState | undefined) {
   const s = status ?? placeholders.gameStatus;
   return <Badge color={getStatusColor(s)}>{s}</Badge>;
 }
-
-// function getPrizePositionGroup(
-//   position: number,
-//   color: MantineColor,
-//   loading: boolean
-// ) {
-//   return (
-//     <Skeleton visible={loading}>
-//       <Group justify="center" style={{ position: "relative" }}>
-//         <IconTrophyFilled size={30} color={color} />
-//         <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
-//           {loading ? "" : position}
-//         </Overlay>
-//       </Group>
-//     </Skeleton>
-//   );
-// }
-
-// function getPrizePosition(position: number, loading: boolean) {
-//   switch (position) {
-//     case 1:
-//       return getPrizePositionGroup(position, "gold", loading);
-//     case 2:
-//       return getPrizePositionGroup(position, "silver", loading);
-//     case 3:
-//       return getPrizePositionGroup(position, "brown", loading);
-//     default:
-//       return getPrizePositionGroup(position, "blue", loading);
-//   }
-// }
 
 interface Params extends Record<string, string | undefined> {
   id: string;
