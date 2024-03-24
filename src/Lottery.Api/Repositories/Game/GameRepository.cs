@@ -27,6 +27,7 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
         => await _db.Games
             .Include(g => g.Selections)
             .Include(g => g.Prizes)
+            .Include(g => g.Results)
             .FirstOrDefaultAsync(g => g.Id == gameId);
 
     public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(int page, int limit, string? name = null, List<SearchGamesInState>? states = default, SearchGamesSortCriteria sortBy = SearchGamesSortCriteria.DrawTime, SortDirection sortDirection = SortDirection.Asc)
@@ -36,6 +37,7 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
         var query = _db.Games
             .Include(x => x.Selections)
             .Include(x => x.Prizes)
+            .Include(x => x.Results)
             .AsQueryable();
 
         // TODO: This wont use the index. Best looking into collation

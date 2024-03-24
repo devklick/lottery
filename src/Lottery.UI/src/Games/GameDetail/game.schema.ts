@@ -27,6 +27,12 @@ export const getGameResponseSchema = z.object({
       selectionNumber: z.number(),
     })
   ),
+  results: z.array(
+    z.object({
+      id: z.string().uuid(),
+      selectionNumber: z.number(),
+    })
+  ),
   prizes: z.array(
     z.object({
       id: z.string().uuid(),
@@ -60,7 +66,9 @@ export type CreateEntryRequestBody = z.infer<
 export type CreateEntryRequest = z.infer<typeof createEntryRequestSchema>;
 export type CreateEntryResponse = z.infer<typeof createEntryResponseSchema>;
 
-export const getEntriesRequestQuerySchema = pagedRequestSchema.extend({});
+export const getEntriesRequestQuerySchema = pagedRequestSchema.extend({
+  gameId: z.string(),
+});
 export const getEntriesRequestSchema = z.object({
   query: getEntriesRequestQuerySchema,
 });

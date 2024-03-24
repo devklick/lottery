@@ -1,4 +1,5 @@
 using Lottery.Api.Models.GamePrize.Get;
+using Lottery.Api.Models.GameResult.Get;
 using Lottery.Api.Models.GameSelection.Get;
 using Lottery.DB.Entities.Dbo;
 
@@ -15,4 +16,5 @@ public class GetGameResponse
     public required GameStatus GameStatus { get; set; }
     public List<GetGameSelectionResponse> Selections { get; set; } = [];
     public List<GetGamePrizeResponse> Prizes { get; set; } = [];
+    public List<GetGameResultResponse> Results { get; set; } = [];
 }

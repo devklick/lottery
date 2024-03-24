@@ -5,6 +5,7 @@ import {
   Collapse,
   Flex,
   Group,
+  Overlay,
   Stack,
   Text,
   Title,
@@ -15,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { CreateEntryRequest, CreateEntryResponse } from "./game.schema";
 import gameService from "../gameService";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useTimeout } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useUserStore } from "../../stores/user.store";
 
@@ -35,13 +36,26 @@ function CreateEntry({
   const theme = useMantineTheme();
   const colorScheme = useComputedColorScheme();
   const user = useUserStore();
+  const [success, setSuccess] = useState(false);
+
+  const successTimeout = useTimeout(() => {
+    setSuccess(false);
+    setSelectedIds([]);
+  }, 1000);
+
   const mutation = useMutation<
     CreateEntryResponse,
     unknown,
     CreateEntryRequest
   >({
     mutationFn: gameService.createEntry,
+    onSuccess: handleMutationSuccess,
   });
+
+  function handleMutationSuccess() {
+    setSuccess(true);
+    successTimeout.start();
+  }
 
   function handleSelected(selectionId: string) {
     const newSelectedIds = [...selectedIds];
@@ -60,16 +74,17 @@ function CreateEntry({
   function getSelectionStyle(selectionId: string): BadgeProps {
     return {
       circle: true,
-      size:"xl",
-      color: selectedIds.includes(selectionId) 
-        ? theme.colors.green[colorScheme == "light" ? 6 : 8] 
-        : selectedIds.length === selectionsRequired 
-          ? theme.colors.gray[colorScheme == "light" ? 2 : 8] 
-          : 'gray', 
+      size: "xl",
+      color: selectedIds.includes(selectionId)
+        ? theme.colors.green[colorScheme == "light" ? 6 : 8]
+        : selectedIds.length === selectionsRequired
+        ? theme.colors.gray[colorScheme == "light" ? 2 : 8]
+        : "gray",
       style: {
-        cursor: selectedIds.length === selectionsRequired ?  "not-allowed" : 'default'
-      }
-    }
+        cursor:
+          selectedIds.length === selectionsRequired ? "not-allowed" : "default",
+      },
+    };
   }
 
   async function handleSubmitEntry() {
@@ -84,14 +99,14 @@ function CreateEntry({
   }
 
   const header = !user.authenticated ? (
-    "Sign in to pick your numbers"
+    <Text span>Sign in to pick your numbers</Text>
   ) : selectionsRequired - selectedIds.length ? (
     <Text span>{`${
       selectionsRequired - selectedIds.length
     } out of ${selectionsRequired} remaining`}</Text>
   ) : (
-    <Button h={24.8} onClick={handleSubmitEntry}>
-      {mutation.isPending ? "Submitting" : "Submit"}
+    <Button h={24.8} onClick={handleSubmitEntry} disabled={success}>
+      {mutation.isPending ? "Submitting" : success ? "Success" : "Submit"}
     </Button>
   );
 
@@ -102,20 +117,45 @@ function CreateEntry({
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
       <Collapse in={opened}>
-      <Stack align="center">
-        {header}
-        <Flex gap={"lg"} align={"center"} justify={'center'} maw={500} wrap={'wrap'}>
-          {user.authenticated && selections
-            ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
-            .map((selection) => (
-                <Badge
-                  key={selection.id} 
-                  {...getSelectionStyle(selection.id)} 
-                  onClick={() => handleSelected(selection.id)}>
-                  {selection.selectionNumber}
-                </Badge>
-            ))}
-        </Flex>
+        <Stack align="center">
+          {header}
+          <Flex
+            gap={"lg"}
+            align={"center"}
+            justify={"center"}
+            maw={500}
+            wrap={"wrap"}
+            style={{ position: "relative" }}
+            p={10}
+          >
+            {success && (
+              <Overlay
+                blur={2}
+                w={"100%"}
+                h={"100%"}
+                style={{ position: "absolute" }}
+                color="#fff"
+              >
+                <Group h={"100%"} justify="center" align="center">
+                  <Badge size="xl" color="green">
+                    Success
+                  </Badge>
+                </Group>
+              </Overlay>
+            )}
+            {user.authenticated &&
+              selections
+                ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
+                .map((selection) => (
+                  <Badge
+                    key={selection.id}
+                    {...getSelectionStyle(selection.id)}
+                    onClick={() => handleSelected(selection.id)}
+                  >
+                    {selection.selectionNumber}
+                  </Badge>
+                ))}
+          </Flex>
         </Stack>
       </Collapse>
     </Stack>

@@ -4,6 +4,7 @@ import dateFormat from "dateformat";
 import gameService from "../gameService";
 import {
   Badge,
+  Center,
   Container,
   Grid,
   Group,
@@ -20,6 +21,7 @@ import { GameState } from "../../common/schemas";
 import { IconTrophyFilled } from "@tabler/icons-react";
 import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
+import Trophy from "../../components/Trophy/Trophy";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -61,35 +63,35 @@ function getStatusBadge(status: GameState | undefined) {
   return <Badge color={getStatusColor(s)}>{s}</Badge>;
 }
 
-function getPrizePositionGroup(
-  position: number,
-  color: MantineColor,
-  loading: boolean
-) {
-  return (
-    <Skeleton visible={loading}>
-      <Group justify="center" style={{ position: "relative" }}>
-        <IconTrophyFilled size={30} color={color} />
-        <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
-          {loading ? "" : position}
-        </Overlay>
-      </Group>
-    </Skeleton>
-  );
-}
+// function getPrizePositionGroup(
+//   position: number,
+//   color: MantineColor,
+//   loading: boolean
+// ) {
+//   return (
+//     <Skeleton visible={loading}>
+//       <Group justify="center" style={{ position: "relative" }}>
+//         <IconTrophyFilled size={30} color={color} />
+//         <Overlay backgroundOpacity={0} c={"white"} style={{ lineHeight: 2 }}>
+//           {loading ? "" : position}
+//         </Overlay>
+//       </Group>
+//     </Skeleton>
+//   );
+// }
 
-function getPrizePosition(position: number, loading: boolean) {
-  switch (position) {
-    case 1:
-      return getPrizePositionGroup(position, "gold", loading);
-    case 2:
-      return getPrizePositionGroup(position, "silver", loading);
-    case 3:
-      return getPrizePositionGroup(position, "brown", loading);
-    default:
-      return getPrizePositionGroup(position, "blue", loading);
-  }
-}
+// function getPrizePosition(position: number, loading: boolean) {
+//   switch (position) {
+//     case 1:
+//       return getPrizePositionGroup(position, "gold", loading);
+//     case 2:
+//       return getPrizePositionGroup(position, "silver", loading);
+//     case 3:
+//       return getPrizePositionGroup(position, "brown", loading);
+//     default:
+//       return getPrizePositionGroup(position, "blue", loading);
+//   }
+// }
 
 interface Params extends Record<string, string | undefined> {
   id: string;
@@ -137,9 +139,10 @@ function GameDetail({}: GameDetailProps) {
     .map((prize, index) => (
       <React.Fragment key={`prize-${index}`}>
         <Grid.Col key={`prize-${index}-position`} span={6}>
-          {getPrizePosition(prize.position, loading)}
+          <Center>
+            <Trophy loading={loading} position={prize.position} />
+          </Center>
         </Grid.Col>
-
         <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
           <Skeleton visible={loading}>
             <Text>
@@ -188,13 +191,19 @@ function GameDetail({}: GameDetailProps) {
           </Grid.Col>
         </Grid>
 
-        <YourEntries />
-
-        <CreateEntry
+        <YourEntries
           gameId={id!}
-          selections={query.data?.selections!}
-          selectionsRequired={query.data?.selectionsRequiredForEntry!}
+          gamePrizes={query.data?.prizes ?? []}
+          winningSelections={query.data?.results}
         />
+
+        {query.data?.gameStatus == "open" && (
+          <CreateEntry
+            gameId={id!}
+            selections={query.data?.selections!}
+            selectionsRequired={query.data?.selectionsRequiredForEntry!}
+          />
+        )}
       </Paper>
     </Container>
   );

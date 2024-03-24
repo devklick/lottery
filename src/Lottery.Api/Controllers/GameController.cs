@@ -19,7 +19,6 @@ public class GameController(ILogger<GameController> logger, GameService gameServ
     [HttpGet("{id}")]
     public async Task<ActionResult<GetGameResponse>> GetGame(GetGameRequest request)
     {
-
         var response = await _gameService.GetGame(request);
 
         return CreateActionResult(response);

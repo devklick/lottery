@@ -109,7 +109,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
-        var (entries, total) = await _entryRepository.SearchEntries(userIdResult.Value, request.Query.Page, request.Query.Limit);
+        var (entries, total) = await _entryRepository.SearchEntries(userIdResult.Value, request.Query.GameId, request.Query.Page, request.Query.Limit);
 
         return new Result<SearchEntriesResponse>
         {

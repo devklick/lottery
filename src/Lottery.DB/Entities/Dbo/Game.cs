@@ -69,6 +69,8 @@ public class Game : EntityObject
     /// </summary>
     public List<Entry> Entries { get; set; } = [];
 
+    public List<GameResult> Results { get; set; } = [];
+
     #endregion
 
     #region Helpers
