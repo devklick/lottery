@@ -5,6 +5,8 @@ import {
   Stack,
   Text,
   Title,
+  useComputedColorScheme,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
@@ -25,6 +27,7 @@ function CreateEntry({
 }: CreateEntryProps) {
   const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
   const theme = useMantineTheme();
+  const colorScheme = useComputedColorScheme();
   const mutation = useMutation<
     CreateEntryResponse,
     unknown,
@@ -53,18 +56,19 @@ function CreateEntry({
       borderStyle: "solid",
       borderRadius: 10,
       borderColor: theme.colors.gray[5],
-      backgroundColor: theme.colors.gray[0],
+      backgroundColor: "transparent",
     };
 
     if (selectedIds.length === selectionsRequired) {
-      style.backgroundColor = theme.colors.gray[1];
-      style.borderColor = theme.colors.gray[1];
-      style.color = theme.colors.gray[5];
+      style.backgroundColor = theme.colors.gray[colorScheme == "light" ? 2 : 8];
+      style.borderColor = theme.colors.gray[colorScheme == "light" ? 2 : 8];
+      style.color = theme.colors.gray[colorScheme == "light" ? 5 : 6];
       style.cursor = "not-allowed";
     }
 
     if (selectedIds.includes(selectionId)) {
-      style.backgroundColor = theme.colors.green[5];
+      style.backgroundColor =
+        theme.colors.green[colorScheme == "light" ? 6 : 8];
       style.borderColor = theme.colors.green[5];
       style.color = theme.white;
       style.cursor = "default";
