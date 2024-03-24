@@ -5,21 +5,17 @@ using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Lottery.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class AccountController(
-    ILogger<AccountController> logger,
     SignInManager<AppUser> signInManager,
-    UserService userService, IOptions<CookiePolicyOptions> cookieOptions) : ApiControllerBase
+    UserService userService) : ApiControllerBase
 {
-    private readonly ILogger<AccountController> _logger = logger;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
     private readonly UserService _userService = userService;
-    private readonly IOptions<CookiePolicyOptions> _cookieOptions = cookieOptions;
 
     [HttpPost("signIn")]
     public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)

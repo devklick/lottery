@@ -10,9 +10,8 @@ namespace Lottery.Api.Controllers;
 [Authorize(Roles = "BasicUser,GameAdmin,SystemAdmin")]
 [ApiController]
 [Route("[controller]")]
-public class EntryController(ILogger<EntryController> logger, EntryService entryService) : ApiControllerBase
+public class EntryController(EntryService entryService) : ApiControllerBase
 {
-    private readonly ILogger<EntryController> _logger = logger;
     private readonly EntryService _entryService = entryService;
 
     [HttpPost]

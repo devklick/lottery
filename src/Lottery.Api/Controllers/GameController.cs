@@ -11,9 +11,8 @@ namespace Lottery.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GameController(ILogger<GameController> logger, GameService gameService) : ApiControllerBase
+public class GameController(GameService gameService) : ApiControllerBase
 {
-    private readonly ILogger<GameController> _logger = logger;
     private readonly GameService _gameService = gameService;
 
     [HttpGet("{id}")]
