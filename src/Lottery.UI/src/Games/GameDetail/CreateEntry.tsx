@@ -1,9 +1,10 @@
 import {
+  Badge,
+  BadgeProps,
   Button,
   Collapse,
-  Grid,
+  Flex,
   Group,
-  MantineStyleProp,
   Stack,
   Text,
   Title,
@@ -56,31 +57,19 @@ function CreateEntry({
     setSelectedIds(newSelectedIds);
   }
 
-  function getSelectionStyle(selectionId: string): MantineStyleProp {
-    const style: MantineStyleProp = {
-      border: 1,
-      borderStyle: "solid",
-      borderRadius: 10,
-      borderColor: theme.colors.gray[5],
-      backgroundColor: "transparent",
-    };
-
-    if (selectedIds.length === selectionsRequired) {
-      style.backgroundColor = theme.colors.gray[colorScheme == "light" ? 2 : 8];
-      style.borderColor = theme.colors.gray[colorScheme == "light" ? 2 : 8];
-      style.color = theme.colors.gray[colorScheme == "light" ? 5 : 6];
-      style.cursor = "not-allowed";
+  function getSelectionStyle(selectionId: string): BadgeProps {
+    return {
+      circle: true,
+      size:"xl",
+      color: selectedIds.includes(selectionId) 
+        ? theme.colors.green[colorScheme == "light" ? 6 : 8] 
+        : selectedIds.length === selectionsRequired 
+          ? theme.colors.gray[colorScheme == "light" ? 2 : 8] 
+          : 'gray', 
+      style: {
+        cursor: selectedIds.length === selectionsRequired ?  "not-allowed" : 'default'
+      }
     }
-
-    if (selectedIds.includes(selectionId)) {
-      style.backgroundColor =
-        theme.colors.green[colorScheme == "light" ? 6 : 8];
-      style.borderColor = theme.colors.green[5];
-      style.color = theme.white;
-      style.cursor = "default";
-    }
-
-    return style;
   }
 
   async function handleSubmitEntry() {
@@ -113,27 +102,20 @@ function CreateEntry({
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
       <Collapse in={opened}>
-        <Stack>
-          {header}
-          {user.authenticated && (
-            <Grid maw={500} justify="center">
-              {selections
-                ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
-                .map((selection) => (
-                  <Grid.Col
-                    key={`grid-selection-${selection.selectionNumber}`}
-                    span={2}
-                    onClick={() => handleSelected(selection.id)}
-                  >
-                    <Stack style={{ ...getSelectionStyle(selection.id) }}>
-                      <Text span style={{ lineHeight: 1, paddingTop: 5 }}>
-                        {selection.selectionNumber}
-                      </Text>
-                    </Stack>
-                  </Grid.Col>
-                ))}
-            </Grid>
-          )}
+      <Stack align="center">
+        {header}
+        <Flex gap={"lg"} align={"center"} maw={500} w={'100%'} wrap={'wrap'}>
+        {selections
+          ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
+          .map((selection) => (
+              <Badge
+                key={selection.id} 
+                {...getSelectionStyle(selection.id)} 
+                onClick={() => handleSelected(selection.id)}>
+                {selection.selectionNumber}
+              </Badge>
+          ))}
+        </Flex>
         </Stack>
       </Collapse>
     </Stack>
