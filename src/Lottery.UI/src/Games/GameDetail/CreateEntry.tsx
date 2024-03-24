@@ -104,7 +104,7 @@ function CreateEntry({
       <Collapse in={opened}>
       <Stack align="center">
         {header}
-        <Flex gap={"lg"} align={"center"} maw={500} w={'100%'} wrap={'wrap'}>
+        <Flex gap={"lg"} align={"center"} justify={'center'} maw={500} wrap={'wrap'}>
         {selections
           ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
           .map((selection) => (
