@@ -9,6 +9,7 @@ export const GameStates = {
   Future: "future",
   CanEnter: "canEnter",
   Resulted: "resulted",
+  Closed: "closed",
 } as const;
 
 export const allGameStates = Object.keys(GameStates);
@@ -23,6 +24,7 @@ export const LabelledGameStates: Record<
   canEnter: { label: "Current Games", value: "canEnter" },
   future: { label: "Future Games", value: "future" },
   resulted: { label: "Past Games", value: "resulted" },
+  closed: { label: "Closed Games", value: "closed" },
 };
 
 export const SortByValues = {

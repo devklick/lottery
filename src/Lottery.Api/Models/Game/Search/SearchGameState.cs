@@ -7,5 +7,6 @@ public enum SearchGameState
 {
     Future,
     CanEnter,
-    Resulted
+    Resulted,
+    Closed
 }

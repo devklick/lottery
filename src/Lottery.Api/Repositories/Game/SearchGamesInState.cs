@@ -4,5 +4,6 @@ public enum SearchGamesInState
 {
     Future,
     CanEnter,
-    Resulted
+    Resulted,
+    Closed
 }
