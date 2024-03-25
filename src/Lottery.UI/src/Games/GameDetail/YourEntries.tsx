@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Badge,
   Center,
   Collapse,
@@ -119,7 +120,9 @@ function YourEntries({
       </Group>
       <Collapse in={opened}>
         {!user.authenticated ? (
-          <Text span>Sign in to view your entries</Text>
+          <Text span>
+            <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
+          </Text>
         ) : (
           <Center w={"100%"} mt={50}>
             <Stack align="center">

@@ -6,11 +6,13 @@ import {
   signUpRequestSchema,
 } from "./signUp.schema";
 import {
+  Anchor,
   Button,
   Container,
   Paper,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -59,6 +61,11 @@ function SignUp({}: SignUpProps) {
             <Button variant="filled" type="submit">
               Submit
             </Button>
+
+            <Text size="sm">
+              Already have an account?{" "}
+              <Anchor href="/account/signIn">Sign in</Anchor>
+            </Text>
           </Stack>
         </form>
       </Paper>

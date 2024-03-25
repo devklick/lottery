@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Badge,
   BadgeProps,
   Button,
@@ -99,7 +100,9 @@ function CreateEntry({
   }
 
   const header = !user.authenticated ? (
-    <Text span>Sign in to pick your numbers</Text>
+    <Text span>
+      <Anchor href="/account/signIn">Sign in</Anchor> to pick your numbers
+    </Text>
   ) : selectionsRequired - selectedIds.length ? (
     <Text span>{`${
       selectionsRequired - selectedIds.length

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
 import {
+  Anchor,
   Button,
   Checkbox,
   Container,
@@ -17,6 +18,7 @@ import {
   Paper,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -76,6 +78,10 @@ function SignIn({}: SignInProps) {
             <Button variant="filled" type="submit">
               Submit
             </Button>
+            <Text size="sm">
+              Don't have an account?{" "}
+              <Anchor href="/account/signUp">Sign up</Anchor>
+            </Text>
           </Stack>
         </form>
       </Paper>
