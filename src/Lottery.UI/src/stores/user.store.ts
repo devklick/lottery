@@ -4,7 +4,8 @@ import { persist } from "zustand/middleware";
 type UserType = "Guest" | "Basic" | "Admin";
 
 interface UserStore {
-  authenticated: boolean;
+  _authenticated: boolean;
+  authenticated(): boolean;
   sessionExpiry: Date;
   userType: UserType;
 
@@ -16,15 +17,23 @@ interface UserStore {
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
-      authenticated: false,
+      _authenticated: false,
       userType: "Guest",
       sessionExpiry: new Date(0),
+      authenticated() {
+        if (!get()._authenticated) return false;
+        if (get().sessionExpiry.getTime() < Date.now()) {
+          set({ _authenticated: false, sessionExpiry: new Date(0) });
+          return false;
+        }
+        return true;
+      },
       login(userType, sessionExpiry) {
-        set({ authenticated: true, userType, sessionExpiry });
+        set({ _authenticated: true, userType, sessionExpiry });
       },
       logout() {
         set({
-          authenticated: false,
+          _authenticated: false,
           userType: "Guest",
           sessionExpiry: new Date(0),
         });
@@ -35,6 +44,13 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: "user",
+      merge(persisted, current) {
+        const persistedUserStore = persisted as UserStore;
+        if (persistedUserStore?.sessionExpiry) {
+          current.sessionExpiry = new Date(persistedUserStore.sessionExpiry);
+        }
+        return current;
+      },
     }
   )
 );

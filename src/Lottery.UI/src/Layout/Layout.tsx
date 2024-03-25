@@ -20,7 +20,7 @@ function Layout({}: LayoutProps) {
   const computedColorScheme = useComputedColorScheme();
 
   async function handleClickLogInOrOut() {
-    if (user.authenticated) {
+    if (user.authenticated()) {
       await accountService.signOut();
       user.logout();
       navigate("/");
@@ -46,7 +46,7 @@ function Layout({}: LayoutProps) {
         toggleColorScheme={toggleColorScheme}
         handleClickLogInOrOut={handleClickLogInOrOut}
         navigate={navigate}
-        userAuthenticated={user.authenticated}
+        userAuthenticated={user.authenticated()}
         userType={user.userType}
       />
 

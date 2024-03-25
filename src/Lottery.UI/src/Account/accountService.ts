@@ -1,5 +1,13 @@
-import { SignUpRequest, SignUpResponse } from "./SignUp/signUp.schema";
-import { SignInRequest, SignInResponse } from "./SignIn/signIn.schema";
+import {
+  SignUpRequest,
+  SignUpResponse,
+  signUpResponseSchema,
+} from "./SignUp/signUp.schema";
+import {
+  SignInRequest,
+  SignInResponse,
+  signInResponseSchema,
+} from "./SignIn/signIn.schema";
 import { ApiService, ApiServiceDefinition } from "../services/ApiService";
 
 interface AccountService {
@@ -20,7 +28,17 @@ export function createAccountService({
       { withCredentials: true }
     );
 
-    return result;
+    if (!result.success) {
+      throw result.error;
+    }
+
+    const valid = signUpResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
   };
 
   const signIn: AccountService["signIn"] = async (request) => {
@@ -30,9 +48,17 @@ export function createAccountService({
       { withCredentials: true }
     );
 
-    if (result.success) return result.data;
+    if (!result.success) {
+      throw result.error;
+    }
 
-    throw result.error;
+    const valid = signInResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
   };
 
   const signOut: AccountService["signOut"] = async () => {

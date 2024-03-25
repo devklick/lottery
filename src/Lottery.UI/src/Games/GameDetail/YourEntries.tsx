@@ -40,7 +40,7 @@ function YourEntries({
   const query = useQuery({
     queryKey: ["entries", page, limit, gameId],
     queryFn: () => gameService.getEntries({ query: { limit, page, gameId } }),
-    enabled: user.authenticated,
+    enabled: user.authenticated(),
   });
 
   function getTrophy(
@@ -119,7 +119,7 @@ function YourEntries({
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
       <Collapse in={opened}>
-        {!user.authenticated ? (
+        {!user.authenticated() ? (
           <Text span>
             <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
           </Text>

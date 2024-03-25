@@ -99,7 +99,7 @@ function CreateEntry({
     });
   }
 
-  const header = !user.authenticated ? (
+  const header = !user.authenticated() ? (
     <Text span>
       <Anchor href="/account/signIn">Sign in</Anchor> to pick your numbers
     </Text>
@@ -146,7 +146,7 @@ function CreateEntry({
                 </Group>
               </Overlay>
             )}
-            {user.authenticated &&
+            {user.authenticated() &&
               selections
                 ?.sort((a, b) => a.selectionNumber - b.selectionNumber)
                 .map((selection) => (
