@@ -21,14 +21,19 @@ export const useUserStore = create<UserStore>()(
       userType: "Guest",
       sessionExpiry: new Date(0),
       authenticated() {
-        if (!get()._authenticated) return false;
+        if (!get()._authenticated) {
+          console.log("Not authenticated");
+          return false;
+        }
         if (get().sessionExpiry.getTime() < Date.now()) {
+          console.log("Authentication expired");
           set({ _authenticated: false, sessionExpiry: new Date(0) });
           return false;
         }
         return true;
       },
       login(userType, sessionExpiry) {
+        console.log("Loggin in to store");
         set({ _authenticated: true, userType, sessionExpiry });
       },
       logout() {
@@ -45,11 +50,13 @@ export const useUserStore = create<UserStore>()(
     {
       name: "user",
       merge(persisted, current) {
-        const persistedUserStore = persisted as UserStore;
-        if (persistedUserStore?.sessionExpiry) {
-          current.sessionExpiry = new Date(persistedUserStore.sessionExpiry);
-        }
-        return current;
+        const us = persisted as UserStore;
+        if (!us) return current;
+        return {
+          ...current,
+          ...us!,
+          sessionExpiry: new Date(us.sessionExpiry),
+        };
       },
     }
   )
