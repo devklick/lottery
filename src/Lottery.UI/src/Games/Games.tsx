@@ -18,6 +18,19 @@ import {
   SearchGamesResponseItem,
 } from "./games.schema";
 
+const placeholder: Array<SearchGamesResponseItem> = Array.from<
+  SearchGamesResponseItem,
+  SearchGamesResponseItem
+>({ length: 12 }, (_, i) => ({
+  name: "Skeleton",
+  startTime: new Date(),
+  drawTime: new Date(),
+  id: i.toString(),
+  prizes: [],
+  selections: [],
+  selectionsRequiredForEntry: 5,
+}));
+
 interface GamesProps {}
 
 function Games({}: GamesProps) {
@@ -59,15 +72,9 @@ function Games({}: GamesProps) {
       <Paper shadow="xl" p={24} radius={10}>
         <GameFilters initialValues={filters} onUpdateClicked={setFilters} />
         <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
-          {(
-            query.data?.items ??
-            Array(limit).fill({
-              name: "Skeleton",
-              startTime: new Date(),
-              drawTime: new Date(),
-            } as SearchGamesResponseItem)
-          ).map((game, i) => (
+          {(query.data?.items ?? placeholder).map((game, i) => (
             <Grid.Col
+              key={`game-${game.id}`}
               style={{ alignSelf: "stretch" }}
               span={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}
             >
