@@ -9,6 +9,7 @@ public class GetGameResponse
 {
     public required Guid Id { get; set; }
     public required DateTime StartTime { get; set; }
+    public required DateTime CloseTime { get; set; }
     public required DateTime DrawTime { get; set; }
     public required DateTime? ResultedAt { get; set; }
     public required string Name { get; set; }

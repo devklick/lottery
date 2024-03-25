@@ -16,6 +16,7 @@ export const getGameRequestSchema = z.object({
 export const getGameResponseSchema = z.object({
   id: z.string().uuid(),
   startTime: z.string().pipe(z.coerce.date()),
+  closeTime: z.string().pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
   resultedAt: z.string().nullable().pipe(z.coerce.date()),
   name: z.string(),

@@ -25,6 +25,7 @@ const placeholders: GetGameResponse = {
   name: "Dummy Text",
   drawTime: new Date(),
   id: "dummy-id",
+  closeTime: new Date(),
   resultedAt: new Date(),
   selectionsRequiredForEntry: 5,
   startTime: new Date(),
@@ -98,6 +99,18 @@ function GameDetail({}: GameDetailProps) {
       <Text c={"dimmed"}>Closes at:</Text>
       <Text>
         {dateFormat(
+          query.data?.closeTime ?? placeholders.closeTime,
+          "dd/mm/yyyy HH:MM"
+        )}
+      </Text>
+    </>
+  );
+
+  const drawTime = (
+    <>
+      <Text c={"dimmed"}>Draw at:</Text>
+      <Text>
+        {dateFormat(
           query.data?.drawTime ?? placeholders.drawTime,
           "dd/mm/yyyy HH:MM"
         )}
@@ -144,14 +157,19 @@ function GameDetail({}: GameDetailProps) {
           </Skeleton>
         </Group>
         <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
-          <Grid.Col span={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
             <Skeleton visible={loading}>
               <Group>{startTime}</Group>
             </Skeleton>
           </Grid.Col>
-          <Grid.Col span={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
             <Skeleton visible={loading}>
               <Group>{closeTime}</Group>
+            </Skeleton>
+          </Grid.Col>
+          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+            <Skeleton visible={loading}>
+              <Group>{drawTime}</Group>
             </Skeleton>
           </Grid.Col>
           <Grid.Col span={12} maw={500} mx="auto">
