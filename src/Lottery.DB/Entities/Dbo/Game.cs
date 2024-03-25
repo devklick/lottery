@@ -22,6 +22,13 @@ public class Game : EntityObject
     public required DateTime StartTime { get; set; }
 
     /// <summary>
+    /// The date and time that entries will no longer be accepted. 
+    /// This date is expected to be on or shortly before the <see cref="DrawTime"/>.
+    /// </summary>
+    [Required]
+    public required DateTime CloseTime { get; set; }
+
+    /// <summary>
     /// The date and time that the results will be drawn. 
     /// Players can enter the game up until this time.
     /// </summary>
