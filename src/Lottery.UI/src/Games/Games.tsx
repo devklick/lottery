@@ -24,6 +24,7 @@ const placeholder: Array<SearchGamesResponseItem> = Array.from<
 >({ length: 12 }, (_, i) => ({
   name: "Skeleton",
   startTime: new Date(),
+  closeTime: new Date(),
   drawTime: new Date(),
   id: i.toString(),
   prizes: [],

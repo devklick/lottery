@@ -28,6 +28,7 @@ export const LabelledGameStates: Record<
 export const SortByValues = {
   DrawTime: "drawTime",
   StartTime: "startTime",
+  CloseTime: "closeTime",
 } as const;
 
 export const allSortByValues = Object.keys(SortByValues);
@@ -42,6 +43,7 @@ export const LabelledSortByValues: Record<
 > = {
   drawTime: { label: "Draw Time", value: "drawTime" },
   startTime: { label: "Start Time", value: "startTime" },
+  closeTime: { label: "Close Time", value: "closeTime" },
 };
 
 export const searchGamesRequestFilterSchema = z.object({
@@ -59,6 +61,7 @@ export const searchGamesResponseItemSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   startTime: z.string().pipe(z.coerce.date()),
+  closeTime: z.string().pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
   selectionsRequiredForEntry: z.number(),
   selections: z.array(

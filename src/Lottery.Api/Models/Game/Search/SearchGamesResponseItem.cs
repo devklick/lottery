@@ -8,6 +8,7 @@ public class SearchGamesResponseItem
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required DateTime StartTime { get; set; }
+    public required DateTime CloseTime { get; set; }
     public required DateTime DrawTime { get; set; }
     public required int SelectionsRequiredForEntry { get; set; }
     public required List<SearchGameSelectionResponseItem> Selections { get; set; }

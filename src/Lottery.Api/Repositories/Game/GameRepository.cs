@@ -88,6 +88,9 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
             case SearchGamesSortCriteria.StartTime:
                 query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.StartTime) : query.OrderByDescending(g => g.StartTime);
                 break;
+            case SearchGamesSortCriteria.CloseTime:
+                query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.CloseTime) : query.OrderByDescending(g => g.CloseTime);
+                break;
         }
 
         var total = await query.CountAsync();

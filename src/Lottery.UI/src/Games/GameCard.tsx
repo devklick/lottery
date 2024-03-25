@@ -17,6 +17,7 @@ interface GameCardProps {
   id: string;
   name: string;
   startTime: Date;
+  closeTime: Date;
   drawTime: Date;
   loading: boolean;
 }
@@ -29,7 +30,14 @@ function formatDate(date: Date) {
   });
 }
 
-function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
+function GameCard({
+  id,
+  name,
+  startTime,
+  closeTime,
+  drawTime,
+  loading,
+}: GameCardProps) {
   const navigate = useNavigate();
   const theme = useMantineTheme();
   const { isUserType } = useUserStore();
@@ -49,6 +57,12 @@ function GameCard({ id, name, startTime, drawTime, loading }: GameCardProps) {
             <Group>
               <Text c="dimmed">Starts on:</Text>
               <Text>{formatDate(startTime)}</Text>
+            </Group>
+          </Skeleton>
+          <Skeleton visible={loading}>
+            <Group>
+              <Text c="dimmed">Closes on:</Text>
+              <Text>{formatDate(closeTime)}</Text>
             </Group>
           </Skeleton>
           <Skeleton visible={loading}>

@@ -5,4 +5,5 @@ public enum SearchGamesSortCriteria
 {
     DrawTime,
     StartTime,
+    CloseTime
 }
