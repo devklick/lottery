@@ -13,6 +13,7 @@ export const createGamePrizesRequestSchema = z.array(
 export const createGameRequestSchema = z
   .object({
     startTime: z.date().or(z.string()).pipe(z.coerce.date()),
+    closeTime: z.date().or(z.string()).pipe(z.coerce.date()),
     drawTime: z.date().or(z.string()).pipe(z.coerce.date()),
     name: z.string().min(3).max(64),
     state: stateSchema.default("enabled"),
@@ -42,6 +43,7 @@ export const createGameRequestSchema = z
 export const createGameResponseSchema = z.object({
   id: z.string().uuid(),
   startTime: z.string().pipe(z.coerce.date()),
+  closeTime: z.date().or(z.string()).pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
   name: z.string(),
   selectionsRequiredForEntry: z.number(),

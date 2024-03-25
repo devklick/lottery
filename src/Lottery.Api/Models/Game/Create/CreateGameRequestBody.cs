@@ -16,6 +16,9 @@ public class CreateGameRequestBody
     public required DateTime StartTime { get; set; }
 
     [Required]
+    public required DateTime CloseTime { get; set; }
+
+    [Required]
     public required DateTime DrawTime { get; set; }
 
     [Required, StringLength(64)]

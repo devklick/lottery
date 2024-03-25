@@ -32,10 +32,10 @@ import React from "react";
 
 interface CreateGameProps {}
 
-function getDate(now: Date, daysToAdd: number) {
+function getDate(now: Date, daysToAdd: number, hoursToAdd = 0) {
   const date = new Date(now);
   date.setDate(now.getDate() + daysToAdd);
-  date.setHours(0);
+  date.setHours(now.getHours() + hoursToAdd);
   date.setMinutes(0);
   date.setSeconds(0);
   date.setUTCMilliseconds(0);
@@ -46,11 +46,13 @@ function CreateGame({}: CreateGameProps) {
   const now = new Date();
   const defaultStartTime = getDate(now, 1);
   const defaultDrawTime = getDate(now, 8);
+  const defaultCloseTime = getDate(now, 8, -1);
 
   const initialValues: CreateGameRequest = {
     name: `Lottery Game - ${now.toDateString()}`,
     state: "enabled",
     startTime: defaultStartTime,
+    closeTime: defaultCloseTime,
     drawTime: defaultDrawTime,
     maxSelections: 50,
     selectionsRequiredForEntry: 5,
@@ -72,6 +74,11 @@ function CreateGame({}: CreateGameProps) {
 
   const colProps: GridColProps = {
     span: { xs: 12, sm: 6, md: 6, lg: 6 },
+    style: { textAlign: "left" },
+  };
+
+  const dateColProps: GridColProps = {
+    span: { xs: 12, sm: 4, md: 4, lg: 4 },
     style: { textAlign: "left" },
   };
 
@@ -99,14 +106,21 @@ function CreateGame({}: CreateGameProps) {
                 allowDeselect={false}
               />
             </Grid.Col>
-            <Grid.Col key={"startTime-col"} {...colProps}>
+            <Grid.Col key={"startTime-col"} {...dateColProps}>
               <DateTimePicker
                 label="Start Time"
                 {...form.getInputProps("startTime")}
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col key={"drawTime-col"} {...colProps}>
+            <Grid.Col key={"closeTime-col"} {...dateColProps}>
+              <DateTimePicker
+                label="Close Time"
+                {...form.getInputProps("closeTime")}
+                withAsterisk
+              />
+            </Grid.Col>
+            <Grid.Col key={"drawTime-col"} {...dateColProps}>
               <DateTimePicker
                 label="Draw Time"
                 {...form.getInputProps("drawTime")}

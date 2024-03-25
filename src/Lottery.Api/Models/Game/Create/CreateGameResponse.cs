@@ -7,6 +7,7 @@ public class CreateGameResponse
 {
     public Guid Id { get; set; }
     public DateTime StartTime { get; set; }
+    public DateTime CloseTime { get; set; }
 
     public DateTime DrawTime { get; set; }
 
