@@ -48,7 +48,7 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
 
         // TODO: Figure a better, more extendable way of building this criteria
 
-        if (states.Contains(SearchGamesInState.CanEnter) && states.Contains(SearchGamesInState.Future) && states.Contains(SearchGamesInState.CanEnter))
+        if (states.Contains(SearchGamesInState.CanEnter) && states.Contains(SearchGamesInState.Future) && states.Contains(SearchGamesInState.Resulted))
         {
             // all to be included, so no filters to apply here
         }

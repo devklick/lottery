@@ -71,7 +71,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             name: request.Query.Name,
             request.Query.GameStates.Select(s => (SearchGamesInState)s).ToList(),
             sortBy: (DB.Repository.SearchGamesSortCriteria)request.Query.SortBy,
-            sortDirection: (DB.Repository.Common.SortDirection)request.Query.SortBy);
+            sortDirection: (DB.Repository.Common.SortDirection)request.Query.SortDirection);
 
         return new Result<SearchGamesResonse>
         {

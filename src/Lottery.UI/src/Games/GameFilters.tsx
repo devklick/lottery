@@ -62,6 +62,7 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
                 {...form.getInputProps("sortBy")}
                 style={{ textAlign: "left" }}
                 data={Object.values(LabelledSortByValues)}
+                allowDeselect={false}
               />
             </Grid.Col>
             <Grid.Col key="sortdir" {...colProps}>
@@ -70,6 +71,7 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
                 {...form.getInputProps("sortDirection")}
                 style={{ textAlign: "left" }}
                 data={Object.values(allSortDirectionsWithLabel)}
+                allowDeselect={false}
               />
             </Grid.Col>
           </Grid>
