@@ -1,16 +1,17 @@
 
-using System.Net.Quic;
-
+using Lottery.Api.Repositories.Game.Filters;
 using Lottery.DB.Context;
+using Lottery.DB.Entities.Ref;
 using Lottery.DB.Repository;
 using Lottery.DB.Repository.Common;
 
-using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lottery.Api.Repositories.Game;
 
 using GameEntity = DB.Entities.Dbo.Game;
+
+
 
 public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
 {
@@ -23,12 +24,39 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
         return result.Entity;
     }
 
-    public async Task<GameEntity?> GetGame(Guid gameId)
-        => await _db.Games
-            .Include(g => g.Selections)
-            .Include(g => g.Prizes)
-            .Include(g => g.Results)
-            .FirstOrDefaultAsync(g => g.Id == gameId);
+    public async Task<GameEntity?> GetGame(Guid gameId, GetGame_SelectionsFilter? selectionsFilter = null, GetGame_PrizesFilter? prizesFilter = null, GetGame_ResultsFilter? resultsFilter = null)
+    {
+        var query = _db.Games.Where(g => g.Id == gameId).AsQueryable();
+
+        if ((selectionsFilter?.Include) ?? false)
+        {
+            query = query.Include(g => g.Selections);
+            if (selectionsFilter.State.HasValue)
+            {
+                query = query.Where(g => g.Selections.Any(s => s.State == selectionsFilter.State));
+            }
+        }
+
+        if ((prizesFilter?.Include) ?? false)
+        {
+            query = query.Include(g => g.Prizes);
+            if (prizesFilter.State.HasValue)
+            {
+                query = query.Where(g => g.Selections.Any(s => s.State == prizesFilter.State));
+            }
+        }
+
+        if ((resultsFilter?.Include) ?? false)
+        {
+            query = query.Include(g => g.Results);
+            if (resultsFilter.State.HasValue)
+            {
+                query = query.Where(g => g.Selections.Any(s => s.State == resultsFilter.State));
+            }
+        }
+
+        return await query.FirstOrDefaultAsync();
+    }
 
     public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(int page, int limit, string? name = null, List<SearchGamesInState>? states = default, SearchGamesSortCriteria sortBy = SearchGamesSortCriteria.DrawTime, SortDirection sortDirection = SortDirection.Asc)
     {
@@ -100,5 +128,14 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
             .Take(limit).ToListAsync();
 
         return (games, total);
+    }
+
+    internal async Task<GameEntity> UpdateGame(GameEntity game)
+    {
+        _db.Games.Update(game);
+
+        await _db.SaveChangesAsync();
+
+        return game;
     }
 }

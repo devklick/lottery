@@ -4,7 +4,6 @@ using AutoMapper;
 
 using Lottery.Api.Models.Entry.Create;
 using Lottery.DB.Entities.Dbo;
-using Lottery.DB;
 using Lottery.Api.Repositories;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Entry.Search;
@@ -36,7 +35,19 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         request.Unbound.CreatedById = userIdResult.Value;
 
         // Grab the game to be sure it exists
-        var game = await _gameRepository.GetGame(request.Body.GameId);
+        var game = await _gameRepository.GetGame(request.Body.GameId,
+            selectionsFilter: new()
+            {
+                Include = true
+            },
+            prizesFilter: new()
+            {
+                Include = true
+            },
+            resultsFilter: new()
+            {
+                Include = true
+            });
 
         if (game == null)
         {

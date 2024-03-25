@@ -1,4 +1,5 @@
 using Lottery.Api.Models.Game.Create;
+using Lottery.Api.Models.Game.Edit;
 using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Services;
@@ -28,6 +29,15 @@ public class GameController(GameService gameService) : ApiControllerBase
     public async Task<ActionResult<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
         var response = await _gameService.CreateGame(request, User);
+
+        return CreateActionResult(response);
+    }
+
+    [Authorize(Roles = "GameAdmin,SystemAdmin")]
+    [HttpPost("{id}")]
+    public async Task<ActionResult<EditGameResponse>> EditGame(EditGameRequest request)
+    {
+        var response = await _gameService.EditGame(request, User);
 
         return CreateActionResult(response);
     }
