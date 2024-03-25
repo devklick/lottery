@@ -87,7 +87,7 @@ function YourEntries({
 
   const entries = query.data?.items.map((entry) => (
     <Skeleton key={entry.id} visible={query.isLoading}>
-      <Group>
+      <Group justify="center">
         {entry.selections
           .sort((a, b) => a.selectionNumber - b.selectionNumber)
           .map((selection) => getSelection(entry.id, selection))}
