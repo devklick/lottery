@@ -38,7 +38,7 @@ function Games({}: GamesProps) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(12);
   const [filters, setFilters] = useState<SearchGamesRequestFilter>({
-    gameStates: ["canEnter", "future"],
+    gameStates: ["open", "future"],
     sortBy: "drawTime",
     sortDirection: "desc",
     name: "",

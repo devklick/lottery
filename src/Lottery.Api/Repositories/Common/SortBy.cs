@@ -1,4 +1,4 @@
-namespace Lottery.DB.Repository.Common;
+namespace Lottery.DB.Repositories.Common;
 
 public enum SortDirection
 {

@@ -7,7 +7,7 @@ import {
 
 export const GameStates = {
   Future: "future",
-  CanEnter: "canEnter",
+  Open: "open",
   Resulted: "resulted",
   Closed: "closed",
 } as const;
@@ -21,7 +21,7 @@ export const LabelledGameStates: Record<
   GameState,
   { label: string; value: GameState }
 > = {
-  canEnter: { label: "Current Games", value: "canEnter" },
+  open: { label: "Current Games", value: "open" },
   future: { label: "Future Games", value: "future" },
   resulted: { label: "Past Games", value: "resulted" },
   closed: { label: "Closed Games", value: "closed" },

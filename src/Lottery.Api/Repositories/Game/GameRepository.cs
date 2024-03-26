@@ -1,9 +1,9 @@
 
 using Lottery.Api.Repositories.Game.Filters;
 using Lottery.DB.Context;
-using Lottery.DB.Entities.Ref;
-using Lottery.DB.Repository;
-using Lottery.DB.Repository.Common;
+using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Repositories;
+using Lottery.DB.Repositories.Common;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -62,9 +62,13 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(int page, int limit, string? name = null, List<SearchGamesInState>? states = default, SearchGamesSortCriteria sortBy = SearchGamesSortCriteria.DrawTime, SortDirection sortDirection = SortDirection.Asc)
+    public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(
+        int page, int limit, string? name = null,
+        List<GameStatus>? states = default,
+        SearchGames.SortCriteria sortBy = Filters.SearchGames.SortCriteria.DrawTime,
+        SortDirection sortDirection = SortDirection.Asc)
     {
-        states ??= [SearchGamesInState.CanEnter];
+        states ??= [GameStatus.Open];
 
         var query = _db.Games
             .Include(x => x.Selections)
@@ -80,47 +84,47 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
 
         // TODO: Figure a better, more extendable way of building this criteria
 
-        if (states.Contains(SearchGamesInState.CanEnter) && states.Contains(SearchGamesInState.Future) && states.Contains(SearchGamesInState.Resulted))
+        if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))
         {
             // all to be included, so no filters to apply here
         }
-        else if (states.Contains(SearchGamesInState.CanEnter) && states.Contains(SearchGamesInState.Future))
+        else if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future))
         {
             query = query.Where(game => (game.StartTime <= DateTime.UtcNow && game.DrawTime > DateTime.UtcNow)
             || (game.StartTime >= DateTime.UtcNow));
         }
-        else if (states.Contains(SearchGamesInState.CanEnter) && states.Contains(SearchGamesInState.Resulted))
+        else if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Resulted))
         {
             query = query.Where(game => (game.StartTime <= DateTime.UtcNow && game.DrawTime > DateTime.UtcNow)
             || (game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow));
         }
-        else if (states.Contains(SearchGamesInState.Future) && states.Contains(SearchGamesInState.Resulted))
+        else if (states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))
         {
             query = query.Where(game => (game.StartTime >= DateTime.UtcNow)
             || (game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow));
         }
-        else if (states.Contains(SearchGamesInState.CanEnter))
+        else if (states.Contains(GameStatus.Open))
         {
             query = query.Where(game => game.StartTime <= DateTime.UtcNow && game.DrawTime >= DateTime.UtcNow);
         }
-        else if (states.Contains(SearchGamesInState.Future))
+        else if (states.Contains(GameStatus.Future))
         {
             query = query.Where(game => game.StartTime > DateTime.UtcNow);
         }
-        else if (states.Contains(SearchGamesInState.Resulted))
+        else if (states.Contains(GameStatus.Resulted))
         {
             query = query.Where(game => game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow);
         }
 
         switch (sortBy)
         {
-            case SearchGamesSortCriteria.DrawTime:
+            case Filters.SearchGames.SortCriteria.DrawTime:
                 query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.DrawTime) : query.OrderByDescending(g => g.DrawTime);
                 break;
-            case SearchGamesSortCriteria.StartTime:
+            case Filters.SearchGames.SortCriteria.StartTime:
                 query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.StartTime) : query.OrderByDescending(g => g.StartTime);
                 break;
-            case SearchGamesSortCriteria.CloseTime:
+            case Filters.SearchGames.SortCriteria.CloseTime:
                 query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.CloseTime) : query.OrderByDescending(g => g.CloseTime);
                 break;
         }

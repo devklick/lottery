@@ -1,10 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Text.Json.Serialization;
 
-using Lottery.Api.Models.GamePrize.Create;
-using Lottery.Api.Models.GameSelection.Create;
 using Lottery.Api.Models.Validation;
 using Lottery.DB.Entities.Ref;
 
@@ -42,5 +39,14 @@ public class CreateGameRequestBody
 
 
     [Required]
-    public required List<CreateGamePrizeRequestBody> Prizes { get; set; }
+    public required List<Prize> Prizes { get; set; }
+
+    public class Prize
+    {
+        [Required]
+        public int Position { get; set; }
+
+        [Required]
+        public int NumberMatchCount { get; set; }
+    }
 }

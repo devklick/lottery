@@ -9,6 +9,7 @@ public class EntryMappingProfile : AutoMapper.Profile
     public EntryMappingProfile()
     {
         MapModelsForCreate();
+        MapModelsForGet();
     }
 
     private void MapModelsForCreate()
@@ -21,7 +22,19 @@ public class EntryMappingProfile : AutoMapper.Profile
 
         CreateMap<CreateEntryRequestUnbound, DB.Entities.Dbo.Entry>();
 
+        CreateMap<CreateEntryRequestBody.Selection, DB.Entities.Dbo.EntrySelection>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+    }
+
+    private void MapModelsForGet()
+    {
         CreateMap<DB.Entities.Dbo.Entry, SearchEntriesResponseItem>();
+
+        CreateMap<DB.Entities.Dbo.EntrySelection, SearchEntriesResponseItem.Selection>()
+            .IncludeMembers(src => src.GameSelection);
+        CreateMap<DB.Entities.Dbo.GameSelection, SearchEntriesResponseItem.Selection>();
+        CreateMap<DB.Entities.Dbo.EntryPrize, SearchEntriesResponseItem.EntryPrize>();
+
     }
 
 }

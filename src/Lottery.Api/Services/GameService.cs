@@ -8,11 +8,10 @@ using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Models.Game.Edit;
 using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
-using Lottery.Api.Repositories;
 using Lottery.Api.Repositories.Game;
+using Lottery.Api.Repositories.Game.Filters;
 using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
-using Lottery.DB.Repository;
 
 using Microsoft.Extensions.ObjectPool;
 
@@ -74,9 +73,9 @@ public class GameService(GameRepository gameRepository, UserService userService,
             request.Query.Page,
             request.Query.Limit,
             name: request.Query.Name,
-            request.Query.GameStates.Select(s => (SearchGamesInState)s).ToList(),
-            sortBy: (DB.Repository.SearchGamesSortCriteria)request.Query.SortBy,
-            sortDirection: (DB.Repository.Common.SortDirection)request.Query.SortDirection);
+            request.Query.GameStates,
+            sortBy: (SearchGames.SortCriteria)request.Query.SortBy,
+            sortDirection: (DB.Repositories.Common.SortDirection)request.Query.SortDirection);
 
         return new Result<SearchGamesResonse>
         {

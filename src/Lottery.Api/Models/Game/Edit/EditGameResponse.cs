@@ -12,27 +12,28 @@ public class EditGameResponse
     public required string Name { get; set; }
     public required int SelectionsRequiredForEntry { get; set; }
     public required GameStatus GameStatus { get; set; }
-    public List<EditGameResponse_GameSelection> Selections { get; set; } = [];
-    public List<EditGameResponse_GamePrize> Prizes { get; set; } = [];
-    public List<EditGameResponse_GameResult> Results { get; set; } = [];
+    public List<Selection> Selections { get; set; } = [];
+    public List<Prize> Prizes { get; set; } = [];
+    public List<Result> Results { get; set; } = [];
+
+    public class Selection
+    {
+        public required Guid Id { get; set; }
+        public required int SelectionNumber { get; set; }
+    }
+
+    public class Prize
+    {
+        public required Guid Id { get; set; }
+        public required int Position { get; set; }
+        public required int NumberMatchCount { get; set; }
+    }
+
+    public class Result
+    {
+        public Guid Id { get; set; }
+        public Guid SelectionId { get; set; }
+        public int SelectionNumber { get; set; }
+    }
 }
 
-public class EditGameResponse_GameSelection
-{
-    public required Guid Id { get; set; }
-    public required int SelectionNumber { get; set; }
-}
-
-public class EditGameResponse_GamePrize
-{
-    public required Guid Id { get; set; }
-    public required int Position { get; set; }
-    public required int NumberMatchCount { get; set; }
-}
-
-public class EditGameResponse_GameResult
-{
-    public Guid Id { get; set; }
-    public Guid SelectionId { get; set; }
-    public int SelectionNumber { get; set; }
-}

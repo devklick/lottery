@@ -23,23 +23,37 @@ public class GameMappingProfile : AutoMapper.Profile
         CreateMap<CreateGameRequestBody, DB.Entities.Dbo.Game>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
 
+        CreateMap<CreateGameRequestBody.Prize, DB.Entities.Dbo.GamePrize>();
+
         CreateMap<CreateGameRequestUnbound, DB.Entities.Dbo.Game>();
 
         CreateMap<DB.Entities.Dbo.Game, CreateGameResponse>();
+        CreateMap<DB.Entities.Dbo.GamePrize, CreateGameResponse.Prize>();
+        CreateMap<DB.Entities.Dbo.GameSelection, CreateGameResponse.Selection>();
     }
 
     private void MapModelsForGet()
     {
         CreateMap<DB.Entities.Dbo.Game, SearchGamesResponseItem>();
         CreateMap<DB.Entities.Dbo.Game, GetGameResponse>();
+        CreateMap<DB.Entities.Dbo.GameSelection, GetGameResponse.Selection>();
+        CreateMap<DB.Entities.Dbo.GameResult, GetGameResponse.Result>()
+            .IncludeMembers(src => src.Selection);
+        CreateMap<DB.Entities.Dbo.GameSelection, GetGameResponse.Result>();
+        CreateMap<DB.Entities.Dbo.GamePrize, GetGameResponse.Prize>();
+        CreateMap<DB.Entities.Dbo.GamePrize, SearchGamesResponseItem.Prize>();
+        CreateMap<DB.Entities.Dbo.GameResult, SearchGamesResponseItem.Result>()
+            .IncludeMembers(src => src.Selection);
+        CreateMap<DB.Entities.Dbo.GameSelection, SearchGamesResponseItem.Selection>();
+        CreateMap<DB.Entities.Dbo.GameSelection, SearchGamesResponseItem.Result>();
     }
 
     private void MapModelsForEdit()
     {
         CreateMap<EditGameRequestBody, DB.Entities.Dbo.Game>();
         CreateMap<DB.Entities.Dbo.Game, EditGameResponse>();
-        CreateMap<DB.Entities.Dbo.GameResult, EditGameResponse_GameResult>();
-        CreateMap<DB.Entities.Dbo.GamePrize, EditGameResponse_GamePrize>();
-        CreateMap<DB.Entities.Dbo.GameSelection, EditGameResponse_GameSelection>();
+        CreateMap<DB.Entities.Dbo.GameResult, EditGameResponse.Result>();
+        CreateMap<DB.Entities.Dbo.GamePrize, EditGameResponse.Prize>();
+        CreateMap<DB.Entities.Dbo.GameSelection, EditGameResponse.Selection>();
     }
 }

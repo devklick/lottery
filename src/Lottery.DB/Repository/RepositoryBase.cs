@@ -2,7 +2,7 @@ using Lottery.DB.Context;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Lottery.DB.Repository;
+namespace Lottery.DB.Repositories;
 
 public abstract class RepositoryBase<TContext>(TContext db) where TContext : LotteryDBContext
 {

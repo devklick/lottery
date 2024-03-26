@@ -1,6 +1,6 @@
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Dbo;
-using Lottery.DB.Repository;
+using Lottery.DB.Repositories;
 using Lottery.ResultService.Models;
 
 using Microsoft.EntityFrameworkCore;
