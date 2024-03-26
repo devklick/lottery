@@ -13,7 +13,7 @@ using GameEntity = DB.Entities.Dbo.Game;
 
 
 
-public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
+public partial class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
 {
     public async Task<GameEntity> CreateGame(GameEntity game)
     {
@@ -24,7 +24,11 @@ public class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
         return result.Entity;
     }
 
-    public async Task<GameEntity?> GetGame(Guid gameId, GetGame_SelectionsFilter? selectionsFilter = null, GetGame_PrizesFilter? prizesFilter = null, GetGame_ResultsFilter? resultsFilter = null)
+    public async Task<GameEntity?> GetGame(
+        Guid gameId,
+        GetGame.SelectionFilter? selectionsFilter = null,
+        GetGame.PrizesFilter? prizesFilter = null,
+        GetGame.ResultsFilter? resultsFilter = null)
     {
         var query = _db.Games.Where(g => g.Id == gameId).AsQueryable();
 
