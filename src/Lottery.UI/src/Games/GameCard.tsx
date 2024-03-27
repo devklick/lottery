@@ -98,12 +98,8 @@ function GameCard({
                   </Menu.Target>
                   <Menu.Dropdown>
                     <Menu.Item
-                      leftSection={
-                        <IconEdit
-                          size={rem(18)}
-                          onClick={() => navigate(`/games/${id}/edit}`)}
-                        />
-                      }
+                      leftSection={<IconEdit size={rem(18)} />}
+                      onClick={() => navigate(`/games/${id}/edit`)}
                     >
                       Edit
                     </Menu.Item>
