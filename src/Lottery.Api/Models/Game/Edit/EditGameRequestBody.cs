@@ -30,4 +30,12 @@ public class EditGameRequestBody
     public ItemState State { get; set; }
 
     // TODO: Support editing prizes
+
+    public class Prize
+    {
+        [Required,]
+        public int Position { get; set; }
+        [Required]
+        public int NumberCountMatch { get; set; }
+    }
 }
