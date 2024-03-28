@@ -30,60 +30,67 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         GetGame.PrizesFilter? prizesFilter = null,
         GetGame.ResultsFilter? resultsFilter = null)
     {
-        var query = _db.Games.Where(g => g.Id == gameId).AsQueryable();
+        var query = _db.Games.Where(g => g.Id == gameId)
+            .AsNoTracking();
 
         if ((selectionsFilter?.Include) ?? false)
         {
-            query = query.Include(g => g.Selections);
-            if (selectionsFilter.State.HasValue)
-            {
-                query = query.Where(g => g.Selections.Any(s => s.State == selectionsFilter.State));
-            }
+            query = query.Include(x => x.Selections.Where(s =>
+                !selectionsFilter.State.HasValue || s.State == selectionsFilter.State));
         }
 
         if ((prizesFilter?.Include) ?? false)
         {
-            query = query.Include(g => g.Prizes);
-            if (prizesFilter.State.HasValue)
-            {
-                query = query.Where(g => g.Selections.Any(s => s.State == prizesFilter.State));
-            }
+            query = query.Include(x => x.Prizes.Where(s =>
+                !prizesFilter.State.HasValue || s.State == prizesFilter.State));
         }
 
         if ((resultsFilter?.Include) ?? false)
         {
-            query = query.Include(g => g.Results);
-            if (resultsFilter.State.HasValue)
-            {
-                query = query.Where(g => g.Selections.Any(s => s.State == resultsFilter.State));
-            }
+            query = query.Include(x => x.Results.Where(s =>
+                !resultsFilter.State.HasValue || s.State == resultsFilter.State));
         }
 
         return await query.FirstOrDefaultAsync();
     }
 
     public async Task<(IEnumerable<GameEntity> Games, int Total)> SearchGames(
-        int page, int limit, string? name = null,
-        List<GameStatus>? states = default,
-        SearchGames.SortCriteria sortBy = Filters.SearchGames.SortCriteria.DrawTime,
-        SortDirection sortDirection = SortDirection.Asc)
+        int page, int limit,
+        SearchGames.GamesFilter? gamesFilter,
+        SearchGames.SelectionsFilter? selectionsFilter,
+        SearchGames.PrizesFilter? prizesFilter,
+        SearchGames.ResultsFilter? resultsFilter)
     {
-        states ??= [GameStatus.Open];
+        gamesFilter ??= new SearchGames.GamesFilter();
 
-        var query = _db.Games
-            .Include(x => x.Selections)
-            .Include(x => x.Prizes)
-            .Include(x => x.Results)
-            .AsQueryable();
+        var query = _db.Games.AsQueryable();
 
-        // TODO: This wont use the index. Best looking into collation
-        if (name != null)
+        if ((selectionsFilter?.Include) ?? false)
         {
-            query = query.Where(g => EF.Functions.ILike(g.Name, $"%{name}%"));
+            query = query.Include(x => x.Selections.Where(s =>
+                !selectionsFilter.State.HasValue || s.State == selectionsFilter.State));
+        }
+        if ((prizesFilter?.Include) ?? false)
+        {
+            query = query.Include(x => x.Prizes.Where(p =>
+                !prizesFilter.State.HasValue || p.State == prizesFilter.State));
+        }
+        if ((resultsFilter?.Include) ?? false)
+        {
+            query = query.Include(x => x.Results.Where(r =>
+                !resultsFilter.State.HasValue || r.State == resultsFilter.State));
         }
 
-        // TODO: Figure a better, more extendable way of building this criteria
+        // TODO: This wont use the index. Best looking into collation
+        if (gamesFilter.Name != null)
+        {
+            query = query.Where(g => EF.Functions.ILike(g.Name, $"%{gamesFilter.Name}%"));
+        }
 
+        // TODO: Figure a better, more extendable way of building these filters
+        var states = gamesFilter.GameStates;
+        var sortBy = gamesFilter.SortBy.Column;
+        var sortDirection = gamesFilter.SortBy.Direction;
         if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))
         {
             // all to be included, so no filters to apply here
@@ -138,7 +145,7 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         return (games, total);
     }
 
-    internal async Task<GameEntity> UpdateGame(GameEntity game)
+    public async Task<GameEntity> UpdateGame(GameEntity game)
     {
         _db.Games.Update(game);
 

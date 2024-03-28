@@ -72,10 +72,31 @@ public class GameService(GameRepository gameRepository, UserService userService,
         var (games, total) = await _gameRepository.SearchGames(
             request.Query.Page,
             request.Query.Limit,
-            name: request.Query.Name,
-            request.Query.GameStates,
-            sortBy: (SearchGames.SortCriteria)request.Query.SortBy,
-            sortDirection: (DB.Repositories.Common.SortDirection)request.Query.SortDirection);
+            gamesFilter: new SearchGames.GamesFilter
+            {
+                Name = request.Query.Name,
+                GameStates = request.Query.GameStates,
+                SortBy = new SearchGames.GamesSorting()
+                {
+                    Column = (SearchGames.SortCriteria)request.Query.SortBy,
+                    Direction = (DB.Repositories.Common.SortDirection)request.Query.SortDirection
+                },
+            },
+            selectionsFilter: new SearchGames.SelectionsFilter
+            {
+                Include = true,
+                State = ItemState.Enabled,
+            },
+            prizesFilter: new SearchGames.PrizesFilter
+            {
+                Include = true,
+                State = ItemState.Enabled,
+            },
+            resultsFilter: new SearchGames.ResultsFilter
+            {
+                Include = true,
+                State = ItemState.Enabled,
+            });
 
         return new Result<SearchGamesResonse>
         {

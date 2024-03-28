@@ -29,6 +29,11 @@ type PostOptions = Partial<{
   onStatusCode: Record<number, StatusCodeHandler>;
 }>;
 
+type PutOptions = Partial<{
+  withCredentials: boolean;
+  onStatusCode: Record<number, StatusCodeHandler>;
+}>;
+
 type GetOptions = Partial<{
   onStatusCode: Record<number, StatusCodeHandler>;
   withCredentials: boolean;
@@ -45,6 +50,12 @@ export interface ApiServiceDefinition {
     url: string,
     query?: Query,
     options?: GetOptions
+  ): AsyncResult<Response>;
+
+  put<Request = unknown, Response = unknown>(
+    url: string,
+    request?: Request,
+    options?: PutOptions
   ): AsyncResult<Response>;
 }
 
@@ -64,6 +75,39 @@ export class ApiService implements ApiServiceDefinition {
     options?: PostOptions
   ): AsyncResult<Response> {
     const response = await this.api.post<
+      Response,
+      AxiosResponse<Response | BasicError>,
+      Request
+    >(url, request, {
+      withCredentials: options?.withCredentials,
+    });
+
+    options?.onStatusCode && options.onStatusCode[response.status]?.();
+
+    if (
+      response.status.toString().startsWith("2") &&
+      !isBasicError(response.data)
+    ) {
+      return {
+        success: true,
+        data: response.data,
+      };
+    }
+
+    return {
+      success: false,
+      error: isBasicError(response.data)
+        ? response.data
+        : { errors: [{ message: "Unknown error info received" }] },
+    };
+  }
+
+  async put<Request = unknown, Response = unknown>(
+    url: string,
+    request?: Request | undefined,
+    options?: PutOptions
+  ): AsyncResult<Response> {
+    const response = await this.api.put<
       Response,
       AxiosResponse<Response | BasicError>,
       Request

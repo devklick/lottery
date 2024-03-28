@@ -34,7 +34,7 @@ public class GameController(GameService gameService) : ApiControllerBase
     }
 
     [Authorize(Roles = "GameAdmin,SystemAdmin")]
-    [HttpPost("{id}")]
+    [HttpPost("{id}/edit")]
     public async Task<ActionResult<EditGameResponse>> EditGame(EditGameRequest request)
     {
         var response = await _gameService.EditGame(request, User);

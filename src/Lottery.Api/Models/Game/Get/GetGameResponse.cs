@@ -1,4 +1,5 @@
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Entities.Ref;
 
 namespace Lottery.Api.Models.Game.Get;
 
@@ -12,6 +13,7 @@ public class GetGameResponse
     public required string Name { get; set; }
     public required int SelectionsRequiredForEntry { get; set; }
     public required GameStatus GameStatus { get; set; }
+    public required ItemState State { get; set; }
     public List<Selection> Selections { get; set; } = [];
     public List<Prize> Prizes { get; set; } = [];
     public List<Result> Results { get; set; } = [];

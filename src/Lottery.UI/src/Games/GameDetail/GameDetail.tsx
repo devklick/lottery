@@ -25,6 +25,7 @@ const placeholders: GetGameResponse = {
   name: "Dummy Text",
   drawTime: new Date(),
   id: "dummy-id",
+  state: "enabled",
   closeTime: new Date(),
   resultedAt: new Date(),
   selectionsRequiredForEntry: 5,

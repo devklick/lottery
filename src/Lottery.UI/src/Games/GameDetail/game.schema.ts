@@ -1,8 +1,11 @@
 import { z } from "zod";
 import {
+  States,
+  camelCaseEnum,
   gameStateSchema,
   pagedRequestSchema,
   pagedResponseSchema,
+  stateSchema,
 } from "../../common/schemas";
 
 const getGameRequestRouteSchema = z.object({
@@ -22,6 +25,7 @@ export const getGameResponseSchema = z.object({
   name: z.string(),
   selectionsRequiredForEntry: z.number(),
   gameStatus: gameStateSchema,
+  state: camelCaseEnum(States),
   selections: z.array(
     z.object({
       id: z.string().uuid(),
