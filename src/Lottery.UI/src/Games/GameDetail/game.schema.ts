@@ -5,7 +5,6 @@ import {
   gameStateSchema,
   pagedRequestSchema,
   pagedResponseSchema,
-  stateSchema,
 } from "../../common/schemas";
 
 const getGameRequestRouteSchema = z.object({

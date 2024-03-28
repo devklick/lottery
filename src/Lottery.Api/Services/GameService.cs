@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Security.Claims;
 
 using AutoMapper;
@@ -10,6 +11,7 @@ using Lottery.Api.Models.Game.Get;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Repositories.Game;
 using Lottery.Api.Repositories.Game.Filters;
+using Lottery.Common.Extensions;
 using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
 
@@ -192,7 +194,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             };
         }
 
-        var entity = _mapper.MergeInto<Game>(current, request.Body);
+        var entity = _mapper.MergeInto<Game>(request.Body, current);
 
         var enabledSelectionsCount = entity.Selections.Count(s => s.State == ItemState.Enabled);
         // Remove any selections that are no longer required
@@ -210,12 +212,12 @@ public class GameService(GameRepository gameRepository, UserService userService,
         else if (request.Body.MaxSelections > enabledSelectionsCount)
         {
             // map the selections by selectionId. We may be able to re-enable some that are disabled
-            var keyed = entity.Selections.ToDictionary(key => key.SelectionNumber, value => value);
+            var keyedSelections = entity.Selections.ToDictionary(key => key.SelectionNumber, value => value);
 
             for (var selectionNumber = enabledSelectionsCount + 1; selectionNumber <= request.Body.MaxSelections; selectionNumber++)
             {
                 // If it exists, enable it
-                if (keyed.TryGetValue(selectionNumber, out GameSelection? selection))
+                if (keyedSelections.TryGetValue(selectionNumber, out GameSelection? selection))
                 {
                     selection.State = ItemState.Enabled;
                 }
@@ -227,6 +229,40 @@ public class GameService(GameRepository gameRepository, UserService userService,
                 });
 
             }
+        }
+
+        var keyedPrizes = entity.Prizes.ToDictionary(key => key.Position, value => value);
+        var keyedReqPrizes = request.Body.Prizes.ToDictionary(key => key.Position, value => value);
+
+        // For each prize that already exists
+        foreach (var prize in entity.Prizes)
+        {
+            // if it exists on the request, update it and enable it
+            if (keyedReqPrizes.TryGetValue(prize.Position, out var reqPrize))
+            {
+                prize.State = ItemState.Enabled;
+                prize.NumberMatchCount = reqPrize.NumberMatchCount;
+            }
+            // otherwise, disable it.
+            else prize.State = ItemState.Disabled;
+        }
+
+        // for each prize in the request
+        foreach (var reqPrize in request.Body.Prizes)
+        {
+            // If it exists on the entity, update it and enable it
+            if (keyedPrizes.TryGetValue(reqPrize.Position, out var entityPrize))
+            {
+                entityPrize.State = ItemState.Enabled;
+                entityPrize.NumberMatchCount = reqPrize.NumberMatchCount;
+            }
+            // Otherwise add it
+            else entity.Prizes.Add(new GamePrize
+            {
+                GameId = entity.Id,
+                Position = reqPrize.Position,
+                NumberMatchCount = reqPrize.NumberMatchCount
+            });
         }
 
         await _gameRepository.UpdateGame(entity);

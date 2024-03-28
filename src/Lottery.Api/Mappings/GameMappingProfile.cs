@@ -51,6 +51,8 @@ public class GameMappingProfile : AutoMapper.Profile
     private void MapModelsForEdit()
     {
         CreateMap<EditGameRequestBody, DB.Entities.Dbo.Game>();
+        CreateMap<EditGameRequestBody.Prize, DB.Entities.Dbo.GamePrize>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<DB.Entities.Dbo.Game, EditGameResponse>();
         CreateMap<DB.Entities.Dbo.GameResult, EditGameResponse.Result>();
         CreateMap<DB.Entities.Dbo.GamePrize, EditGameResponse.Prize>();

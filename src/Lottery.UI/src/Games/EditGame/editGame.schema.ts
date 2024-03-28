@@ -1,26 +1,3 @@
-/*
-    [Required, CompareWithOther(ComparisonType.LessThan, nameof(CloseTime))]
-    public required DateTime StartTime { get; set; }
-
-    [Required, CompareWithOther(ComparisonType.LessThanOrEqual, nameof(CloseTime))]
-    public required DateTime CloseTime { get; set; }
-
-    [Required]
-    public required DateTime DrawTime { get; set; }
-
-    [Required]
-    public required string Name { get; set; }
-
-    [Required, CompareWithOther(ComparisonType.LessThanOrEqual, nameof(MaxSelections))]
-    public int SelectionsRequiredForEntry { get; set; }
-
-    [Required, Range(0, 100)]
-    public int? MaxSelections { get; set; }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ItemState State { get; set; }
-*/
-
 import { z } from "zod";
 import { stateSchema } from "../../common/schemas";
 
@@ -58,6 +35,56 @@ export const editGameRequestBodySchema = z
           path: ["prizes", i, "numberMatchCount"],
         });
       }
+    });
+  })
+  .superRefine(({ prizes }, ctx) => {
+    prizes.forEach((prize, i) => {
+      if (prizes.filter((p) => p.position === prize.position).length > 1) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Same position used multiple times",
+          path: [`prizes`, i, `position`],
+        });
+      }
+      if (
+        prizes.filter((p) => p.numberMatchCount === prize.numberMatchCount)
+          .length > 1
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Same match count used multiple times",
+          path: [`prizes`, i, `numberMatchCount`],
+        });
+      }
+    });
+  })
+  .superRefine(({ prizes }, ctx) => {
+    const indexed = prizes
+      .map((prize, index) => ({ prize, index }))
+      .sort((a, b) => a.prize.position - b.prize.position);
+    const min = indexed[0];
+    if (min.prize.position !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        message: "A prize for first position is required",
+        path: ["prizes", min.index, "position"],
+      });
+    }
+  })
+  .superRefine(({ prizes }, ctx) => {
+    const indexed = prizes
+      .map((prize, index) => ({ prize, index }))
+      .sort((a, b) => a.prize.position - b.prize.position);
+    let prev = indexed[0].prize.position - 1;
+    indexed.forEach(({ prize, index }) => {
+      if (prize.position != prev + 1) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Prize positions should run in sequence",
+          path: ["prizes", index, "position"],
+        });
+      }
+      prev = prize.position;
     });
   });
 

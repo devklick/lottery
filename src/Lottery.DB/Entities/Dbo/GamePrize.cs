@@ -12,9 +12,6 @@ namespace Lottery.DB.Entities.Dbo;
 // Only prizes with one combination of game + position can be allowed. 
 // Have a game with multiple prizes using the same position will not result properly.
 [Index(nameof(GameId), nameof(Position), IsUnique = true)]
-// Only prizes with one combination of game + number match count can be allowed. 
-// Have a game with multiple prizes using the same position will not result properly.
-[Index(nameof(GameId), nameof(NumberMatchCount), IsUnique = true)]
 /// <summary>
 /// An entity representing a prize that can be won during a game
 /// based on whether or not any players predict the correct numbers.
@@ -48,7 +45,7 @@ public class GamePrize : EntityObject
     /// Although this will always exist, it may be null if not included
     /// in the query that's fetching the prize.
     /// </summary>
-    public required Game Game { get; set; }
+    public Game Game { get; set; } = default!;
 
     /// <summary>
     /// The entries that won this prize, if any.

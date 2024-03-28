@@ -71,6 +71,7 @@ function EditGame({}: EditGameProps) {
   const form = useForm<EditGameRequestBody>({
     validate: zodResolver(editGameRequestBodySchema),
     validateInputOnChange: true,
+    validateInputOnBlur: true,
     initialValues: {
       closeTime: query.data?.closeTime ?? placeholders.closeTime,
       drawTime: query.data?.drawTime ?? placeholders.drawTime,
@@ -91,6 +92,7 @@ function EditGame({}: EditGameProps) {
       form.setValues({
         ...query.data,
         maxSelections: query.data.selections.length,
+        prizes: query.data.prizes.sort((a, b) => a.position - b.position),
       });
     }
   }, [query.isLoading, query.data]);
@@ -208,47 +210,45 @@ function EditGame({}: EditGameProps) {
                 </Grid.Col>
 
                 {/* Updating prizes not yet supported on the server side. Changes will be ignored */}
-                {form.values.prizes
-                  .sort((a, b) => a.position - b.position)
-                  .map((_, index) => (
-                    <React.Fragment key={`prize-${index}`}>
-                      <Grid.Col
-                        key={`prize-${index}-position`}
-                        mt={"xs"}
-                        span={6}
-                      >
-                        <Skeleton visible={query.isLoading}>
-                          <NumberInput
-                            {...form.getInputProps(`prizes.${index}.position`)}
-                            leftSection={
-                              <ActionIcon
-                                variant="transparent"
-                                onClick={() =>
-                                  form.removeListItem("prizes", index)
-                                }
-                                disabled={form.values.prizes.length <= 1}
-                              >
-                                <IconTrash />
-                              </ActionIcon>
-                            }
-                          />
-                        </Skeleton>
-                      </Grid.Col>
-                      <Grid.Col
-                        key={`prize-${index}-numberMatchCount`}
-                        mt={"xs"}
-                        span={6}
-                      >
-                        <Skeleton visible={query.isLoading}>
-                          <NumberInput
-                            {...form.getInputProps(
-                              `prizes.${index}.numberMatchCount`
-                            )}
-                          />
-                        </Skeleton>
-                      </Grid.Col>
-                    </React.Fragment>
-                  ))}
+                {form.values.prizes.map((_, index) => (
+                  <React.Fragment key={`prize-${index}`}>
+                    <Grid.Col
+                      key={`prize-${index}-position`}
+                      mt={"xs"}
+                      span={6}
+                    >
+                      <Skeleton visible={query.isLoading}>
+                        <NumberInput
+                          {...form.getInputProps(`prizes.${index}.position`)}
+                          leftSection={
+                            <ActionIcon
+                              variant="transparent"
+                              onClick={() =>
+                                form.removeListItem("prizes", index)
+                              }
+                              disabled={form.values.prizes.length <= 1}
+                            >
+                              <IconTrash />
+                            </ActionIcon>
+                          }
+                        />
+                      </Skeleton>
+                    </Grid.Col>
+                    <Grid.Col
+                      key={`prize-${index}-numberMatchCount`}
+                      mt={"xs"}
+                      span={6}
+                    >
+                      <Skeleton visible={query.isLoading}>
+                        <NumberInput
+                          {...form.getInputProps(
+                            `prizes.${index}.numberMatchCount`
+                          )}
+                        />
+                      </Skeleton>
+                    </Grid.Col>
+                  </React.Fragment>
+                ))}
               </Grid>
               <Group justify="center" mt={"md"}>
                 <Button
