@@ -140,6 +140,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
 
     public async Task<Result<EditEntryResponse>> EditEntry(EditEntryRequest request, ClaimsPrincipal user)
     {
+        // get the player
         var userIdResult = _userService.GetUserId(user);
         if (userIdResult.Status != ResultStatus.Ok)
         {
@@ -150,6 +151,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
+        // get the players entry
         var entry = await _entryRepository.GetEntry(request.Route.EntryId,
             gamesFilter: new GetEntry.GameFilter
             {
@@ -162,10 +164,10 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             },
             selectionsFilter: new GetEntry.SelectionsFilter
             {
-                Include = true,
-                State = ItemState.Enabled
+                Include = true
             });
 
+        // Make sure it's a valid entry for this player
         if (entry == null || entry.CreatedById != userIdResult.Value)
         {
             return new Result<EditEntryResponse>
@@ -175,6 +177,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
+        // Make sure the requets has the right number of selections
         if (entry.Game.SelectionsRequiredForEntry != request.Body.Selections.Count)
         {
             return new Result<EditEntryResponse>
@@ -184,6 +187,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
+        // Disable all the current selections
         foreach (var selection in entry.Selections)
         {
             selection.State = ItemState.Disabled;
@@ -194,10 +198,12 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
 
         foreach (var selection in request.Body.Selections)
         {
+            // If an entry selection already exists for this selection number, enable it
             if (indexedEs.TryGetValue(selection.SelectionNumber, out var es))
             {
                 es.State = ItemState.Enabled;
             }
+            // If it doesnt exist, add it
             else if (indexedGs.TryGetValue(selection.SelectionNumber, out var gs))
             {
                 entry.Selections.Add(new EntrySelection
@@ -207,6 +213,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
                     GameSelectionId = gs.Id,
                 });
             }
+            // If it's a selection number that doesnt exist on the game, return error
             else return new Result<EditEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
@@ -215,6 +222,10 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         }
 
         await _entryRepository.UpdateEntry(entry);
+
+        // The selections list currently includes disabled ones. 
+        // Inlcude only enabled entry selections in the response
+        entry.Selections = entry.Selections.Where(s => s.State == ItemState.Enabled).ToList();
 
         return new Result<EditEntryResponse>
         {
