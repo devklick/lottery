@@ -41,19 +41,41 @@ public class EntryRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCont
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<(IEnumerable<EntryEntity> Entries, int Total)> SearchEntries(Guid userId, Guid? gameId, int page, int limit)
+    public async Task<(IEnumerable<EntryEntity> Entries, int Total)> SearchEntries(
+        int page, int limit,
+        SearchEntries.EntryFilter? entryFilter = null,
+        SearchEntries.GameFilter? gameFilter = null,
+        SearchEntries.PrizeFilter? prizeFilter = null,
+        SearchEntries.SelectionsFilter? selectionsFilter = null)
     {
-        var query = _db.Entries
-            .Include(entry => entry.Prize)
-            .ThenInclude(prize => prize.GamePrize)
-            .Include(entry => entry.Selections)
-            .ThenInclude(selection => selection.GameSelection)
-            .Where(e => e.CreatedById == userId)
-            .AsQueryable();
+        var query = _db.Entries.AsQueryable();
 
-        if (gameId.HasValue)
+        if (entryFilter != null)
         {
-            query = query.Where(e => e.GameId == gameId);
+            query = query.Where(e =>
+                (!entryFilter.State.HasValue || entryFilter.State == e.State)
+                && (!entryFilter.UserId.HasValue || entryFilter.UserId == e.CreatedById));
+        }
+
+        if (gameFilter != null)
+        {
+            if (gameFilter.Include) query = query.Include(e => e.Game);
+            query = query.Where(e =>
+                (!gameFilter.GameId.HasValue || e.GameId == gameFilter.GameId)
+                && (!gameFilter.State.HasValue || e.Game.State == gameFilter.State));
+        }
+
+        if (prizeFilter != null)
+        {
+            if (prizeFilter.Include) query = query.Include(e => e.Prize).ThenInclude(p => p.GamePrize);
+            query = query.Where(e => e.Prize == null || !prizeFilter.State.HasValue || e.Prize.State == prizeFilter.State);
+        }
+
+        if (selectionsFilter != null)
+        {
+            if (selectionsFilter.Include) query = query.Include(e =>
+                e.Selections.Where(s => !selectionsFilter.State.HasValue || s.State == selectionsFilter.State))
+                .ThenInclude(s => s.GameSelection);
         }
 
         query = query.OrderByDescending(e => e.CreatedOnUtc);
