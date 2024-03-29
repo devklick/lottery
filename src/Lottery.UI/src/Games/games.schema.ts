@@ -1,31 +1,10 @@
 import { z } from "zod";
 import {
+  gameStatusSchema,
   pagedRequestSchema,
   pagedResponseSchema,
   sortDirectionSchema,
 } from "../common/schemas";
-
-export const GameStates = {
-  Future: "future",
-  Open: "open",
-  Resulted: "resulted",
-  Closed: "closed",
-} as const;
-
-export const allGameStates = Object.keys(GameStates);
-
-export const gameStateSchema = z.nativeEnum(GameStates);
-export type GameState = z.infer<typeof gameStateSchema>;
-
-export const LabelledGameStates: Record<
-  GameState,
-  { label: string; value: GameState }
-> = {
-  open: { label: "Current Games", value: "open" },
-  future: { label: "Future Games", value: "future" },
-  resulted: { label: "Past Games", value: "resulted" },
-  closed: { label: "Closed Games", value: "closed" },
-};
 
 export const SortByValues = {
   DrawTime: "drawTime",
@@ -49,7 +28,7 @@ export const LabelledSortByValues: Record<
 };
 
 export const searchGamesRequestFilterSchema = z.object({
-  gameStates: z.array(gameStateSchema),
+  gameStatus: z.array(gameStatusSchema),
   sortBy: sortBySchema,
   sortDirection: sortDirectionSchema,
   name: z.string().optional(),
@@ -66,6 +45,7 @@ export const searchGamesResponseItemSchema = z.object({
   closeTime: z.string().pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
   selectionsRequiredForEntry: z.number(),
+  gameStatus: gameStatusSchema,
   selections: z.array(
     z.object({
       id: z.string().uuid(),

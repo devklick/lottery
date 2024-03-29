@@ -16,7 +16,7 @@ public class SearchGames
     public class GamesFilter
     {
         public string? Name { get; set; }
-        public List<GameStatus> GameStates { get; set; } = [GameStatus.Open];
+        public List<GameStatus> GameStatus { get; set; } = [DB.Entities.Dbo.GameStatus.Open];
         public GamesSorting SortBy { get; set; } = new GamesSorting
         {
             Column = SortCriteria.DrawTime,

@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   States,
   camelCaseEnum,
-  gameStateSchema,
+  gameStatusSchema,
   pagedRequestSchema,
   pagedResponseSchema,
 } from "../../common/schemas";
@@ -23,7 +23,7 @@ export const getGameResponseSchema = z.object({
   resultedAt: z.string().nullable().pipe(z.coerce.date()),
   name: z.string(),
   selectionsRequiredForEntry: z.number(),
-  gameStatus: gameStateSchema,
+  gameStatus: gameStatusSchema,
   state: camelCaseEnum(States),
   selections: z.array(
     z.object({

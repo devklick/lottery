@@ -16,10 +16,11 @@ import {
 } from "@mantine/core";
 import { GetGameResponse } from "./game.schema";
 import React from "react";
-import { GameState } from "../../common/schemas";
+import { GameStatus } from "../../common/schemas";
 import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
 import Trophy from "../../components/Trophy/Trophy";
+import GameStatusBadge from "../../components/GameStatusBadge";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -30,7 +31,7 @@ const placeholders: GetGameResponse = {
   resultedAt: new Date(),
   selectionsRequiredForEntry: 5,
   startTime: new Date(),
-  gameStatus: "future",
+  gameStatus: "open",
   results: [
     { id: "result-1", selectionNumber: 1 },
     { id: "result-2", selectionNumber: 2 },
@@ -50,24 +51,6 @@ const placeholders: GetGameResponse = {
   ],
 };
 
-function getStatusColor(status: GameState): MantineColor {
-  switch (status) {
-    case "closed":
-      return "orange";
-    case "future":
-      return "blue";
-    case "open":
-      return "green";
-    case "resulted":
-      return "grey";
-  }
-}
-
-function getStatusBadge(status: GameState | undefined) {
-  const s = status ?? placeholders.gameStatus;
-  return <Badge color={getStatusColor(s)}>{s}</Badge>;
-}
-
 interface Params extends Record<string, string | undefined> {
   id: string;
 }
@@ -82,8 +65,6 @@ function GameDetail({}: GameDetailProps) {
     queryFn: async () => await gameService.getGame({ route: { id: id! } }),
     refetchInterval: 0,
   });
-
-  const status = getStatusBadge(query.data?.gameStatus);
 
   const startTime = (
     <>
@@ -152,11 +133,10 @@ function GameDetail({}: GameDetailProps) {
       </Group>
 
       <Paper shadow="xl" p={24} radius={10}>
-        <Group justify="end">
-          <Skeleton w={100} visible={loading}>
-            {status}
-          </Skeleton>
-        </Group>
+        <GameStatusBadge
+          loading={query.isLoading}
+          state={query.data?.gameStatus}
+        />
         <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
             <Skeleton visible={loading}>
@@ -183,11 +163,13 @@ function GameDetail({}: GameDetailProps) {
           </Grid.Col>
         </Grid>
 
-        <YourEntries
-          gameId={id!}
-          gamePrizes={query.data?.prizes ?? []}
-          winningSelections={query.data?.results}
-        />
+        {query.data?.gameStatus == "open" && (
+          <YourEntries
+            gameId={id!}
+            gamePrizes={query.data?.prizes ?? []}
+            winningSelections={query.data?.results}
+          />
+        )}
 
         {query.data?.gameStatus == "open" && (
           <CreateEntry

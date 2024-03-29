@@ -77,7 +77,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             gamesFilter: new SearchGames.GamesFilter
             {
                 Name = request.Query.Name,
-                GameStates = request.Query.GameStates,
+                GameStatus = request.Query.GameStatus,
                 SortBy = new SearchGames.GamesSorting()
                 {
                     Column = (SearchGames.SortCriteria)request.Query.SortBy,

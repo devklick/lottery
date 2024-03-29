@@ -8,7 +8,7 @@ namespace Lottery.Api.Models.Game.Search;
 public class SearchGamesRequestQuery : PagedRequest
 {
     public string? Name { get; set; }
-    public List<GameStatus> GameStates { get; set; } = [GameStatus.Open];
+    public List<GameStatus> GameStatus { get; set; } = [DB.Entities.Dbo.GameStatus.Open];
     public SortCriteria SortBy { get; set; } = SortCriteria.DrawTime;
     public SortDirection SortDirection { get; set; } = SortDirection.Asc;
 

@@ -8,6 +8,8 @@ using Lottery.DB.Entities.Idt;
 using Lottery.DB.Extensions;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Repositories.Game;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lottery.Api;
 
@@ -43,6 +45,11 @@ public class Program
         builder.Services.Configure<UserServiceOptions>(
             builder.Configuration.GetSection(UserServiceOptions.Name));
 
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+        {
+            options.LoginPath = "/account/signIn";
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -55,6 +62,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();

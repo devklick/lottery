@@ -25,6 +25,7 @@ const placeholder: Array<SearchGamesResponseItem> = Array.from<
   name: "Skeleton",
   startTime: new Date(),
   closeTime: new Date(),
+  gameStatus: "closed",
   drawTime: new Date(),
   id: i.toString(),
   prizes: [],
@@ -38,7 +39,7 @@ function Games({}: GamesProps) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(12);
   const [filters, setFilters] = useState<SearchGamesRequestFilter>({
-    gameStates: ["open", "future"],
+    gameStatus: ["open", "future"],
     sortBy: "drawTime",
     sortDirection: "desc",
     name: "",
@@ -50,7 +51,7 @@ function Games({}: GamesProps) {
       "search",
       page,
       limit,
-      filters.gameStates,
+      filters.gameStatus,
       filters.name,
       filters.sortBy,
       filters.sortDirection,
@@ -59,7 +60,7 @@ function Games({}: GamesProps) {
       gameService.searchGames({
         limit,
         page,
-        gameStates: filters.gameStates,
+        gameStatus: filters.gameStatus,
         sortBy: filters.sortBy,
         sortDirection: filters.sortDirection,
         name: filters.name,
@@ -79,7 +80,12 @@ function Games({}: GamesProps) {
               style={{ alignSelf: "stretch" }}
               span={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}
             >
-              <GameCard key={i} {...game} loading={query.isLoading} />
+              <GameCard
+                key={i}
+                {...game}
+                gameStatus={game.gameStatus}
+                loading={query.isLoading}
+              />
             </Grid.Col>
           ))}
         </Grid>

@@ -35,17 +35,17 @@ export const allStatesWithLabel: Record<State, ValueAndLabel<State>> = {
 //#endregion
 
 // region ======== Game State ========
-export const GameStates = {
+export const GameStatuses = {
   Future: "future",
   Open: "open",
   Closed: "closed",
   Resulted: "resulted",
 } as const;
-export const allGameStates = Object.keys(GameStates);
-export const gameStateSchema = camelCaseEnum(GameStates);
+export const allGameStatuses = Object.keys(GameStatuses);
+export const gameStatusSchema = camelCaseEnum(GameStatuses);
 
-export type GameState = z.infer<typeof gameStateSchema>;
-export const allGameStatesWithLabels: ValuesAndLabels<GameState> = {
+export type GameStatus = z.infer<typeof gameStatusSchema>;
+export const allGameStatusesWithLabels: ValuesAndLabels<GameStatus> = {
   closed: { value: "closed", label: "Closed" },
   open: { value: "open", label: "Open" },
   future: { value: "future", label: "Future" },

@@ -88,7 +88,8 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         }
 
         // TODO: Figure a better, more extendable way of building these filters
-        var states = gamesFilter.GameStates;
+        // TODO: Need to update these status filters to handle closed status
+        var states = gamesFilter.GameStatus;
         var sortBy = gamesFilter.SortBy.Column;
         var sortDirection = gamesFilter.SortBy.Direction;
         if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))

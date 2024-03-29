@@ -10,7 +10,7 @@ public class SearchGamesResponseItem
     public required DateTime CloseTime { get; set; }
     public required DateTime DrawTime { get; set; }
     public required int SelectionsRequiredForEntry { get; set; }
-    public required GameStatus GameState { get; set; }
+    public required GameStatus GameStatus { get; set; }
     public required List<Selection> Selections { get; set; }
     public required List<Result> Results { get; set; }
     public required List<Prize> Prizes { get; set; }

@@ -14,12 +14,14 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import {
-  LabelledGameStates,
   LabelledSortByValues,
   SearchGamesRequestFilter,
   searchGamesRequestFilterSchema,
 } from "./games.schema";
-import { allSortDirectionsWithLabel } from "../common/schemas";
+import {
+  allGameStatusesWithLabels,
+  allSortDirectionsWithLabel,
+} from "../common/schemas";
 
 interface GameFiltersProps {
   initialValues: SearchGamesRequestFilter;
@@ -51,9 +53,9 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
             <Grid.Col key={"status"} {...colProps}>
               <MultiSelect
                 label="Game States"
-                {...form.getInputProps("gameStates")}
+                {...form.getInputProps("gameStatus")}
                 style={{ textAlign: "left" }}
-                data={Object.values(LabelledGameStates)}
+                data={Object.values(allGameStatusesWithLabels)}
               />
             </Grid.Col>
             <Grid.Col key="sortby" {...colProps}>

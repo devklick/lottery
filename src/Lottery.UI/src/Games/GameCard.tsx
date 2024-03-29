@@ -12,6 +12,9 @@ import {
 import { IconBriefcase, IconEdit, IconRotate2 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/user.store";
+import GameStatusBadge from "../components/GameStatusBadge";
+import { useEffect } from "react";
+import { GameStatus } from "../common/schemas";
 
 interface GameCardProps {
   id: string;
@@ -20,6 +23,7 @@ interface GameCardProps {
   closeTime: Date;
   drawTime: Date;
   loading: boolean;
+  gameStatus: GameStatus;
 }
 
 function formatDate(date: Date) {
@@ -36,8 +40,12 @@ function GameCard({
   startTime,
   closeTime,
   drawTime,
+  gameStatus,
   loading,
 }: GameCardProps) {
+  useEffect(() => {
+    console.log("GameCard, state", gameStatus);
+  }, [gameStatus]);
   const navigate = useNavigate();
   const theme = useMantineTheme();
   const { isUserType } = useUserStore();
@@ -53,6 +61,11 @@ function GameCard({
 
       <Card.Section h={"100%"} withBorder inheritPadding py={"xs"}>
         <Stack py={"xs"} gap={"xs"} align="start">
+          <GameStatusBadge
+            loading={loading}
+            state={gameStatus}
+            groupProps={{ justify: "center", w: "100%" }}
+          />
           <Skeleton visible={loading}>
             <Group>
               <Text c="dimmed">Starts on:</Text>
@@ -79,7 +92,7 @@ function GameCard({
           <Skeleton visible={loading}>
             <Group>
               <Button fullWidth onClick={() => navigate(`/games/${id}`)}>
-                Play
+                {gameStatus == "open" ? "Play" : "View"}
               </Button>
             </Group>
           </Skeleton>
