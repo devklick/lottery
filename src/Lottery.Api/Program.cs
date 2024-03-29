@@ -10,6 +10,7 @@ using Lottery.Api.Services.Options;
 using Lottery.Api.Repositories.Game;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Lottery.Api.Repositories.Entry;
 
 namespace Lottery.Api;
 

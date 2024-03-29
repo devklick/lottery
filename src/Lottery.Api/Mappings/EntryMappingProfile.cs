@@ -1,5 +1,6 @@
 
 using Lottery.Api.Models.Entry.Create;
+using Lottery.Api.Models.Entry.Edit;
 using Lottery.Api.Models.Entry.Search;
 
 namespace Lottery.Api.Mappings;
@@ -10,6 +11,7 @@ public class EntryMappingProfile : AutoMapper.Profile
     {
         MapModelsForCreate();
         MapModelsForGet();
+        MapModelsForEdit();
     }
 
     private void MapModelsForCreate()
@@ -35,6 +37,11 @@ public class EntryMappingProfile : AutoMapper.Profile
         CreateMap<DB.Entities.Dbo.GameSelection, SearchEntriesResponseItem.Selection>();
         CreateMap<DB.Entities.Dbo.EntryPrize, SearchEntriesResponseItem.EntryPrize>();
 
+    }
+
+    public void MapModelsForEdit()
+    {
+        CreateMap<DB.Entities.Dbo.Entry, EditEntryResponse>();
     }
 
 }

@@ -1,4 +1,5 @@
 using Lottery.Api.Models.Entry.Create;
+using Lottery.Api.Models.Entry.Edit;
 using Lottery.Api.Models.Entry.Search;
 using Lottery.Api.Services;
 
@@ -26,6 +27,14 @@ public class EntryController(EntryService entryService) : ApiControllerBase
     public async Task<ActionResult<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request)
     {
         var result = await _entryService.SearchEntries(request, User);
+
+        return CreateActionResult(result);
+    }
+
+    [HttpPost("{entryId}/edit")]
+    public async Task<ActionResult<EditEntryResponse>> EditEntry(EditEntryRequest request)
+    {
+        var result = await _entryService.EditEntry(request, User);
 
         return CreateActionResult(result);
     }
