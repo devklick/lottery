@@ -57,15 +57,15 @@ function GameCard({
             <Text fw={500}>{name}</Text>
           </Skeleton>
         </Group>
+        <GameStatusBadge
+          loading={loading}
+          state={gameStatus}
+          groupProps={{ justify: "center", w: "100%" }}
+        />
       </Card.Section>
 
       <Card.Section h={"100%"} withBorder inheritPadding py={"xs"}>
         <Stack py={"xs"} gap={"xs"} align="start">
-          <GameStatusBadge
-            loading={loading}
-            state={gameStatus}
-            groupProps={{ justify: "center", w: "100%" }}
-          />
           <Skeleton visible={loading}>
             <Group>
               <Text c="dimmed">Starts on:</Text>

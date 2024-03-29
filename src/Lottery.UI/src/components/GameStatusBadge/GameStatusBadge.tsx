@@ -19,7 +19,7 @@ interface GameStatusBadgeProps {
   };
 }
 
-function getStatusColor(status: GameStatus): MantineColor {
+export function getStatusColor(status: GameStatus): MantineColor {
   switch (status) {
     case "closed":
       return "orange";
