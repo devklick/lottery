@@ -92,3 +92,110 @@ export type SearchGamesResponseItem = z.infer<
   typeof searchGamesResponseItemSchema
 >;
 export type SearchGamesResponse = z.infer<typeof searchGamesResponseSchema>;
+
+// shared validation functions
+
+export function validateSelectionsRequiredForEntry(
+  {
+    selectionsRequiredForEntry,
+    maxSelections,
+  }: { selectionsRequiredForEntry: number; maxSelections: number },
+  ctx: z.RefinementCtx
+) {
+  if (selectionsRequiredForEntry > maxSelections) {
+    ctx.addIssue({
+      code: "too_big",
+      path: ["selectionsRequiredForEntry"],
+      message: "Cannot be greater than the maximum selections",
+      maximum: maxSelections,
+      type: "number",
+      inclusive: true,
+    });
+  }
+}
+
+export function validateNumberMatchCount(
+  {
+    prizes,
+    selectionsRequiredForEntry,
+  }: {
+    prizes: Array<{ numberMatchCount: number }>;
+    selectionsRequiredForEntry: number;
+  },
+  ctx: z.RefinementCtx
+) {
+  prizes.forEach(({ numberMatchCount }, i) => {
+    if (numberMatchCount > selectionsRequiredForEntry) {
+      ctx.addIssue({
+        type: "number",
+        code: z.ZodIssueCode.too_big,
+        maximum: selectionsRequiredForEntry,
+        inclusive: true,
+        message: "Cannot be greater than the number of selections per entry",
+        path: ["prizes", i, "numberMatchCount"],
+      });
+    }
+  });
+}
+
+export function validateUniquePrizes(
+  { prizes }: { prizes: Array<{ position: number; numberMatchCount: number }> },
+  ctx: z.RefinementCtx
+) {
+  prizes.forEach((prize, i) => {
+    if (prizes.filter((p) => p.position === prize.position).length > 1) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Same position used multiple times",
+        path: [`prizes`, i, `position`],
+      });
+    }
+    if (
+      prizes.filter((p) => p.numberMatchCount === prize.numberMatchCount)
+        .length > 1
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Same match count used multiple times",
+        path: [`prizes`, i, `numberMatchCount`],
+      });
+    }
+  });
+}
+
+export function validatePrizesStartFromOne(
+  { prizes }: { prizes: Array<{ position: number }> },
+  ctx: z.RefinementCtx
+) {
+  const indexed = prizes
+    .map((prize, index) => ({ prize, index }))
+    .sort((a, b) => a.prize.position - b.prize.position);
+  const min = indexed[0];
+  if (min.prize.position !== 1) {
+    ctx.addIssue({
+      code: "custom",
+      message: "A prize for first position is required",
+      path: ["prizes", min.index, "position"],
+    });
+  }
+}
+
+export function validatePrizesSequential(
+  { prizes }: { prizes: Array<{ position: number }> },
+  ctx: z.RefinementCtx
+) {
+  const indexed = prizes
+    .map((prize, index) => ({ prize, index }))
+    .sort((a, b) => a.prize.position - b.prize.position);
+  let prev = indexed[0].prize.position - 1;
+  indexed.forEach(({ prize, index }) => {
+    if (prize.position != prev + 1) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Prize positions should run in sequence",
+        path: ["prizes", index, "position"],
+      });
+    }
+    prev = prize.position;
+  });
+}

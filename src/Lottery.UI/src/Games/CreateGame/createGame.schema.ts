@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { stateSchema } from "../../common/schemas";
+import {
+  validateNumberMatchCount,
+  validatePrizesSequential,
+  validatePrizesStartFromOne,
+  validateSelectionsRequiredForEntry,
+  validateUniquePrizes,
+} from "../games.schema";
 
 export const createGamePrizeRequestSchema = z.object({
   position: z.number().positive().min(1),
@@ -21,24 +28,11 @@ export const createGameRequestSchema = z
     selectionsRequiredForEntry: z.number().positive().min(3).max(100),
     prizes: createGamePrizesRequestSchema,
   })
-  .refine((data) => data.selectionsRequiredForEntry <= data.maxSelections, {
-    path: ["selectionsRequiredForEntry"],
-    message: "Cannot be greater than the maximum selections",
-  })
-  .superRefine(({ prizes, selectionsRequiredForEntry }, ctx) => {
-    prizes.forEach(({ numberMatchCount }, i) => {
-      if (numberMatchCount > selectionsRequiredForEntry) {
-        ctx.addIssue({
-          type: "number",
-          code: z.ZodIssueCode.too_big,
-          maximum: selectionsRequiredForEntry,
-          inclusive: true,
-          message: "Cannot be greater than the number of selections per entry",
-          path: ["prizes", i, "numberMatchCount"],
-        });
-      }
-    });
-  });
+  .superRefine(validateSelectionsRequiredForEntry)
+  .superRefine(validateNumberMatchCount)
+  .superRefine(validateUniquePrizes)
+  .superRefine(validatePrizesStartFromOne)
+  .superRefine(validatePrizesSequential);
 
 export const createGameResponseSchema = z.object({
   id: z.string().uuid(),

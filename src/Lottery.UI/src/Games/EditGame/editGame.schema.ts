@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { stateSchema } from "../../common/schemas";
+import {
+  validateNumberMatchCount,
+  validatePrizesSequential,
+  validatePrizesStartFromOne,
+  validateSelectionsRequiredForEntry,
+  validateUniquePrizes,
+} from "../games.schema";
 
 export const editGamePrizeRequestSchema = z.object({
   position: z.number().positive().min(1),
@@ -19,74 +26,11 @@ export const editGameRequestBodySchema = z
     prizes: editGamePrizesRequestSchema,
     name: z.string().min(3).max(64),
   })
-  .refine((data) => data.selectionsRequiredForEntry <= data.maxSelections, {
-    path: ["selectionsRequiredForEntry"],
-    message: "Cannot be greater than the maximum selections",
-  })
-  .superRefine(({ prizes, selectionsRequiredForEntry }, ctx) => {
-    prizes.forEach(({ numberMatchCount }, i) => {
-      if (numberMatchCount > selectionsRequiredForEntry) {
-        ctx.addIssue({
-          type: "number",
-          code: z.ZodIssueCode.too_big,
-          maximum: selectionsRequiredForEntry,
-          inclusive: true,
-          message: "Cannot be greater than the number of selections per entry",
-          path: ["prizes", i, "numberMatchCount"],
-        });
-      }
-    });
-  })
-  .superRefine(({ prizes }, ctx) => {
-    prizes.forEach((prize, i) => {
-      if (prizes.filter((p) => p.position === prize.position).length > 1) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Same position used multiple times",
-          path: [`prizes`, i, `position`],
-        });
-      }
-      if (
-        prizes.filter((p) => p.numberMatchCount === prize.numberMatchCount)
-          .length > 1
-      ) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Same match count used multiple times",
-          path: [`prizes`, i, `numberMatchCount`],
-        });
-      }
-    });
-  })
-  .superRefine(({ prizes }, ctx) => {
-    const indexed = prizes
-      .map((prize, index) => ({ prize, index }))
-      .sort((a, b) => a.prize.position - b.prize.position);
-    const min = indexed[0];
-    if (min.prize.position !== 1) {
-      ctx.addIssue({
-        code: "custom",
-        message: "A prize for first position is required",
-        path: ["prizes", min.index, "position"],
-      });
-    }
-  })
-  .superRefine(({ prizes }, ctx) => {
-    const indexed = prizes
-      .map((prize, index) => ({ prize, index }))
-      .sort((a, b) => a.prize.position - b.prize.position);
-    let prev = indexed[0].prize.position - 1;
-    indexed.forEach(({ prize, index }) => {
-      if (prize.position != prev + 1) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Prize positions should run in sequence",
-          path: ["prizes", index, "position"],
-        });
-      }
-      prev = prize.position;
-    });
-  });
+  .superRefine(validateSelectionsRequiredForEntry)
+  .superRefine(validateNumberMatchCount)
+  .superRefine(validateUniquePrizes)
+  .superRefine(validatePrizesStartFromOne)
+  .superRefine(validatePrizesSequential);
 
 export const editGameRequestRouteSchema = z.object({
   id: z.string().uuid(),
