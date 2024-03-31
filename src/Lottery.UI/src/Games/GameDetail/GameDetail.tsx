@@ -168,13 +168,16 @@ function GameDetail({}: GameDetailProps) {
             gameId={id!}
             gamePrizes={query.data?.prizes ?? []}
             winningSelections={query.data?.results}
+            gameSelections={query.data.selections}
           />
         )}
 
         {query.data?.gameStatus == "open" && (
           <CreateEntry
             gameId={id!}
-            selections={query.data?.selections!}
+            selectionNumbers={query.data?.selections.map(
+              (s) => s.selectionNumber
+            )}
             selectionsRequired={query.data?.selectionsRequiredForEntry!}
           />
         )}

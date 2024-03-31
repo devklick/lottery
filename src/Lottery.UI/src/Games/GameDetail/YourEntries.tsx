@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Anchor,
   Badge,
   Center,
@@ -15,15 +16,21 @@ import {
 } from "@mantine/core";
 import { useUserStore } from "../../stores/user.store";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { IconChevronDown, IconChevronUp, IconEdit } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "../gameService";
 import Trophy from "../../components/Trophy/Trophy";
+import EditEntry from "./EditEntry";
 
 interface YourEntriesProps {
-  winningSelections?: Array<{ id: string; selectionNumber: number }>;
-  gamePrizes: Array<{ id: string; position: number; numberMatchCount: number }>;
+  gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
+  winningSelections?: ReadonlyArray<{ id: string; selectionNumber: number }>;
+  gamePrizes: ReadonlyArray<{
+    id: string;
+    position: number;
+    numberMatchCount: number;
+  }>;
   gameId: string;
 }
 
@@ -31,11 +38,16 @@ function YourEntries({
   gameId,
   winningSelections,
   gamePrizes,
+  gameSelections,
 }: YourEntriesProps) {
   const user = useUserStore();
   const [opened, { toggle }] = useDisclosure(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
+  const [editTarget, setEditTarget] = useState<{
+    entryId: string;
+    selectionNumbers: ReadonlyArray<number>;
+  } | null>(null);
 
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -86,19 +98,6 @@ function YourEntries({
     );
   }
 
-  const entries = query.data?.items.map((entry) => (
-    <Skeleton key={entry.id} visible={query.isLoading}>
-      <Group justify="center">
-        {entry.selections
-          .sort((a, b) => a.selectionNumber - b.selectionNumber)
-          .map((selection) => getSelection(entry.id, selection))}
-        {getTrophy(entry.selections)}
-      </Group>
-    </Skeleton>
-  ));
-
-  const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
-
   function removeCurrentQuery() {
     queryClient.removeQueries({ queryKey: ["entries", gameId, page, limit] });
   }
@@ -112,6 +111,30 @@ function YourEntries({
     removeCurrentQuery();
     setPage(value);
   }
+
+  const entries = query.data?.items.map((entry) => (
+    <Skeleton key={entry.id} visible={query.isLoading}>
+      <Group justify="center">
+        {entry.selections
+          .sort((a, b) => a.selectionNumber - b.selectionNumber)
+          .map((selection) => getSelection(entry.id, selection))}
+        {getTrophy(entry.selections)}
+        <ActionIcon
+          variant="subtle"
+          onClick={() =>
+            setEditTarget({
+              entryId: entry.id,
+              selectionNumbers: entry.selections.map((s) => s.selectionNumber),
+            })
+          }
+        >
+          <IconEdit />
+        </ActionIcon>
+      </Group>
+    </Skeleton>
+  ));
+
+  const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
 
   const paginaton = (
     <Flex gap={"lg"} align={"center"}>
@@ -131,6 +154,10 @@ function YourEntries({
     </Flex>
   );
 
+  function handleEntryEdited() {
+    setEditTarget(null);
+  }
+
   return (
     <Stack align="center" justify="center" mt={50}>
       <Group style={{ alignSelf: "start" }} onClick={toggle}>
@@ -144,6 +171,14 @@ function YourEntries({
           </Text>
         ) : (
           <Center w={"100%"} mt={50}>
+            {editTarget && (
+              <EditEntry
+                selectedNumbers={editTarget.selectionNumbers}
+                selectionNumbers={gameSelections.map((s) => s.selectionNumber)}
+                onClose={handleEntryEdited}
+                entryId={editTarget.entryId}
+              />
+            )}
             <Stack align="center">
               {entries}
               {paginaton}

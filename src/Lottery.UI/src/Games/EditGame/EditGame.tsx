@@ -216,7 +216,6 @@ function EditGame({}: EditGameProps) {
                   </Text>
                 </Grid.Col>
 
-                {/* Updating prizes not yet supported on the server side. Changes will be ignored */}
                 {form.values.prizes.map((_, index) => (
                   <React.Fragment key={`prize-${index}`}>
                     <Grid.Col
