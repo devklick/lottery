@@ -163,14 +163,15 @@ function GameDetail({}: GameDetailProps) {
           </Grid.Col>
         </Grid>
 
-        {query.data?.gameStatus == "open" && (
+        {
           <YourEntries
             gameId={id!}
             gamePrizes={query.data?.prizes ?? []}
             winningSelections={query.data?.results}
-            gameSelections={query.data.selections}
+            gameSelections={query.data!.selections ?? []}
+            gameStatus={query.data?.gameStatus ?? "closed"}
           />
-        )}
+        }
 
         {query.data?.gameStatus == "open" && (
           <CreateEntry

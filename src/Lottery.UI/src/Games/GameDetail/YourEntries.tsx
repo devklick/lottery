@@ -22,6 +22,7 @@ import { useState } from "react";
 import gameService from "../gameService";
 import Trophy from "../../components/Trophy/Trophy";
 import EditEntry from "./EditEntry";
+import { GameStatus } from "../../common/schemas";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
@@ -32,6 +33,7 @@ interface YourEntriesProps {
     numberMatchCount: number;
   }>;
   gameId: string;
+  gameStatus: GameStatus;
 }
 
 function YourEntries({
@@ -39,6 +41,7 @@ function YourEntries({
   winningSelections,
   gamePrizes,
   gameSelections,
+  gameStatus,
 }: YourEntriesProps) {
   const user = useUserStore();
   const [opened, { toggle }] = useDisclosure(false);
@@ -121,6 +124,7 @@ function YourEntries({
         {getTrophy(entry.selections)}
         <ActionIcon
           variant="subtle"
+          disabled={gameStatus !== "open"}
           onClick={() =>
             setEditTarget({
               entryId: entry.id,
