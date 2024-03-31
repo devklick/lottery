@@ -70,6 +70,25 @@ export type CreateEntryRequestBody = z.infer<
 export type CreateEntryRequest = z.infer<typeof createEntryRequestSchema>;
 export type CreateEntryResponse = z.infer<typeof createEntryResponseSchema>;
 
+export const editEntryRequestRouteSchema = z.object({
+  entryId: z.string().uuid(),
+});
+export const editEntryRequestBodySchema = z.object({
+  selections: z.array(
+    z.object({
+      selectionNumber: z.number().positive(),
+    })
+  ),
+});
+export const editEntryRequestSchema = z.object({
+  route: editEntryRequestRouteSchema,
+  body: editEntryRequestBodySchema,
+});
+export const editEntryResponseSchema = z.object({});
+export type EditEntryRequest = z.infer<typeof editEntryRequestSchema>;
+export type EditEntryRequestBody = z.infer<typeof editEntryRequestBodySchema>;
+export type EditEntryResponse = z.infer<typeof editEntryResponseSchema>;
+
 export const getEntriesRequestQuerySchema = pagedRequestSchema.extend({
   gameId: z.string(),
 });

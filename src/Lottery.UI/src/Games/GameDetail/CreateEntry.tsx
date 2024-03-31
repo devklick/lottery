@@ -13,7 +13,7 @@ import {
   useComputedColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { CreateEntryRequest, CreateEntryResponse } from "./game.schema";
 import gameService from "../gameService";
@@ -32,13 +32,17 @@ function CreateEntry({
   gameId,
   selectionsRequired,
 }: CreateEntryProps) {
-  const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
   const [opened, { toggle }] = useDisclosure(false);
   const theme = useMantineTheme();
   const colorScheme = useComputedColorScheme();
   const user = useUserStore();
-  const [success, setSuccess] = useState(false);
+  const queryClient = useQueryClient();
 
+  const [success, setSuccess] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+
+  // Timeout to control how long the success message shows
+  // after creating an entry
   const successTimeout = useTimeout(() => {
     setSuccess(false);
     setSelectedIds([]);
@@ -56,6 +60,7 @@ function CreateEntry({
   function handleMutationSuccess() {
     setSuccess(true);
     successTimeout.start();
+    queryClient.refetchQueries({ exact: false, queryKey: ["entries"] });
   }
 
   function handleSelected(selectionId: string) {

@@ -14,12 +14,16 @@ import {
   CreateEntryRequest,
   CreateEntryRequestBody,
   CreateEntryResponse,
+  EditEntryRequest,
+  EditEntryRequestBody,
+  EditEntryResponse,
   GetEntriesRequest,
   GetEntriesRequestQuery,
   GetEntriesResponse,
   GetGameRequest,
   GetGameResponse,
   createEntryResponseSchema,
+  editEntryResponseSchema,
   getEntriesResponseSchema,
   getGameResponseSchema,
 } from "./GameDetail/game.schema";
@@ -34,6 +38,7 @@ interface GameService {
   searchGames(request: SearchGamesRequest): Promise<SearchGamesResponse>;
   getGame(request: GetGameRequest): Promise<GetGameResponse>;
   createEntry(request: CreateEntryRequest): Promise<CreateEntryResponse>;
+  editEntry(request: EditEntryRequest): Promise<EditEntryResponse>;
   getEntries(request: GetEntriesRequest): Promise<GetEntriesResponse>;
   editGame(request: EditGameRequest): Promise<EditGameResponse>;
 }
@@ -143,6 +148,23 @@ export function createGameService({
     throw valid.error.errors.map((e) => e.message);
   };
 
+  const editEntry: GameService["editEntry"] = async (request) => {
+    const result = await api.post<EditEntryRequestBody, EditEntryResponse>(
+      `/entry/${request.route.entryId}/edit`,
+      request.body,
+      { withCredentials: true }
+    );
+    if (!result.success) throw result.error;
+
+    const valid = editEntryResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.errors.map((e) => e.message);
+  };
+
   return {
     createGame,
     searchGames,
@@ -150,6 +172,7 @@ export function createGameService({
     createEntry,
     getEntries,
     editGame,
+    editEntry,
   };
 }
 
