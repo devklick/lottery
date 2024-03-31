@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "./gameService";
 import {
@@ -44,6 +44,8 @@ function Games({}: GamesProps) {
     sortDirection: "desc",
     name: "",
   });
+
+  const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: [

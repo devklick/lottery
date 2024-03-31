@@ -16,7 +16,7 @@ import {
 import { useUserStore } from "../../stores/user.store";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "../gameService";
 import Trophy from "../../components/Trophy/Trophy";
@@ -37,6 +37,7 @@ function YourEntries({
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
 
+  const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["entries", gameId, page, limit],
     queryFn: () => gameService.getEntries({ query: { limit, page, gameId } }),
@@ -98,15 +99,33 @@ function YourEntries({
 
   const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
 
+  function removeCurrentQuery() {
+    queryClient.removeQueries({ queryKey: ["entries", gameId, page, limit] });
+  }
+
+  function handleLimitChanged(value: string | null) {
+    removeCurrentQuery();
+    setLimit(Number(value));
+  }
+
+  function handlePageChanged(value: number) {
+    removeCurrentQuery();
+    setPage(value);
+  }
+
   const paginaton = (
     <Flex gap={"lg"} align={"center"}>
-      <Pagination total={totalPages} value={page} onChange={setPage} />
+      <Pagination
+        total={totalPages}
+        value={page}
+        onChange={handlePageChanged}
+      />
       <Select
         w={80}
         value={limit.toString()}
         defaultValue={limit.toString()}
         data={["5", "10", "20"]}
-        onChange={(value) => setLimit(Number(value))}
+        onChange={handleLimitChanged}
         allowDeselect={false}
       />
     </Flex>
