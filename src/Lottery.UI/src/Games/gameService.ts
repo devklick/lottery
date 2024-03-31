@@ -91,7 +91,6 @@ export function createGameService({
       return valid.data;
     }
 
-    console.log(valid.error);
     throw new Error(valid.error.errors.map((e) => e.message).join("."));
   };
 

@@ -43,9 +43,6 @@ function GameCard({
   gameStatus,
   loading,
 }: GameCardProps) {
-  useEffect(() => {
-    console.log("GameCard, state", gameStatus);
-  }, [gameStatus]);
   const navigate = useNavigate();
   const theme = useMantineTheme();
   const { isUserType } = useUserStore();

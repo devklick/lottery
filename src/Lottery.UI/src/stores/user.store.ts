@@ -22,18 +22,15 @@ export const useUserStore = create<UserStore>()(
       sessionExpiry: new Date(0),
       authenticated() {
         if (!get()._authenticated) {
-          console.log("Not authenticated");
           return false;
         }
         if (get().sessionExpiry.getTime() < Date.now()) {
-          console.log("Authentication expired");
           set({ _authenticated: false, sessionExpiry: new Date(0) });
           return false;
         }
         return true;
       },
       login(userType, sessionExpiry) {
-        console.log("Loggin in to store");
         set({ _authenticated: true, userType, sessionExpiry });
       },
       logout() {

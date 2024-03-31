@@ -46,9 +46,6 @@ function GameStatusBadge({
   groupProps = { justify: "end" },
   state = "resulted",
 }: GameStatusBadgeProps) {
-  useEffect(() => {
-    console.log("GameStatusBadge, state", state);
-  }, [state]);
   return (
     <Group justify={groupProps?.justify} w={groupProps?.w}>
       <Skeleton w={100} visible={loading}>
