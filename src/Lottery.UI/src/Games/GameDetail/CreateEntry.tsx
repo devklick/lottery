@@ -60,7 +60,7 @@ function CreateEntry({
   function handleMutationSuccess() {
     setSuccess(true);
     successTimeout.start();
-    queryClient.refetchQueries({ exact: false, queryKey: ["entries"] });
+    queryClient.refetchQueries({ exact: false, queryKey: ["entries", gameId] });
   }
 
   function handleSelected(selectionId: string) {

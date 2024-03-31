@@ -38,7 +38,7 @@ function YourEntries({
   const [limit, setLimit] = useState(5);
 
   const query = useQuery({
-    queryKey: ["entries", page, limit, gameId],
+    queryKey: ["entries", gameId, page, limit],
     queryFn: () => gameService.getEntries({ query: { limit, page, gameId } }),
     enabled: user.authenticated(),
   });
