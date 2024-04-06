@@ -1,6 +1,7 @@
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Models.Game.Edit;
 using Lottery.Api.Models.Game.Get;
+using Lottery.Api.Models.Game.Result;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Services;
 
@@ -25,7 +26,7 @@ public class GameController(GameService gameService) : ApiControllerBase
         return CreateActionResult(response);
     }
 
-    [Authorize(Roles = "GameAdmin,SystemAdmin", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost]
     public async Task<ActionResult<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
@@ -47,6 +48,14 @@ public class GameController(GameService gameService) : ApiControllerBase
     public async Task<ActionResult<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
     {
         var response = await _gameService.SearchGames(request);
+
+        return CreateActionResult(response);
+    }
+
+    [HttpPost("result")]
+    public async Task<ActionResult<ResultGameResponse>> ResultGame(ResultGameRequest request)
+    {
+        var response = await _gameService.ResultGame(request);
 
         return CreateActionResult(response);
     }

@@ -1,4 +1,4 @@
-namespace Lottery.Api.Models.Common;
+namespace Lottery.Common.Models;
 
 public enum ResultStatus
 {

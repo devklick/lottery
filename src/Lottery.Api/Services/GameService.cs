@@ -1,30 +1,28 @@
-using System.Collections.Immutable;
 using System.Security.Claims;
 
 using AutoMapper;
 
 using Lottery.Api.Mappings.Extensions;
-using Lottery.Api.Models.Common;
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Models.Game.Edit;
 using Lottery.Api.Models.Game.Get;
+using Lottery.Api.Models.Game.Result;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Repositories.Game;
 using Lottery.Api.Repositories.Game.Filters;
-using Lottery.Common.Extensions;
+using Lottery.Common.Models;
 using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
-
-using Microsoft.Extensions.ObjectPool;
-
+using Lottery.Resulting;
 
 namespace Lottery.Api.Services;
 
-public class GameService(GameRepository gameRepository, UserService userService, IMapper mapper)
+public class GameService(GameRepository gameRepository, UserService userService, IMapper mapper, ResultService resultService)
 {
     private readonly GameRepository _gameRepository = gameRepository;
     private readonly UserService _userService = userService;
     private readonly IMapper _mapper = mapper;
+    private readonly ResultService _resultService = resultService;
 
     public async Task<Result<CreateGameResponse>> CreateGame(CreateGameRequest request, ClaimsPrincipal user)
     {
@@ -274,6 +272,40 @@ public class GameService(GameRepository gameRepository, UserService userService,
         {
             Status = ResultStatus.Ok,
             Value = _mapper.Map<EditGameResponse>(entity)
+        };
+    }
+
+    public async Task<Result<ResultGameResponse>> ResultGame(ResultGameRequest request)
+    {
+        var game = await _gameRepository.GetGame(request.Route.GameId,
+            prizesFilter: new() { Include = true, State = ItemState.Enabled },
+            selectionsFilter: new() { Include = true, State = ItemState.Enabled },
+            resultsFilter: new() { Include = true, State = ItemState.Enabled }
+        );
+        if (game == null)
+        {
+            return new Result<ResultGameResponse>
+            {
+                Status = ResultStatus.NotFound,
+                Errors = [new() { Message = "Game not found" }]
+            };
+        }
+
+        var result = await _resultService.ResultGame(game, request.Body.WinningSelections.Select(ws => ws.SelectionNumber));
+
+        if (result.Status != ResultStatus.Ok)
+        {
+            return new Result<ResultGameResponse>
+            {
+                Errors = result.Errors,
+                Status = result.Status,
+            };
+        }
+
+        return new Result<ResultGameResponse>
+        {
+            Status = ResultStatus.Ok,
+            Value = _mapper.Map<ResultGameResponse>(result.Value)
         };
     }
 }

@@ -168,7 +168,7 @@ function GameDetail({}: GameDetailProps) {
             gameId={id!}
             gamePrizes={query.data?.prizes ?? []}
             winningSelections={query.data?.results}
-            gameSelections={query.data!.selections ?? []}
+            gameSelections={query.data?.selections ?? []}
             gameStatus={query.data?.gameStatus ?? "closed"}
           />
         }

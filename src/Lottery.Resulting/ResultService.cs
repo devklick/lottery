@@ -1,0 +1,97 @@
+using Lottery.Common.Models;
+using Lottery.DB.Entities.Dbo;
+
+namespace Lottery.Resulting;
+
+public class ResultService(ResultRepository repository)
+{
+    private readonly ResultRepository _repository = repository;
+
+
+    public async Task<IEnumerable<Game>> GetGamesToResult()
+    {
+        return await _repository.GetGamesToResult();
+    }
+
+    public async Task<Result<Game>> ResultGame(Game game, IEnumerable<int> winningNumbers)
+    {
+        var serviceUserId = await _repository.GetServiceUserId();
+
+        // Determine how many numbers need to be picked
+        var numbersToDraw = game.Prizes.Find(p => p.Position == 1)?.NumberMatchCount
+            ?? throw new Exception($"Game {game.Id} does not have a prize for position 1");
+
+        // If winning numbers have been specified but are invalid, return error
+        if (winningNumbers.Any() && winningNumbers.Count() != numbersToDraw)
+        {
+            return new Result<Game>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = $"Expected 0 or {numbersToDraw} winning numbers, found {winningNumbers.Count()}" }]
+            };
+        }
+        else if (!winningNumbers.Any() && game.Selections.Count < numbersToDraw)
+        {
+            return new Result<Game>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = $"Invalid configuration for game {game.Id}. Only {game.Selections.Count} selections but {numbersToDraw} numbers to be drawn" }]
+            };
+        }
+
+        // Pick the winning game selections
+        var winningSelections = GetWinningSelections(game, winningNumbers, numbersToDraw);
+
+        // Store the winning numbers as game results
+        game.Results = winningSelections.Select(s => new GameResult
+        {
+            GameId = game.Id,
+            SelectionId = s.Id,
+            CreatedById = serviceUserId,
+        }).ToList();
+
+        // Save the results at this point
+        await _repository.SaveChangesAsync();
+
+        // Determine the entries who have won prizes.
+        // We'll get a list of back with an item for each prize, along with the 
+        // entries who have won that prize (if any)
+        var prizeWinners = await _repository.GetPrizeWinners(game.Id, winningSelections.Select(s => s.Id));
+
+        var entryPrizes = new List<EntryPrize>();
+        // Cycle through the prizes and process the winners
+        foreach (var (gamePrize, winningEntries) in prizeWinners)
+        {
+            // If there's no winners for this prize, move on
+            if (!winningEntries.Any()) continue;
+
+            // Construct the entry prizes that link a game prize to a player
+            entryPrizes.AddRange(winningEntries.Select(we => new EntryPrize
+            {
+                GamePrizeId = gamePrize.Id,
+                EntryId = we.Id,
+                CreatedById = serviceUserId
+            }));
+        }
+
+        // Store the entry prizes
+        await _repository.AddEntryPrizes(entryPrizes);
+
+        game.ResultedAt = DateTime.UtcNow;
+
+        await _repository.SaveChangesAsync();
+
+        return new Result<Game>
+        {
+            Status = ResultStatus.Ok,
+            Value = game
+        };
+    }
+
+    private IEnumerable<GameSelection> GetWinningSelections(Game game, IEnumerable<int> winningNumbers, int numbersToDraw)
+    {
+        return winningNumbers.Any()
+            ? game.Selections.Where(gs => winningNumbers.Contains(gs.SelectionNumber))
+            : Rng.TakeRandom(game.Selections, numbersToDraw);
+    }
+}

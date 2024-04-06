@@ -21,10 +21,12 @@ public static class HostBuilderExtensions
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.MapEnum<ItemState>();
 
+        var dataSource = dataSourceBuilder.Build();
+
         builder.Services.Configure<EFMigrationSettings>(
             builder.Configuration.GetSection(nameof(EFMigrationSettings)));
 
-        builder.Services.AddDbContext<TContext>(options => options.UseNpgsql(dataSourceBuilder.Build(), options =>
+        builder.Services.AddDbContext<TContext>(options => options.UseNpgsql(dataSource, options =>
         {
             var settings = builder.Configuration.GetSection(nameof(EFMigrationSettings)).Get<EFMigrationSettings>()
                 ?? throw new Exception("No EFMigrationSettings found");

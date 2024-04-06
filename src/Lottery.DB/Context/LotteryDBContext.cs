@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Entities.Base;
+using Npgsql;
 
 namespace Lottery.DB.Context;
 
@@ -28,7 +29,6 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
     public DbSet<Entry> Entries { get; set; }
     public DbSet<EntrySelection> EntrySelections { get; set; }
     public DbSet<EntryPrize> EntryPrizes { get; set; }
-
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

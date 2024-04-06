@@ -11,6 +11,7 @@ using Lottery.Api.Repositories.Game;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Lottery.Api.Repositories.Entry;
+using Lottery.Resulting;
 
 namespace Lottery.Api;
 
@@ -88,9 +89,11 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<GameService>();
         builder.Services.AddScoped<EntryService>();
+        builder.Services.AddScoped<ResultService>();
 
         builder.Services.AddScoped<GameRepository>();
         builder.Services.AddScoped<EntryRepository>();
+        builder.Services.AddScoped<ResultRepository>();
     }
 
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)

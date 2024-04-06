@@ -6,6 +6,7 @@ using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Services.Options;
+using Lottery.Common.Models;
 using Lottery.DB.Entities.Idt;
 
 using Microsoft.AspNetCore.Authentication.Cookies;

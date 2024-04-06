@@ -1,6 +1,6 @@
-namespace Lottery.ResultService.Services;
+namespace Lottery.Resulting;
 
-public class Rng()
+public class Rng
 {
     public static IEnumerable<T> TakeRandom<T>(IEnumerable<T> items, int count)
     {

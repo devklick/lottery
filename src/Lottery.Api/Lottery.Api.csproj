@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lottery.DB\Lottery.DB.csproj" />
+    <ProjectReference Include="..\Lottery.Resulting\Lottery.Resulting.csproj" />
   </ItemGroup>
 </Project>

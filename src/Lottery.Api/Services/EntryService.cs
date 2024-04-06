@@ -11,6 +11,7 @@ using Lottery.Api.Models.Entry.Edit;
 using Lottery.Api.Repositories.Entry;
 using Lottery.Api.Repositories.Entry.Filters;
 using Lottery.DB.Entities.Ref;
+using Lottery.Common.Models;
 
 namespace Lottery.Api.Services;
 
