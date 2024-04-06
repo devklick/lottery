@@ -4,6 +4,7 @@ using Lottery.DB.Context;
 using Lottery.DB.Entities.Ref;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     [DbContext(typeof(MaintenanceDBContext))]
-    partial class MaintenanceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240406123516_MapItemStateEnum")]
+    partial class MapItemStateEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
