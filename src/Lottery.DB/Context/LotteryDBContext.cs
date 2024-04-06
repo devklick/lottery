@@ -2,18 +2,17 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
 using Lottery.Common.Extensions;
 using Lottery.DB.Attributes;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations.Schema;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Entities.Base;
-using Npgsql;
 
 namespace Lottery.DB.Context;
 
