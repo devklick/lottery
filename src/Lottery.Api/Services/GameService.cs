@@ -192,7 +192,8 @@ public class GameService(GameRepository gameRepository, UserService userService,
             };
         }
 
-        var entity = _mapper.MergeInto<Game>(request.Body, current);
+        var entity = _mapper.MergeInto<Game>(current, request.Body);
+
 
         var enabledSelectionsCount = entity.Selections.Count(s => s.State == ItemState.Enabled);
         // Remove any selections that are no longer required
@@ -264,6 +265,8 @@ public class GameService(GameRepository gameRepository, UserService userService,
         }
 
         await _gameRepository.UpdateGame(entity);
+
+        await _gameRepository.SaveChangesAsync();
 
         // Only include enabled selections in the response
         entity.Selections = entity.Selections.Where(s => s.State == ItemState.Enabled).ToList();

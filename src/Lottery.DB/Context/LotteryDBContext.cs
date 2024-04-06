@@ -113,7 +113,9 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
         }
     }
 
-    public override int SaveChanges()
+
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
         foreach (var entry in ChangeTracker.Entries())
@@ -130,8 +132,11 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
                 {
                     entity.UpdatedOnUtc = now;
 
-                    // TODO: Dunno about this, need to verify it works
-                    if (entry.Collections.Any(c => c.Metadata.Name == nameof(EntityObject.State)))
+                    var stateProp = entry.Properties.First(w => w.Metadata.Name == nameof(entity.State));
+
+                    // TODO: Look into why IsModified is incorrectly true when CurrentValue and OriginalValue are the same. 
+
+                    if (stateProp.IsModified)
                     {
                         entity.StateLastUpdatedUtc = now;
                     }
@@ -139,7 +144,7 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
             }
         }
 
-        return base.SaveChanges();
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     protected string GetRequiredConfigValue(string key)
