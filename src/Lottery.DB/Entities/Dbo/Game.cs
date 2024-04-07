@@ -88,10 +88,10 @@ public class Game : EntityObject
     {
         get
         {
-            if (StartTime > DateTime.UtcNow) return GameStatus.Future;
-            if (DrawTime > DateTime.UtcNow) return GameStatus.Open;
-            if (!ResultedAt.HasValue) return GameStatus.Closed;
-            return GameStatus.Resulted;
+            if (ResultedAt.HasValue) return GameStatus.Resulted;
+            else if (StartTime > DateTime.UtcNow) return GameStatus.Future;
+            else if (DrawTime > DateTime.UtcNow) return GameStatus.Open;
+            return GameStatus.Closed;
         }
     }
     #endregion

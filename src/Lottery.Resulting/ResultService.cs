@@ -8,6 +8,7 @@ public class ResultService(ResultRepository repository)
     private readonly ResultRepository _repository = repository;
 
 
+
     public async Task<IEnumerable<Game>> GetGamesToResult()
     {
         return await _repository.GetGamesToResult();
@@ -15,7 +16,14 @@ public class ResultService(ResultRepository repository)
 
     public async Task<Result<Game>> ResultGame(Game game, IEnumerable<int> winningNumbers)
     {
-        var serviceUserId = await _repository.GetServiceUserId();
+        if (game.GameStatus == GameStatus.Resulted)
+        {
+            return new Result<Game>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = "Game already resulted" }]
+            };
+        }
 
         // Determine how many numbers need to be picked
         var numbersToDraw = game.Prizes.Find(p => p.Position == 1)?.NumberMatchCount
@@ -42,21 +50,51 @@ public class ResultService(ResultRepository repository)
         // Pick the winning game selections
         var winningSelections = GetWinningSelections(game, winningNumbers, numbersToDraw);
 
-        // Store the winning numbers as game results
-        game.Results = winningSelections.Select(s => new GameResult
-        {
-            GameId = game.Id,
-            SelectionId = s.Id,
-            CreatedById = serviceUserId,
-        }).ToList();
+        var serviceUserId = await _repository.GetServiceUserId();
 
-        // Save the results at this point
+        // Store the winning numbers as game results
+        // Only do this if there are not yet any results. 
+        // This allows us to re-process anything where an error previously
+        // occured between drawing the numbers but not assigning prizes to the winners.
+        if (game.Results.Count == 0)
+        {
+            game.Results = winningSelections.Select(s => new GameResult
+            {
+                GameId = game.Id,
+                SelectionId = s.Id,
+                CreatedById = serviceUserId,
+            }).ToList();
+
+            // Save the results at this point
+            await _repository.SaveChangesAsync();
+        }
+
+        await AssignPrizes(game.Id, winningSelections, serviceUserId);
+
+        game.ResultedAt = DateTime.UtcNow;
+
         await _repository.SaveChangesAsync();
 
+        return new Result<Game>
+        {
+            Status = ResultStatus.Ok,
+            Value = game
+        };
+    }
+
+    private static IEnumerable<GameSelection> GetWinningSelections(Game game, IEnumerable<int> winningNumbers, int numbersToDraw)
+    {
+        return winningNumbers.Any()
+            ? game.Selections.Where(gs => winningNumbers.Contains(gs.SelectionNumber))
+            : Rng.TakeRandom(game.Selections, numbersToDraw);
+    }
+
+    private async Task AssignPrizes(Guid gameId, IEnumerable<GameSelection> winningSelections, Guid serviceUserId)
+    {
         // Determine the entries who have won prizes.
         // We'll get a list of back with an item for each prize, along with the 
         // entries who have won that prize (if any)
-        var prizeWinners = await _repository.GetPrizeWinners(game.Id, winningSelections.Select(s => s.Id));
+        var prizeWinners = await _repository.GetPrizeWinners(gameId, winningSelections.Select(s => s.Id));
 
         var entryPrizes = new List<EntryPrize>();
         // Cycle through the prizes and process the winners
@@ -76,22 +114,5 @@ public class ResultService(ResultRepository repository)
 
         // Store the entry prizes
         await _repository.AddEntryPrizes(entryPrizes);
-
-        game.ResultedAt = DateTime.UtcNow;
-
-        await _repository.SaveChangesAsync();
-
-        return new Result<Game>
-        {
-            Status = ResultStatus.Ok,
-            Value = game
-        };
-    }
-
-    private IEnumerable<GameSelection> GetWinningSelections(Game game, IEnumerable<int> winningNumbers, int numbersToDraw)
-    {
-        return winningNumbers.Any()
-            ? game.Selections.Where(gs => winningNumbers.Contains(gs.SelectionNumber))
-            : Rng.TakeRandom(game.Selections, numbersToDraw);
     }
 }

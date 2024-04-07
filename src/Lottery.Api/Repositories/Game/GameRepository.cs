@@ -30,8 +30,10 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         GetGame.PrizesFilter? prizesFilter = null,
         GetGame.ResultsFilter? resultsFilter = null)
     {
-        var query = _db.Games.Where(g => g.Id == gameId)
-            .AsNoTracking();
+        var query = _db.Games.Where(g => g.Id == gameId);
+        // .AsNoTracking(); 
+        // added back in tracking to fix resulting, but this will resurface 
+        // another issue that I had previously. Will need to re-address that.
 
         if ((selectionsFilter?.Include) ?? false)
         {
