@@ -135,6 +135,7 @@ function GameCard({
                         Edit
                       </Menu.Item>
                       <Menu.Item
+                        disabled={gameStatus === "resulted"}
                         leftSection={<IconRotate2 size={rem(18)} />}
                         onClick={openResultGame}
                       >
