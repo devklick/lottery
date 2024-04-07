@@ -85,6 +85,8 @@ function Games({}: GamesProps) {
               <GameCard
                 key={i}
                 {...game}
+                numbersRequired={game.selectionsRequiredForEntry}
+                selectionNumbers={game.selections.map((s) => s.selectionNumber)}
                 gameStatus={game.gameStatus}
                 loading={query.isLoading}
               />

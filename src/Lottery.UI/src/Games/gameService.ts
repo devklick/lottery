@@ -28,6 +28,12 @@ import {
   getGameResponseSchema,
 } from "./GameDetail/game.schema";
 import {
+  ResultGameRequest,
+  ResultGameRequestBody,
+  ResultGameResponse,
+  resultGameResponseSchema,
+} from "./ResultGame/resultGame.schema";
+import {
   SearchGamesRequest,
   SearchGamesResponse,
   searchGamesResponseSchema,
@@ -41,6 +47,7 @@ interface GameService {
   editEntry(request: EditEntryRequest): Promise<EditEntryResponse>;
   getEntries(request: GetEntriesRequest): Promise<GetEntriesResponse>;
   editGame(request: EditGameRequest): Promise<EditGameResponse>;
+  resultGame(request: ResultGameRequest): Promise<ResultGameResponse>;
 }
 
 export function createGameService({
@@ -164,6 +171,23 @@ export function createGameService({
     throw valid.error.errors.map((e) => e.message);
   };
 
+  const resultGame: GameService["resultGame"] = async (request) => {
+    const result = await api.post<ResultGameRequestBody, ResultGameResponse>(
+      `/game/${request.route.gameId}/result`,
+      request.body,
+      { withCredentials: true }
+    );
+    if (!result.success) throw result.error;
+
+    const valid = resultGameResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.errors.map((e) => e.message);
+  };
+
   return {
     createGame,
     searchGames,
@@ -172,6 +196,7 @@ export function createGameService({
     getEntries,
     editGame,
     editEntry,
+    resultGame,
   };
 }
 

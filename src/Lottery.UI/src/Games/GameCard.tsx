@@ -3,6 +3,7 @@ import {
   Card,
   Group,
   Menu,
+  Modal,
   Skeleton,
   Stack,
   Text,
@@ -15,6 +16,8 @@ import { useUserStore } from "../stores/user.store";
 import GameStatusBadge from "../components/GameStatusBadge";
 import { useEffect } from "react";
 import { GameStatus } from "../common/schemas";
+import { useDisclosure } from "@mantine/hooks";
+import ResultGame from "./ResultGame/ResultGame";
 
 interface GameCardProps {
   id: string;
@@ -24,6 +27,8 @@ interface GameCardProps {
   drawTime: Date;
   loading: boolean;
   gameStatus: GameStatus;
+  numbersRequired: number;
+  selectionNumbers: Array<number>;
 }
 
 function formatDate(date: Date) {
@@ -42,88 +47,108 @@ function GameCard({
   drawTime,
   gameStatus,
   loading,
+  numbersRequired,
+  selectionNumbers,
 }: GameCardProps) {
   const navigate = useNavigate();
   const theme = useMantineTheme();
   const { isUserType } = useUserStore();
+  const [resultGameOpened, { close: closeResultGame, open: openResultGame }] =
+    useDisclosure(false);
+
   return (
-    <Card withBorder shadow="xl" radius="lg" h={"100%"}>
-      <Card.Section withBorder inheritPadding py={"xs"}>
-        <Group>
-          <Skeleton visible={loading}>
-            <Text fw={500}>{name}</Text>
-          </Skeleton>
-        </Group>
-        <GameStatusBadge
-          loading={loading}
-          state={gameStatus}
-          groupProps={{ justify: "center", w: "100%" }}
-        />
-      </Card.Section>
-
-      <Card.Section h={"100%"} withBorder inheritPadding py={"xs"}>
-        <Stack py={"xs"} gap={"xs"} align="start">
-          <Skeleton visible={loading}>
-            <Group>
-              <Text c="dimmed">Starts on:</Text>
-              <Text>{formatDate(startTime)}</Text>
-            </Group>
-          </Skeleton>
-          <Skeleton visible={loading}>
-            <Group>
-              <Text c="dimmed">Closes on:</Text>
-              <Text>{formatDate(closeTime)}</Text>
-            </Group>
-          </Skeleton>
-          <Skeleton visible={loading}>
-            <Group>
-              <Text c="dimmed">Draws on:</Text>
-              <Text>{formatDate(drawTime)}</Text>
-            </Group>
-          </Skeleton>
-        </Stack>
-      </Card.Section>
-
-      <Card.Section withBorder inheritPadding py={"xs"}>
-        <Stack h={"100%"} justify="flex-end">
-          <Skeleton visible={loading}>
-            <Group>
-              <Button fullWidth onClick={() => navigate(`/games/${id}`)}>
-                {gameStatus == "open" ? "Play" : "View"}
-              </Button>
-            </Group>
-          </Skeleton>
-          {isUserType("Admin") && (
+    <>
+      {resultGameOpened && (
+        <Modal opened={resultGameOpened} onClose={closeResultGame}>
+          <ResultGame
+            numbersRequired={numbersRequired}
+            selectionNumbers={selectionNumbers}
+            gameId={id}
+            onDone={closeResultGame}
+          />
+        </Modal>
+      )}
+      <Card withBorder shadow="xl" radius="lg" h={"100%"}>
+        <Card.Section withBorder inheritPadding py={"xs"}>
+          <Group>
             <Skeleton visible={loading}>
-              <Group justify="space-between">
-                <Menu withinPortal shadow="sm">
-                  <Menu.Target>
-                    <Button
-                      fullWidth
-                      color={theme.colors.violet[9]}
-                      leftSection={<IconBriefcase size={rem(18)} />}
-                    >
-                      Manage
-                    </Button>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Item
-                      leftSection={<IconEdit size={rem(18)} />}
-                      onClick={() => navigate(`/games/${id}/edit`)}
-                    >
-                      Edit
-                    </Menu.Item>
-                    <Menu.Item leftSection={<IconRotate2 size={rem(18)} />}>
-                      Result
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
+              <Text fw={500}>{name}</Text>
+            </Skeleton>
+          </Group>
+          <GameStatusBadge
+            loading={loading}
+            state={gameStatus}
+            groupProps={{ justify: "center", w: "100%" }}
+          />
+        </Card.Section>
+
+        <Card.Section h={"100%"} withBorder inheritPadding py={"xs"}>
+          <Stack py={"xs"} gap={"xs"} align="start">
+            <Skeleton visible={loading}>
+              <Group>
+                <Text c="dimmed">Starts on:</Text>
+                <Text>{formatDate(startTime)}</Text>
               </Group>
             </Skeleton>
-          )}
-        </Stack>
-      </Card.Section>
-    </Card>
+            <Skeleton visible={loading}>
+              <Group>
+                <Text c="dimmed">Closes on:</Text>
+                <Text>{formatDate(closeTime)}</Text>
+              </Group>
+            </Skeleton>
+            <Skeleton visible={loading}>
+              <Group>
+                <Text c="dimmed">Draws on:</Text>
+                <Text>{formatDate(drawTime)}</Text>
+              </Group>
+            </Skeleton>
+          </Stack>
+        </Card.Section>
+
+        <Card.Section withBorder inheritPadding py={"xs"}>
+          <Stack h={"100%"} justify="flex-end">
+            <Skeleton visible={loading}>
+              <Group>
+                <Button fullWidth onClick={() => navigate(`/games/${id}`)}>
+                  {gameStatus == "open" ? "Play" : "View"}
+                </Button>
+              </Group>
+            </Skeleton>
+            {isUserType("Admin") && (
+              <Skeleton visible={loading}>
+                <Group justify="space-between">
+                  <Menu withinPortal shadow="sm">
+                    <Menu.Target>
+                      <Button
+                        fullWidth
+                        color={theme.colors.violet[9]}
+                        leftSection={<IconBriefcase size={rem(18)} />}
+                      >
+                        Manage
+                      </Button>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        leftSection={<IconEdit size={rem(18)} />}
+                        onClick={() => navigate(`/games/${id}/edit`)}
+                      >
+                        Edit
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={<IconRotate2 size={rem(18)} />}
+                        onClick={openResultGame}
+                      >
+                        Result
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                </Group>
+              </Skeleton>
+            )}
+          </Stack>
+        </Card.Section>
+      </Card>
+    </>
   );
 }
 

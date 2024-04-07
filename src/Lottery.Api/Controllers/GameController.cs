@@ -52,7 +52,7 @@ public class GameController(GameService gameService) : ApiControllerBase
         return CreateActionResult(response);
     }
 
-    [HttpPost("result")]
+    [HttpPost("{gameId}/result")]
     public async Task<ActionResult<ResultGameResponse>> ResultGame(ResultGameRequest request)
     {
         var response = await _gameService.ResultGame(request);

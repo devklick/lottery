@@ -1,9 +1,9 @@
-import { useState } from "react";
-import SelectionPicker from "./SelectionPicker";
 import { Modal } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
-import gameService from "../gameService";
 import { useDisclosure } from "@mantine/hooks";
+
+import SelectionPicker from "./SelectionPicker";
+import gameService from "../gameService";
 
 interface EditEntryProps {
   selectionNumbers: ReadonlyArray<number>;
@@ -14,7 +14,7 @@ interface EditEntryProps {
 
 function EditEntry({
   selectionNumbers,
-  selectedNumbers: _selectedNumbers,
+  selectedNumbers,
   entryId,
   onClose,
 }: EditEntryProps) {
@@ -47,8 +47,8 @@ function EditEntry({
     <Modal opened={opened} onClose={handleClose}>
       <SelectionPicker
         selectionNumbers={selectionNumbers}
-        selectedNumbers={_selectedNumbers}
-        requiredCount={_selectedNumbers.length}
+        selectedNumbers={selectedNumbers}
+        requiredCount={selectedNumbers.length}
         onSubmit={handleSubmit}
         submitStatus={
           mutation.status === "idle"
