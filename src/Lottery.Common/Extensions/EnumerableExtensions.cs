@@ -43,4 +43,24 @@ public static class EnumerableExtensions
         return (false, default!);
     }
 
+    public static IEnumerable<IEnumerable<T>> GetPermutations<T>(this IEnumerable<T> values)
+    {
+        List<List<T>> result = [];
+
+        for (int count = 0; count < (1 << values.Count()); ++count)
+        {
+            List<T> combinationList = [];
+
+            for (int i = 0; i < values.Count(); ++i)
+            {
+                if ((count & (1 << i)) == 0)
+                {
+                    combinationList.Add(values.ElementAt(i));
+                }
+            }
+            result.Add(combinationList);
+        }
+
+        return result;
+    }
 }

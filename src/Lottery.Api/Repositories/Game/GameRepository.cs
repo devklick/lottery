@@ -1,7 +1,9 @@
 
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+
 using Lottery.Api.Repositories.Game.Filters;
 using Lottery.DB.Context;
-using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Repositories;
 using Lottery.DB.Repositories.Common;
 
@@ -10,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Lottery.Api.Repositories.Game;
 
 using GameEntity = DB.Entities.Dbo.Game;
-
 
 
 public partial class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
@@ -89,42 +90,11 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
             query = query.Where(g => EF.Functions.ILike(g.Name, $"%{gamesFilter.Name}%"));
         }
 
-        // TODO: Figure a better, more extendable way of building these filters
-        // TODO: Need to update these status filters to handle closed status
+        query = query.FilterByGameStatuses(gamesFilter.GameStatus);
+
         var states = gamesFilter.GameStatus;
         var sortBy = gamesFilter.SortBy.Column;
         var sortDirection = gamesFilter.SortBy.Direction;
-        if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))
-        {
-            // all to be included, so no filters to apply here
-        }
-        else if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Future))
-        {
-            query = query.Where(game => (game.StartTime <= DateTime.UtcNow && game.DrawTime > DateTime.UtcNow)
-            || (game.StartTime >= DateTime.UtcNow));
-        }
-        else if (states.Contains(GameStatus.Open) && states.Contains(GameStatus.Resulted))
-        {
-            query = query.Where(game => (game.StartTime <= DateTime.UtcNow && game.DrawTime > DateTime.UtcNow)
-            || (game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow));
-        }
-        else if (states.Contains(GameStatus.Future) && states.Contains(GameStatus.Resulted))
-        {
-            query = query.Where(game => (game.StartTime >= DateTime.UtcNow)
-            || (game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow));
-        }
-        else if (states.Contains(GameStatus.Open))
-        {
-            query = query.Where(game => game.StartTime <= DateTime.UtcNow && game.DrawTime >= DateTime.UtcNow);
-        }
-        else if (states.Contains(GameStatus.Future))
-        {
-            query = query.Where(game => game.StartTime > DateTime.UtcNow);
-        }
-        else if (states.Contains(GameStatus.Resulted))
-        {
-            query = query.Where(game => game.ResultedAt != null && game.ResultedAt <= DateTime.UtcNow);
-        }
 
         switch (sortBy)
         {
