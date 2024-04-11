@@ -5,6 +5,7 @@ using Lottery.Common.Comparers;
 using Lottery.Common.Extensions;
 
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Repositories.Common;
 
 using GameEntity = Lottery.DB.Entities.Dbo.Game;
 
@@ -47,4 +48,16 @@ public static class GameRepositoryExtensions
 
     public static IQueryable<GameEntity> FilterByGameStatuses(this IQueryable<GameEntity> query, List<GameStatus> statuses)
         => query.Where(StatusesToFilterMap[statuses]);
+
+    public static IQueryable<GameEntity> SortBy(this IQueryable<GameEntity> query, Filters.SearchGames.SortCriteria sortBy, SortDirection sortDirection)
+    {
+        return sortBy switch
+        {
+            Filters.SearchGames.SortCriteria.DrawTime => query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.DrawTime) : query.OrderByDescending(g => g.DrawTime),
+            Filters.SearchGames.SortCriteria.StartTime => query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.StartTime) : query.OrderByDescending(g => g.StartTime),
+            Filters.SearchGames.SortCriteria.CloseTime => query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.CloseTime) : query.OrderByDescending(g => g.CloseTime),
+            _ => query,
+        };
+
+    }
 }

@@ -90,24 +90,9 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
             query = query.Where(g => EF.Functions.ILike(g.Name, $"%{gamesFilter.Name}%"));
         }
 
-        query = query.FilterByGameStatuses(gamesFilter.GameStatus);
-
-        var states = gamesFilter.GameStatus;
-        var sortBy = gamesFilter.SortBy.Column;
-        var sortDirection = gamesFilter.SortBy.Direction;
-
-        switch (sortBy)
-        {
-            case Filters.SearchGames.SortCriteria.DrawTime:
-                query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.DrawTime) : query.OrderByDescending(g => g.DrawTime);
-                break;
-            case Filters.SearchGames.SortCriteria.StartTime:
-                query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.StartTime) : query.OrderByDescending(g => g.StartTime);
-                break;
-            case Filters.SearchGames.SortCriteria.CloseTime:
-                query = sortDirection == SortDirection.Asc ? query.OrderBy(g => g.CloseTime) : query.OrderByDescending(g => g.CloseTime);
-                break;
-        }
+        query = query
+            .FilterByGameStatuses(gamesFilter.GameStatus)
+            .SortBy(gamesFilter.SortBy.Column, gamesFilter.SortBy.Direction);
 
         var total = await query.CountAsync();
 
