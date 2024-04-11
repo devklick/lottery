@@ -3,12 +3,10 @@ import { useParams } from "react-router-dom";
 import dateFormat from "dateformat";
 import gameService from "../gameService";
 import {
-  Badge,
   Center,
   Container,
   Grid,
   Group,
-  MantineColor,
   Paper,
   Skeleton,
   Text,
@@ -16,7 +14,6 @@ import {
 } from "@mantine/core";
 import { GetGameResponse } from "./game.schema";
 import React from "react";
-import { GameStatus } from "../../common/schemas";
 import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
 import Trophy from "../../components/Trophy/Trophy";
@@ -127,7 +124,7 @@ function GameDetail({}: GameDetailProps) {
   return (
     <Container p={0}>
       <Group justify="center">
-        <Skeleton visible={loading} maw={"50%"}>
+        <Skeleton visible={loading}>
           <Title>{query.data?.name ?? placeholders.name}</Title>
         </Skeleton>
       </Group>

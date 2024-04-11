@@ -184,7 +184,13 @@ function YourEntries({
               />
             )}
             <Stack align="center">
-              {entries}
+              {entries?.length ? (
+                entries
+              ) : (
+                <Skeleton key={"no-entries"} visible={query.isLoading}>
+                  <Text>You have not yet entered this game</Text>
+                </Skeleton>
+              )}
               {paginaton}
             </Stack>
           </Center>
