@@ -16,12 +16,12 @@ public class ResultService(ResultRepository repository)
 
     public async Task<Result<Game>> ResultGame(Game game, IEnumerable<int> winningNumbers)
     {
-        if (game.GameStatus == GameStatus.Resulted)
+        if (game.GameStatus != GameStatus.Closed)
         {
             return new Result<Game>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = "Game already resulted" }]
+                Errors = [new() { Message = $"Unable to result game while its in a {game.GameStatus} state" }]
             };
         }
 
