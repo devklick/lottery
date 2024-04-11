@@ -87,8 +87,8 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
         labelPosition="right"
         label={
           <Group onClick={toggle}>
-            <Badge
-              ml={5}
+            <Button
+              size="compact-xs"
               rightSection={
                 opened ? (
                   <IconChevronUp size={12} />
@@ -98,7 +98,7 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
               }
             >
               Filters
-            </Badge>
+            </Button>
           </Group>
         }
       ></Divider>
