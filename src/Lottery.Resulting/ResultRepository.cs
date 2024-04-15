@@ -12,10 +12,7 @@ public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCon
     public async Task<List<Game>> GetGamesToResult()
     {
         return await _db.Games
-            .Where(g => g.State == DB.Entities.Ref.ItemState.Enabled
-                && g.DrawTime <= DateTime.UtcNow
-                && !_db.GameResults.Any(gr => gr.GameId == g.Id)
-            )
+            .Where(g => g.State == ItemState.Enabled && g.DrawTime <= DateTime.UtcNow)
             .Include(g => g.Selections)
             .Include(g => g.Prizes)
             .ToListAsync();
