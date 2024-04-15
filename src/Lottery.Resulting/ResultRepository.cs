@@ -38,6 +38,7 @@ public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCon
             .Where(es => winningGameSelectionIds.Contains(es.GameSelectionId))
             .Where(es => es.State == ItemState.Enabled)
             .Include(x => x.Entry)
+            .Where(e => e.Entry.State == ItemState.Enabled)
             .Include(x => x.Entry.CreatedBy)
             .GroupBy(es => es.EntryId)
             .Select(x => new { EntryId = x.Key, WinningSelections = x.ToList() })
