@@ -124,3 +124,4 @@ export type GetEntriesResponseItem = z.infer<
   typeof getEntriesResponseItemSchema
 >;
 export type GetEntriesResponse = z.infer<typeof getEntriesResponseSchema>;
+export type EntryPrize = GetEntriesResponseItem["prize"];

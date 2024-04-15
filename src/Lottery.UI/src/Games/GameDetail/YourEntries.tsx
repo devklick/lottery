@@ -23,15 +23,11 @@ import gameService from "../gameService";
 import Trophy from "../../components/Trophy/Trophy";
 import EditEntry from "./EditEntry";
 import { GameStatus } from "../../common/schemas";
+import { EntryPrize } from "./game.schema";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
   winningSelections?: ReadonlyArray<{ id: string; selectionNumber: number }>;
-  gamePrizes: ReadonlyArray<{
-    id: string;
-    position: number;
-    numberMatchCount: number;
-  }>;
   gameId: string;
   gameStatus: GameStatus;
 }
@@ -39,7 +35,6 @@ interface YourEntriesProps {
 function YourEntries({
   gameId,
   winningSelections,
-  gamePrizes,
   gameSelections,
   gameStatus,
 }: YourEntriesProps) {
@@ -59,28 +54,26 @@ function YourEntries({
     enabled: user.authenticated(),
   });
 
-  function getTrophy(
-    selections: Array<{ id: string; selectionNumber: number }>
-  ) {
-    if (!winningSelections?.length) return null;
-
-    const matched =
-      winningSelections?.filter((ws) => selections.some((s) => ws.id === s.id))
-        ?.length ?? 0;
-
-    for (const prize of gamePrizes) {
-      if (prize.numberMatchCount === matched) {
-        return <Trophy position={prize.position} loading={false} />;
-      }
+  function getTrophy(prize: EntryPrize) {
+    if (!winningSelections?.length) {
+      return null;
     }
 
-    return <Trophy position={0} loading={false} disabled />;
+    return (
+      <Trophy
+        position={prize?.position ?? 0}
+        loading={false}
+        disabled={!prize}
+      />
+    );
   }
 
-  function getSelectionColor(selectionId: string): MantineColor {
+  function getSelectionColor(selectionNumber: number): MantineColor {
     if (!winningSelections?.length) return "blue";
 
-    return winningSelections.find((ws) => ws.id === selectionId)
+    return winningSelections.find(
+      (ws) => ws.selectionNumber === selectionNumber
+    )
       ? "green"
       : "gray";
   }
@@ -94,7 +87,7 @@ function YourEntries({
         key={`${entryId}-${selection.id}`}
         circle
         size={"xl"}
-        color={getSelectionColor(selection.id)}
+        color={getSelectionColor(selection.selectionNumber)}
       >
         {selection.selectionNumber}
       </Badge>
@@ -121,7 +114,7 @@ function YourEntries({
         {entry.selections
           .sort((a, b) => a.selectionNumber - b.selectionNumber)
           .map((selection) => getSelection(entry.id, selection))}
-        {getTrophy(entry.selections)}
+        {getTrophy(entry.prize)}
         <ActionIcon
           variant="subtle"
           disabled={gameStatus !== "open"}
