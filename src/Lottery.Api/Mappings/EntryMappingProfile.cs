@@ -35,8 +35,9 @@ public class EntryMappingProfile : AutoMapper.Profile
         CreateMap<DB.Entities.Dbo.EntrySelection, SearchEntriesResponseItem.Selection>()
             .IncludeMembers(src => src.GameSelection);
         CreateMap<DB.Entities.Dbo.GameSelection, SearchEntriesResponseItem.Selection>();
-        CreateMap<DB.Entities.Dbo.EntryPrize, SearchEntriesResponseItem.EntryPrize>();
-
+        CreateMap<DB.Entities.Dbo.EntryPrize, SearchEntriesResponseItem.EntryPrize>()
+            .IncludeMembers(src => src.GamePrize);
+        CreateMap<DB.Entities.Dbo.GamePrize, SearchEntriesResponseItem.EntryPrize>();
     }
 
     public void MapModelsForEdit()
