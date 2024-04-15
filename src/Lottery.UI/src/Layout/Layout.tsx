@@ -50,7 +50,7 @@ function Layout({}: LayoutProps) {
         userType={user.userType}
       />
 
-      <MobileMenu navigate={navigate} />
+      <MobileMenu navigate={navigate} toggleBurger={toggleBurger} />
 
       <AppShell.Main>
         <Outlet />
