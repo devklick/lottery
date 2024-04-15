@@ -4,6 +4,7 @@ import {
   Group,
   Menu,
   Switch,
+  Text,
   UnstyledButton,
 } from "@mantine/core";
 import { IconLogin, IconMoon, IconSun } from "@tabler/icons-react";
@@ -40,7 +41,11 @@ function Header({
           size="sm"
         />
         <Group justify="space-between" style={{ flex: 1 }}>
-          <Group></Group>
+          <Group>
+            <UnstyledButton onClick={() => navigate("/")}>
+              <Text>Lottery</Text>
+            </UnstyledButton>
+          </Group>
           <Group ml="xl" gap={20} visibleFrom="sm">
             <Menu
               trigger="hover"
