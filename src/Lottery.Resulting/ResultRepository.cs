@@ -1,5 +1,6 @@
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Entities.Ref;
 using Lottery.DB.Repositories;
 
 using Microsoft.EntityFrameworkCore;
@@ -28,12 +29,14 @@ public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCon
         // Grab the prizes that are available to be won in this game
         var prizes = await _db.GamePrizes
             .Where(gp => gp.GameId == gameId)
+            .Where(gp => gp.State == ItemState.Enabled)
             .ToListAsync();
 
         // Grab the entries and their selections that have 
         // got at least one number correct
         var winners = await _db.EntrySelections
             .Where(es => winningGameSelectionIds.Contains(es.GameSelectionId))
+            .Where(es => es.State == ItemState.Enabled)
             .Include(x => x.Entry)
             .Include(x => x.Entry.CreatedBy)
             .GroupBy(es => es.EntryId)
