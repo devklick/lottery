@@ -7,7 +7,13 @@ import {
   Text,
   UnstyledButton,
 } from "@mantine/core";
-import { IconLogin, IconMoon, IconSun } from "@tabler/icons-react";
+import {
+  IconLogin,
+  IconLogout,
+  IconMoon,
+  IconSun,
+  IconUserPlus,
+} from "@tabler/icons-react";
 import { UserType } from "../Account/SignIn/signIn.schema";
 
 interface HeaderProps {
@@ -31,6 +37,7 @@ function Header({
   colorScheme,
   toggleColorScheme,
 }: HeaderProps) {
+  const logInOrOutIcon = userAuthenticated ? <IconLogout /> : <IconLogin />;
   return (
     <AppShell.Header>
       <Group h="100%" px="md">
@@ -82,11 +89,19 @@ function Header({
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Item
-                  leftSection={<IconLogin />}
+                  leftSection={logInOrOutIcon}
                   onClick={handleClickLogInOrOut}
                 >
-                  {userAuthenticated ? "Log Out" : "Log In"}
+                  {userAuthenticated ? "Sign Out" : "Sign In"}
                 </Menu.Item>
+                {!userAuthenticated && (
+                  <Menu.Item
+                    leftSection={<IconUserPlus />}
+                    onClick={() => navigate("/account/signUp")}
+                  >
+                    Sign Up
+                  </Menu.Item>
+                )}
                 <Menu.Divider />
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item
@@ -99,7 +114,9 @@ function Header({
                       style={{ pointerEvents: "none" }}
                     />
                   }
-                >{`Theme`}</Menu.Item>
+                >
+                  Theme
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>
