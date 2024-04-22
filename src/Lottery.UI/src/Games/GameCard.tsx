@@ -122,21 +122,21 @@ function GameCard({
                       <Button
                         fullWidth
                         color={theme.colors.violet[9]}
-                        leftSection={<IconBriefcase size={rem(18)} />}
+                        leftSection={<IconBriefcase size={18} />}
                       >
                         Manage
                       </Button>
                     </Menu.Target>
                     <Menu.Dropdown>
                       <Menu.Item
-                        leftSection={<IconEdit size={rem(18)} />}
+                        leftSection={<IconEdit size={18} />}
                         onClick={() => navigate(`/games/${id}/edit`)}
                       >
                         Edit
                       </Menu.Item>
                       <Menu.Item
                         disabled={gameStatus !== "closed"}
-                        leftSection={<IconRotate2 size={rem(18)} />}
+                        leftSection={<IconRotate2 size={18} />}
                         onClick={openResultGame}
                       >
                         Result
