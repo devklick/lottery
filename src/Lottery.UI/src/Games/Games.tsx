@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import gameService from "./gameService";
 import {
   Center,
@@ -13,10 +13,9 @@ import {
 } from "@mantine/core";
 import GameCard from "./GameCard";
 import GameFilters from "./GameFilters";
-import {
-  SearchGamesRequestFilter,
-  SearchGamesResponseItem,
-} from "./games.schema";
+import { SearchGamesRequest, SearchGamesResponseItem } from "./games.schema";
+import useMergedSearchParams from "../hooks/url/useMergedSearchParams";
+import QueryParams from "../utils/QueryParams";
 
 const placeholder: Array<SearchGamesResponseItem> = Array.from<
   SearchGamesResponseItem,
@@ -33,26 +32,52 @@ const placeholder: Array<SearchGamesResponseItem> = Array.from<
   selectionsRequiredForEntry: 5,
 }));
 
+const defaultFilters: SearchGamesRequest = {
+  gameStatus: ["open", "future"],
+  sortBy: "drawTime",
+  sortDirection: "desc",
+  name: "",
+  page: 1,
+  limit: 12,
+};
+
+function searchParamsToFilters(params: URLSearchParams): SearchGamesRequest {
+  return {
+    gameStatus: params.get("gameStatus")
+      ? Array.isArray(params.get("gameStatus")) &&
+        params.get("gameStatus")?.length === 1
+        ? [params.get("gameStatus")]
+        : params.getAll("gameStatus")
+      : defaultFilters.gameStatus,
+    limit: params.get("limit") ?? defaultFilters.limit,
+    page: params.get("page") ?? defaultFilters.page,
+    sortBy: params.get("sortBy") ?? defaultFilters.sortBy,
+    sortDirection: params.get("sortDirection") ?? defaultFilters.sortDirection,
+    name: params.get("name") ?? defaultFilters.name,
+  } as any as SearchGamesRequest;
+  // TODO: Implement this properly at some point...
+}
+
 interface GamesProps {}
 
 function Games({}: GamesProps) {
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(12);
-  const [filters, setFilters] = useState<SearchGamesRequestFilter>({
-    gameStatus: ["open", "future"],
-    sortBy: "drawTime",
-    sortDirection: "desc",
-    name: "",
-  });
+  const [searchParams, setSearchParams] = useMergedSearchParams(defaultFilters);
+  const [filters, setFilters] = useState<SearchGamesRequest>(
+    searchParamsToFilters(searchParams)
+  );
 
-  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (searchParams.size) {
+      setFilters(searchParamsToFilters(searchParams));
+    }
+  }, [searchParams]);
 
   const query = useQuery({
     queryKey: [
       "game",
       "search",
-      page,
-      limit,
+      filters.page,
+      filters.limit,
       filters.gameStatus,
       filters.name,
       filters.sortBy,
@@ -60,8 +85,8 @@ function Games({}: GamesProps) {
     ],
     queryFn: () =>
       gameService.searchGames({
-        limit,
-        page,
+        limit: filters.limit,
+        page: filters.page,
         gameStatus: filters.gameStatus,
         sortBy: filters.sortBy,
         sortDirection: filters.sortDirection,
@@ -74,7 +99,12 @@ function Games({}: GamesProps) {
       <Title>Lottery Games</Title>
 
       <Paper shadow="xl" p={24} radius={10}>
-        <GameFilters initialValues={filters} onUpdateClicked={setFilters} />
+        <GameFilters
+          initialValues={filters}
+          onUpdateClicked={(newFilters) =>
+            setSearchParams(new QueryParams({ ...filters, ...newFilters }))
+          }
+        />
         <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           {(query.data?.items ?? placeholder).map((game, i) => (
             <Grid.Col
@@ -98,16 +128,27 @@ function Games({}: GamesProps) {
       <Center w={"100%"} mt={50}>
         <Flex gap={"lg"} align={"center"}>
           <Pagination
-            total={Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1)}
-            value={page}
-            onChange={setPage}
+            total={Math.max(
+              Math.ceil((query.data?.total ?? 0) / filters.limit),
+              1
+            )}
+            value={filters.page}
+            onChange={(value) =>
+              setSearchParams(
+                new QueryParams({ ...filters, page: Number(value) })
+              )
+            }
           />
           <Select
             w={80}
-            value={limit.toString()}
-            defaultValue={limit.toString()}
+            value={filters.limit.toString()}
+            defaultValue={filters.limit.toString()}
             data={["12", "24", "48"]}
-            onChange={(value) => setLimit(Number(value))}
+            onChange={(value) =>
+              setSearchParams(
+                new QueryParams({ ...filters, limit: Number(value) })
+              )
+            }
             allowDeselect={false}
           />
         </Flex>
