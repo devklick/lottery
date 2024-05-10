@@ -5,7 +5,10 @@ using AutoMapper;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Common;
+using Lottery.Api.Models.User.Invite;
+using Lottery.Api.Repositories.User;
 using Lottery.Api.Services.Options;
+using Lottery.Api.Utilities;
 using Lottery.Common.Models;
 using Lottery.DB.Entities.Idt;
 
@@ -20,15 +23,17 @@ public class UserService(
     IMapper mapper,
     IOptions<UserServiceOptions> userServiceOptions,
     IOptions<CookieAuthenticationOptions> cookieOptions,
-    PasswordHasher<AppUser> passwordHasher,
-    SignInManager<AppUser> signInManager)
+    SignInManager<AppUser> signInManager,
+    Hasher hasher,
+    UserRepository userRepository)
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly IMapper _mapper = mapper;
     private readonly IOptions<UserServiceOptions> _userServiceOptions = userServiceOptions;
     private readonly IOptions<CookieAuthenticationOptions> _cookieOptions = cookieOptions;
-    private readonly PasswordHasher<AppUser> _passwordHasher = passwordHasher;
+    private readonly Hasher _hasher = hasher;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
+    private readonly UserRepository _userRepository = userRepository;
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
     {
@@ -92,7 +97,7 @@ public class UserService(
         var appUser = _mapper.Map<AppUser>(request);
 
         appUser.EmailConfirmed = _userServiceOptions.Value.AutoConfirmNewAccounts;
-        appUser.PasswordHash = _passwordHasher.HashPassword(appUser, request.Body.Password);
+        appUser.PasswordHash = _hasher.HashPassword(appUser, request.Body.Password);
 
         var userResult = await _userManager.CreateAsync(appUser);
 
@@ -115,6 +120,62 @@ public class UserService(
         {
             Status = ResultStatus.ServerError,
             Errors = roleResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
+        };
+    }
+
+    public async Task<Result<UserInviteResponse>> InviteUser(UserInviteRequest request, ClaimsPrincipal user)
+    {
+        // Get the ID of the user who is inviting another user
+        var userIdResult = GetUserId(user);
+        if (userIdResult.Status != ResultStatus.Ok)
+        {
+            return new Result<UserInviteResponse>
+            {
+                Status = userIdResult.Status,
+                Errors = userIdResult.Errors
+            };
+        }
+
+        // Get the role which the user is being invited to
+        var role = await _userRepository.GetRole(request.Body.UserType);
+        if (role == null)
+        {
+            return new Result<UserInviteResponse>
+            {
+                Status = ResultStatus.ServerError,
+                Errors = [new() { Message = $"Unable to find role for user type {request.Body.UserType}" }]
+            };
+        }
+
+        var invite = new AppUserInvite
+        {
+            Id = Guid.NewGuid(),
+            Email = request.Body.Email,
+            Token = _hasher.GetString(128),
+            CreatedById = userIdResult.Value,
+            Expiry = DateTime.UtcNow.Add(_userServiceOptions.Value.UserInviteValidFor),
+        };
+
+        // Create the invite
+        var inviteResult = await _userRepository.CreateUserInvite(invite);
+
+        var inviteRole = new AppUserInviteRole
+        {
+            AppUserInviteId = inviteResult.Id,
+            AppRoleId = role.Id
+        };
+
+        // Link the invite to the role that the user is being invited to
+        await _userRepository.CreateUserInviteRoles(inviteRole);
+
+        await _userRepository.SaveChangesAsync();
+
+        // Send email to invite user - not going to implement this
+
+        return new Result<UserInviteResponse>
+        {
+            Status = ResultStatus.Ok,
+            Value = new UserInviteResponse { }
         };
     }
 }

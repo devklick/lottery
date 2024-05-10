@@ -28,6 +28,8 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
     public DbSet<Entry> Entries { get; set; }
     public DbSet<EntrySelection> EntrySelections { get; set; }
     public DbSet<EntryPrize> EntryPrizes { get; set; }
+    public DbSet<AppUserInvite> UserInvites { get; set; }
+    public DbSet<AppUserInviteRole> UserInviteRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
