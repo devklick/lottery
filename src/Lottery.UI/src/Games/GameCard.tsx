@@ -7,16 +7,15 @@ import {
   Skeleton,
   Stack,
   Text,
-  rem,
   useMantineTheme,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconBriefcase, IconEdit, IconRotate2 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+
 import { useUserStore } from "../stores/user.store";
 import GameStatusBadge from "../components/GameStatusBadge";
-import { useEffect } from "react";
 import { GameStatus } from "../common/schemas";
-import { useDisclosure } from "@mantine/hooks";
 import ResultGame from "./ResultGame/ResultGame";
 
 interface GameCardProps {

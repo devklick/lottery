@@ -1,4 +1,24 @@
-import { EnumLike, z } from "zod";
+import { z, EnumLike } from "zod";
+
+export const userTypes = {
+  Guest: "Guest",
+  Basic: "Basic",
+  Admin: "Admin",
+  SystemAdmin: "SystemAdmin",
+} as const;
+
+export const allUserTypes = Object.keys(userTypes);
+
+export const userTypeSchema = z.nativeEnum(userTypes);
+
+export type UserType = z.infer<typeof userTypeSchema>;
+
+export const allUserTypesWithLabel: ValuesAndLabels<UserType> = {
+  Guest: { label: "Guest", value: "Guest" },
+  Basic: { label: "Basic", value: "Basic" },
+  Admin: { label: "Admin", value: "Admin" },
+  SystemAdmin: { label: "SystemAdmin", value: "SystemAdmin" },
+};
 
 // region ======== Common ========
 type ValueAndLabel<Value> = {
@@ -83,4 +103,5 @@ export const allSortDirectionsWithLabel: ValuesAndLabels<SortDirection> = {
   asc: { label: "Ascending", value: "asc" },
   desc: { label: "Descending", value: "desc" },
 };
+
 //#endregion

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-type UserType = "Guest" | "Basic" | "Admin";
+import { UserType } from "../common/schemas";
 
 interface UserStore {
   _authenticated: boolean;

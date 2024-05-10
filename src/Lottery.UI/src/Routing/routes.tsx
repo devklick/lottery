@@ -50,13 +50,34 @@ const routes: Array<RouteObject> = [
       },
       {
         path: "/games/:id/edit",
-
         element: (
           <ProtectedRoute
             permittedUserTypes={["Admin"]}
             notPermittedErrorMessage="You do not have permission to edit games"
           >
             <pages.Games.EditGame.Page />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/users",
+        element: (
+          <ProtectedRoute
+            permittedUserTypes={["Admin"]}
+            notPermittedErrorMessage="You do not have permission to view users"
+          >
+            <pages.Users.Page />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/users/invite",
+        element: (
+          <ProtectedRoute
+            permittedUserTypes={["Admin"]}
+            notPermittedErrorMessage="You do not have permission to invite users"
+          >
+            <pages.Users.Invite.Page />
           </ProtectedRoute>
         ),
       },
