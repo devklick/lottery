@@ -1,8 +1,8 @@
 import Users from "./Users";
-import UserInvite from "./UserInvite";
+import Invite from "./Invite";
 
 export default {
   Page: Users,
 
-  Invite: UserInvite,
+  Invite,
 };

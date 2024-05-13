@@ -6,6 +6,8 @@ using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.User.Invite;
+using Lottery.Api.Models.User.Invite.Accept;
+using Lottery.Api.Models.User.Invite.Verify;
 using Lottery.Api.Repositories.User;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Utilities;
@@ -92,7 +94,7 @@ public class UserService(
         };
     }
 
-    public async Task<Result<SignUpResponse>> CreateAccount(SignUpRequest request)
+    public async Task<Result<SignUpResponse>> CreateAccount(SignUpRequest request, IEnumerable<string>? roles = null)
     {
         var appUser = _mapper.Map<AppUser>(request);
 
@@ -110,17 +112,27 @@ public class UserService(
             };
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(appUser, "BasicUser");
+        if (roles == null || !roles.Any())
+        {
+            roles = ["BasicUser"];
+        }
+
+        foreach (var role in roles)
+        {
+            var roleResult = await _userManager.AddToRoleAsync(appUser, role);
+
+            if (!roleResult.Succeeded)
+            {
+                return new Result<SignUpResponse>
+                {
+                    Status = ResultStatus.ServerError,
+                    Errors = roleResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
+                };
+            }
+        }
 
 
-        return roleResult.Succeeded ? new Result<SignUpResponse>
-        {
-            Status = ResultStatus.Ok,
-        } : new Result<SignUpResponse>
-        {
-            Status = ResultStatus.ServerError,
-            Errors = roleResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
-        };
+        return new Result<SignUpResponse> { Status = ResultStatus.Ok };
     }
 
     public async Task<Result<UserInviteResponse>> InviteUser(UserInviteRequest request, ClaimsPrincipal user)
@@ -175,7 +187,92 @@ public class UserService(
         return new Result<UserInviteResponse>
         {
             Status = ResultStatus.Ok,
-            Value = new UserInviteResponse { }
+            Value = new UserInviteResponse
+            {
+                Email = invite.Email,
+                Token = invite.Token
+            }
+        };
+    }
+
+    public async Task<Result<VerifyUserInviteResponse>> FindUserInvite(VerifyUserInviteRequest request)
+    {
+        var invite = await _userRepository.FindUserInvite(request.Query.Email, request.Query.Token);
+
+        if (invite == null)
+        {
+            return new Result<VerifyUserInviteResponse> { Status = ResultStatus.NotFound };
+        }
+
+        if (invite.Expiry < DateTime.UtcNow)
+        {
+            return new Result<VerifyUserInviteResponse>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = "Invite Expired" }]
+            };
+        }
+
+        if (invite.AppUserId != null)
+        {
+            return new Result<VerifyUserInviteResponse>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = "Invite already accepted" }]
+            };
+        }
+
+        return new Result<VerifyUserInviteResponse> { Status = ResultStatus.Ok };
+    }
+
+    public async Task<Result<AcceptUserInviteResponse>> AcceptUserInvite(AcceptUserInviteRequest request)
+    {
+        var invite = await _userRepository.FindUserInvite(request.Body.Email, request.Body.Token,
+            rolesFilter: new()
+            {
+                Include = true
+            }
+        );
+
+        if (invite == null)
+        {
+            return new Result<AcceptUserInviteResponse> { Status = ResultStatus.NotFound };
+        }
+
+        if (invite.Expiry < DateTime.UtcNow)
+        {
+            return new Result<AcceptUserInviteResponse>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = "Invite Expired" }]
+            };
+        }
+
+        if (invite.AppUserId != null)
+        {
+            return new Result<AcceptUserInviteResponse>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = "Invite already accepted" }]
+            };
+        }
+
+        var roles = invite.AppUserInviteRoles.Select(r => r.AppRole.Name ?? "").ToList();
+
+        var accountResult = await CreateAccount(new SignUpRequest
+        {
+            Body = new SignUpRequestBody
+            {
+                Email = request.Body.Email,
+                Password = request.Body.Password,
+                Username = request.Body.Username
+            }
+        }, roles);
+
+        return new Result<AcceptUserInviteResponse>
+        {
+            Status = accountResult.Status,
+            Errors = accountResult.Errors,
         };
     }
 }

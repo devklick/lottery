@@ -1,7 +1,12 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 export function isBasicError(value: unknown): value is BasicError {
-  return !!value && typeof value === "object" && "errors" in value;
+  return (
+    !!value &&
+    typeof value === "object" &&
+    "errors" in value &&
+    Array.isArray(value.errors)
+  );
 }
 
 type BasicError = {

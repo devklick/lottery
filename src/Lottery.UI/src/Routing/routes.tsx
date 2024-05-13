@@ -82,6 +82,10 @@ const routes: Array<RouteObject> = [
         ),
       },
       {
+        path: "/users/invite/accept",
+        element: <pages.Users.Invite.Accept.Page />,
+      },
+      {
         path: "account/unauthorized",
         element: <Unauthorized />,
       },

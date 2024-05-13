@@ -11,10 +11,10 @@ public class ApiControllerBase : ControllerBase
 {
     protected ActionResult<T> CreateActionResult<T>(Result<T> result) => result.Status switch
     {
-        ResultStatus.BadRequest => BadRequest(result.Errors),
-        ResultStatus.NotFound => NotFound(result.Errors),
-        ResultStatus.NotAuthenticated => Unauthorized(result.Errors),
+        ResultStatus.BadRequest => BadRequest(new { result.Errors }),
+        ResultStatus.NotFound => NotFound(new { result.Errors }),
+        ResultStatus.NotAuthenticated => Unauthorized(new { result.Errors }),
         ResultStatus.Ok => Ok(result.Value),
-        _ => StatusCode((int)HttpStatusCode.InternalServerError, result.Errors),
+        _ => StatusCode((int)HttpStatusCode.InternalServerError, new { result.Errors }),
     };
 }

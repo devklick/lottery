@@ -4,7 +4,7 @@ import {
   UserInviteRequestBody,
   UserInviteResponse,
   userInviteRequestBodySchema,
-} from "./userInvite.schema";
+} from "./invite.schema";
 import { useMutation } from "@tanstack/react-query";
 import userService from "../userService";
 import {
@@ -15,12 +15,14 @@ import {
   TextInput,
   Select,
   Button,
+  Text,
 } from "@mantine/core";
 import { allUserTypesWithLabel } from "../../common/schemas";
+import { Link } from "react-router-dom";
 
-interface UserInviteProps {}
+interface InviteProps {}
 
-function UserInvite({}: UserInviteProps) {
+function Invite({}: InviteProps) {
   const initialValues: UserInviteRequestBody = {
     email: "",
     userType: "Basic",
@@ -63,6 +65,19 @@ function UserInvite({}: UserInviteProps) {
               allowDeselect={false}
             />
             <Button type="submit">Submit</Button>
+            {mutation.isSuccess && (
+              <Text>
+                {
+                  "Invitation successfully created. To accept the invite, click "
+                }
+                <Link
+                  to={`accept?email=${mutation.data.email}&token=${mutation.data.token}`}
+                >
+                  here
+                </Link>
+                .
+              </Text>
+            )}
           </Stack>
         </form>
       </Paper>
@@ -70,4 +85,4 @@ function UserInvite({}: UserInviteProps) {
   );
 }
 
-export default UserInvite;
+export default Invite;

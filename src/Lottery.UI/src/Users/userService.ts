@@ -1,13 +1,26 @@
 import { ApiServiceDefinition, createApiService } from "../services/ApiService";
 import {
+  AcceptInviteRequest,
+  AcceptInviteRequestBody,
+  AcceptInviteResponse,
+  VerifyInviteRequestQuery,
+  VerifyInviteResponse,
+  acceptInviteResponseSchema,
+  verifyInviteResponseSchema,
+} from "./Invite/Accept/accept.schema";
+import {
   UserInviteRequest,
   UserInviteRequestBody,
   UserInviteResponse,
   userInviteResponseSchema,
-} from "./UserInvite/userInvite.schema";
+} from "./Invite/invite.schema";
 
 interface UserService {
   inviteUser: (request: UserInviteRequest) => Promise<UserInviteResponse>;
+  verifyInvite: (
+    request: VerifyInviteRequestQuery
+  ) => Promise<VerifyInviteResponse>;
+  acceptInvite: (request: AcceptInviteRequest) => Promise<AcceptInviteResponse>;
 }
 
 export function createUserService({
@@ -35,7 +48,45 @@ export function createUserService({
     throw valid.error.message;
   };
 
-  return { inviteUser };
+  const verifyInvite: UserService["verifyInvite"] = async (request) => {
+    const result = await api.get<VerifyInviteRequestQuery, UserInviteResponse>(
+      "/user/invite/verify",
+      request
+    );
+
+    if (!result.success) {
+      throw result.error;
+    }
+
+    const valid = verifyInviteResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const acceptInvite: UserService["acceptInvite"] = async (request) => {
+    const result = await api.post<
+      AcceptInviteRequestBody,
+      AcceptInviteResponse
+    >("/user/invite/accept", request.body);
+
+    if (!result.success) {
+      throw result.error;
+    }
+
+    const valid = acceptInviteResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  return { inviteUser, verifyInvite, acceptInvite };
 }
 
 export default createUserService({
