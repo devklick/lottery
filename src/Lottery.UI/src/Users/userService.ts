@@ -77,7 +77,7 @@ export function createUserService({
       throw result.error;
     }
 
-    const valid = acceptInviteResponseSchema.safeParse(result.data);
+    const valid = acceptInviteResponseSchema.safeParse(result.data || {});
 
     if (valid.success) {
       return valid.data;
