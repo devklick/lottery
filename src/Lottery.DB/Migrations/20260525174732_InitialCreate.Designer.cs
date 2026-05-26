@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     [DbContext(typeof(MaintenanceDBContext))]
-    [Migration("20240310150251_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260525174732_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "account_type", new[] { "user", "service" });
@@ -197,6 +197,10 @@ namespace Lottery.DB.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<DateTime>("CloseTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("close_time");
+
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid")
                         .HasColumnName("created_by_id");
@@ -217,9 +221,13 @@ namespace Lottery.DB.Migrations
                         .HasColumnType("character varying(64)")
                         .HasColumnName("name");
 
-                    b.Property<int>("NumbersRequired")
+                    b.Property<DateTime?>("ResultedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("resulted_at");
+
+                    b.Property<int>("SelectionsRequiredForEntry")
                         .HasColumnType("integer")
-                        .HasColumnName("numbers_required");
+                        .HasColumnName("selections_required_for_entry");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone")
@@ -301,9 +309,6 @@ namespace Lottery.DB.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("GameId", "NumberMatchCount")
-                        .IsUnique();
 
                     b.HasIndex("GameId", "Position")
                         .IsUnique();
@@ -467,7 +472,7 @@ namespace Lottery.DB.Migrations
                         new
                         {
                             Id = new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"),
-                            ConcurrencyStamp = "ab02ef94ec384cc49049fc2a5c5b3061",
+                            ConcurrencyStamp = "b10a7e5e8875420a8d90a55e38b11fb0",
                             Description = "Elevated permissions across the entire system.",
                             DisplayName = "System Administrator",
                             Name = "SystemAdministrator",
@@ -476,7 +481,7 @@ namespace Lottery.DB.Migrations
                         new
                         {
                             Id = new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"),
-                            ConcurrencyStamp = "3cea94e0ff784364b49c9df292555af0",
+                            ConcurrencyStamp = "76c43f385c2b405fba3d946f2bcea6b1",
                             Description = "Permission to create and edit any games",
                             DisplayName = "Game Admin",
                             Name = "GameAdmin",
@@ -485,7 +490,7 @@ namespace Lottery.DB.Migrations
                         new
                         {
                             Id = new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"),
-                            ConcurrencyStamp = "ed2350457c1b4c18afc9d13c23ed5a05",
+                            ConcurrencyStamp = "4cdc4513a4804f46aa2ef1538249c2d1",
                             Description = "Permission to access the site and play games.",
                             DisplayName = "Basic User",
                             Name = "BasicUser",
@@ -494,7 +499,7 @@ namespace Lottery.DB.Migrations
                         new
                         {
                             Id = new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"),
-                            ConcurrencyStamp = "cf7a8e8a2eef4e13b6dfeeeed3064cda",
+                            ConcurrencyStamp = "0b1e458292f14381be395229b68a6e3c",
                             Description = "Role to be assumed by user accounts used by backend services.",
                             DisplayName = "Service Account",
                             Name = "ServiceAccount",
@@ -621,15 +626,15 @@ namespace Lottery.DB.Migrations
                             Id = new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"),
                             AccessFailedCount = 0,
                             AccountType = 0,
-                            ConcurrencyStamp = "6cd1f1703ac548e2a9295d2568fdc229",
+                            ConcurrencyStamp = "421123fe685b4be1a9b63c6d809583e5",
                             Email = "SystemAdministrator@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
                             NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDwIZYUsECFbX8jyI6oujyQNsZphVSpLCXTaBoW8ta2Td2yhrkBMUQuLx4R8CoRdfw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "421123fe685b4be1a9b63c6d809583e5",
+                            SecurityStamp = "6cd1f1703ac548e2a9295d2568fdc229",
                             TwoFactorEnabled = false,
                             UserName = "SystemAdmin"
                         },
@@ -638,15 +643,15 @@ namespace Lottery.DB.Migrations
                             Id = new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"),
                             AccessFailedCount = 0,
                             AccountType = 0,
-                            ConcurrencyStamp = "0c057e3ddbb746aa9fd1ad3f9b98488d",
+                            ConcurrencyStamp = "d2761ece200c4ead95f643a5227218a5",
                             Email = "GameAdmin@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
                             NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPkZPfF6vAdFP7EW+fw9L7JDwvGLMYtp2AMuTgnRudV7tBRtVxrBdOAPm2mAOwNtXA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d2761ece200c4ead95f643a5227218a5",
+                            SecurityStamp = "0c057e3ddbb746aa9fd1ad3f9b98488d",
                             TwoFactorEnabled = false,
                             UserName = "GameAdmin"
                         },
@@ -655,32 +660,32 @@ namespace Lottery.DB.Migrations
                             Id = new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"),
                             AccessFailedCount = 0,
                             AccountType = 1,
-                            ConcurrencyStamp = "ff152f04ba8649f196c20b5f090b7659",
-                            Email = "Lottery.Api@Lottery.Game",
+                            ConcurrencyStamp = "ConcurrencyStamp",
+                            Email = "Lottery.Api.User@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "LOTTERY.API@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.API",
+                            NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
+                            NormalizedUserName = "LOTTERY.API.USER",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bc1b6b3b3982424f8f5e93d05c4eeb44",
+                            SecurityStamp = "801f9eb0a8cf40fc8a8c621d70ffe214",
                             TwoFactorEnabled = false,
-                            UserName = "Lottery.Api"
+                            UserName = "Lottery.Api.User"
                         },
                         new
                         {
                             Id = new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"),
                             AccessFailedCount = 0,
                             AccountType = 1,
-                            ConcurrencyStamp = "b0851a4bec7c489aaf7a37f311a6a946",
-                            Email = "Lottery.ResultService@Lottery.Game",
+                            ConcurrencyStamp = "87d73fa701bf494b9ef9c5f193278a3f",
+                            Email = "Lottery.ResultService.User@Lottery.Game",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "LOTTERY.RESULTSERVICE@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.RESULTSERVICE",
+                            NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
+                            NormalizedUserName = "LOTTERY.RESULTSERVICE.USER",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d440692d809e4e2f921e06722aed9ef3",
+                            SecurityStamp = "bdd00b91be02492cb91154dabb5ce5a2",
                             TwoFactorEnabled = false,
-                            UserName = "Lottery.ResultService"
+                            UserName = "Lottery.ResultService.User"
                         });
                 });
 
@@ -710,6 +715,95 @@ namespace Lottery.DB.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("app_user_claim", "idt");
+                });
+
+            modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserInvite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("integer")
+                        .HasColumnName("account_type");
+
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("app_user_id");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email");
+
+                    b.Property<DateTime>("Expiry")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiry");
+
+                    b.Property<int>("State")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("state");
+
+                    b.Property<DateTime>("StateLastUpdatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("state_last_updated_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("token");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("app_user_invite", "idt");
+                });
+
+            modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserInviteRole", b =>
+                {
+                    b.Property<Guid>("AppUserInviteId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("app_user_invite_id");
+
+                    b.Property<Guid>("AppRoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("app_role_id");
+
+                    b.HasKey("AppUserInviteId", "AppRoleId");
+
+                    b.HasIndex("AppRoleId");
+
+                    b.ToTable("app_user_invite_role", "idt");
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserLogin", b =>
@@ -911,7 +1005,7 @@ namespace Lottery.DB.Migrations
                         .IsRequired();
 
                     b.HasOne("Lottery.DB.Entities.Dbo.Game", "Game")
-                        .WithMany()
+                        .WithMany("Results")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -966,6 +1060,43 @@ namespace Lottery.DB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserInvite", b =>
+                {
+                    b.HasOne("Lottery.DB.Entities.Idt.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Lottery.DB.Entities.Idt.AppUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserInviteRole", b =>
+                {
+                    b.HasOne("Lottery.DB.Entities.Idt.AppRole", "AppRole")
+                        .WithMany()
+                        .HasForeignKey("AppRoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Lottery.DB.Entities.Idt.AppUserInvite", "AppUserInvite")
+                        .WithMany("AppUserInviteRoles")
+                        .HasForeignKey("AppUserInviteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppRole");
+
+                    b.Navigation("AppUserInvite");
+                });
+
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserLogin", b =>
                 {
                     b.HasOne("Lottery.DB.Entities.Idt.AppUser", null)
@@ -1012,6 +1143,8 @@ namespace Lottery.DB.Migrations
 
                     b.Navigation("Prizes");
 
+                    b.Navigation("Results");
+
                     b.Navigation("Selections");
                 });
 
@@ -1023,6 +1156,11 @@ namespace Lottery.DB.Migrations
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUser", b =>
                 {
                     b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserInvite", b =>
+                {
+                    b.Navigation("AppUserInviteRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,26 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+WORKDIR /src
+
+COPY src/Lottery.Api/Lottery.Api.csproj src/Lottery.Api/
+COPY src/Lottery.DB/Lottery.DB.csproj src/Lottery.DB/
+
+RUN dotnet restore src/Lottery.Api/Lottery.Api.csproj
+
+COPY . .
+
+RUN dotnet publish src/Lottery.Api/Lottery.Api.csproj \
+    -c Release \
+    -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "Lottery.Api.dll"]

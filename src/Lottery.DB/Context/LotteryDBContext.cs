@@ -35,7 +35,9 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
     {
         base.OnModelCreating(builder);
 
-        builder.HasPostgresEnum<ItemState>().HasPostgresEnum<AccountType>();
+        builder
+            .HasPostgresEnum<ItemState>()
+            .HasPostgresEnum<AccountType>();
 
         foreach (var entity in builder.Model.GetEntityTypes())
         {
@@ -51,6 +53,8 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
                 ApplyNamingConvention(property);
 
                 AddDefaultConstraint(property);
+
+                AddSentinelValue(property);
             }
 
             // foreach foreign key
@@ -103,6 +107,16 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
             {
                 property.SetDefaultValue(sqlDefault.DefaultValue);
             }
+        }
+    }
+
+    private static void AddSentinelValue(IMutableProperty property)
+    {
+        var attr = property.PropertyInfo?.GetCustomAttribute<SentinelValueAttribute>();
+
+        if (attr != null)
+        {
+            property.Sentinel = attr.Value;
         }
     }
 

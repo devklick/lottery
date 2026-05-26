@@ -1,7 +1,7 @@
 import { PropsWithChildren, useEffect } from "react";
-import { UserType } from "../Account/SignIn/signIn.schema";
 import { useUserStore } from "../stores/user.store";
 import { useNavigate } from "react-router-dom";
+import { UserType } from "../common/schemas";
 
 interface ProtectedRouteProps {
   permittedUserTypes: Array<UserType>;
@@ -23,7 +23,7 @@ function ProtectedRoute({
       });
       return;
     }
-  }, [isUserType]);
+  }, [isUserType, navigate, notPermittedErrorMessage, permittedUserTypes]);
 
   return children;
 }

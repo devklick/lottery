@@ -10,22 +10,77 @@
 
 ## Running Locally
 
-### Setting up the database
+### Docker Compose
 
-The application uses a PostgreSQL database for the data store. As such, you'll need to have a Postgres instance accessible from the machine you're running the application on. The quickest and easiest way to get up and running is to run Postgres in a Docker container.
+The easiest way to run the application is with docker compose. But before doing so, 
+you'll need a `.env` file in the root of the project:
+```sh
+POSTGRES_DB=lottery # The name of the DB
+POSTGRES_PASSWORD=<add> # The master password for the DB
 
-Before running the following, replace `PASSWORD_HERE` with the password you want to use to access the postgres instance. If you want, you can also change `postgres-local` with another value - this is the name you are giving to the docker container.
+# A DB user will be created for the API that results the games.
+# These env vars are the credentials for this user
+API_DB_USER=lottery_api_service
+API_DB_PASSWORD=<add>
 
+# A DB user will be created for the service that results the games.
+# These env vars are the credentials for this user
+RESULTS_DB_USER=lottery_results_service
+RESULTS_DB_PASSWORD=<add>
+
+# A DB user will be created for the migrations to run under.
+# These env vars are the credentials for this user
+MIGRATOR_DB_USER=lottery_migration_service
+MIGRATOR_DB_PASSWORD=<add>
+
+# Two app/site users will be created; GameAdmin and SystemAdmin.
+# These env vars are the passwords for these users.
+SYSTEM_ADMIN_PASSWORD=<add>
+GAME_ADMIN_PASSWORD=<add>
 ```
-docker run \
-    --name postgres-local \
-    -p 5432:5432 \
-    -e POSTGRES_PASSWORD=PASSWORD_HERE \
-    -d \
-    post
+
+One your env vars are defined, you can now run:
+```
+docker compose up
 ```
 
-> [!NOTE]
-> The password specified here will be the main password that will be used for maintenance tasks such as creating and altering the database, but will not be used by the various applications that need to access the data.
+The UI can be accessed from [http://localhost:3000](http://localhost:3000) and 
+the API can be accessed from [http://localhost:5000](http://localhost:5000). 
+You can log into the UI as either the Game Admin or System Admin:
 
-Now that the database exists, the migration needs to be applied. See the [README in Lottery.DB](./src/Lottery.DB/README.md) for more on this.
+#### Game Admin
+- Username: `GameAdmin`
+- Password: Defined in your `GAME_ADMIN_PASSWORD` env var
+
+#### System Admin
+- Username: `SystemAdmin`
+- Password: Defined in your `SYSTEM_ADMIN_PASSWORD` env var
+
+
+### Debugging
+
+#### API
+
+Running the code in docker is great, but it's often useful to be able to attach 
+a debugger and step through the code. To do so, start by initializing user secrets 
+for the API project:
+```
+dotnet user-secrets init --project Lottery.Api
+```
+Then add the username and password that the API will connect with - the ones you 
+specified in your `.env` file:
+```
+dotnet user-secrets set \
+    "ConnectionStrings:Default:User" \
+    "USER" \
+    --project Lottery.Api
+
+dotnet user-secrets set \
+    "ConnectionStrings:Default:Password" \
+    "PASSWORD" \
+    --project Lottery.Api
+```
+
+At run time, the API will take the `ConnectionStrings:Default` connection string
+from ['appsettings.json']('./src/Lottery.Api/appsettings.json) and append your 
+credentials to it.

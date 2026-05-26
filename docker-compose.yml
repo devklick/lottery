@@ -1,0 +1,93 @@
+services:
+  db:
+    labels:
+      - com.host.description=Postgres data store for the lottery application
+    image: postgres:18
+    container_name: lottery-db
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # needs to know the migrator creds because the init_users.sh script uses
+      # these to create the migrator user
+      MIGRATOR_DB_USER: ${MIGRATOR_DB_USER}
+      MIGRATOR_DB_PASSWORD: ${MIGRATOR_DB_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./db/init_users.sh:/docker-entrypoint-initdb.d/init_users.sh
+
+  migrate:
+    labels:
+      - com.host.description=Runs the EF migration
+    build:
+      context: .
+      dockerfile: src/Lottery.DB/dockerfile
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      API_DB_USER: ${API_DB_USER}
+      API_DB_PASSWORD: ${API_DB_PASSWORD}
+      RESULTS_DB_USER: ${RESULTS_DB_USER}
+      RESULTS_DB_PASSWORD: ${RESULTS_DB_PASSWORD}
+      ConnectionStrings__Default: "Host=db;Database=${POSTGRES_DB};Username=${MIGRATOR_DB_USER};Password=${MIGRATOR_DB_PASSWORD}"
+
+    command:
+      [
+        "database",
+        "update",
+        "--project",
+        "src/Lottery.DB",
+        "--context",
+        "MaintenanceDBContext",
+      ]
+
+  api:
+    labels:
+      - com.host.description=The API which is consumed by the lottery UI to manage and interact with lottery games
+    build:
+      context: .
+      dockerfile: src/Lottery.Api/dockerfile
+
+    container_name: lottery-api
+    restart: unless-stopped
+
+    ports:
+      - 5000:8080
+
+    depends_on:
+      - db
+
+    environment:
+      ConnectionStrings__Default: Host=db;Database=${POSTGRES_DB};Username=${API_DB_USER};Password=${API_DB_PASSWORD}
+
+  ui:
+    labels:
+      - com.host.description=The UI to manage and interact with lottery games
+    build:
+      context: src/Lottery.UI
+      dockerfile: dockerfile
+
+    container_name: lottery-ui
+    restart: unless-stopped
+
+    # Map localhost port 3000 to 80. Nginx config will listen on 80.
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:

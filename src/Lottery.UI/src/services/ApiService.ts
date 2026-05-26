@@ -48,19 +48,19 @@ export interface ApiServiceDefinition {
   post<Request = unknown, Response = unknown>(
     url: string,
     request?: Request,
-    options?: PostOptions
+    options?: PostOptions,
   ): AsyncResult<Response>;
 
   get<Query, Response>(
     url: string,
     query?: Query,
-    options?: GetOptions
+    options?: GetOptions,
   ): AsyncResult<Response>;
 
   put<Request = unknown, Response = unknown>(
     url: string,
     request?: Request,
-    options?: PutOptions
+    options?: PutOptions,
   ): AsyncResult<Response>;
 }
 
@@ -77,8 +77,9 @@ export class ApiService implements ApiServiceDefinition {
   async post<Request = unknown, Response = unknown>(
     url: string,
     request?: Request,
-    options?: PostOptions
+    options?: PostOptions,
   ): AsyncResult<Response> {
+    console.info("Calling API", { url, request, options });
     const response = await this.api.post<
       Response,
       AxiosResponse<Response | BasicError>,
@@ -110,7 +111,7 @@ export class ApiService implements ApiServiceDefinition {
   async put<Request = unknown, Response = unknown>(
     url: string,
     request?: Request | undefined,
-    options?: PutOptions
+    options?: PutOptions,
   ): AsyncResult<Response> {
     const response = await this.api.put<
       Response,
@@ -143,7 +144,7 @@ export class ApiService implements ApiServiceDefinition {
   async get<Query, Response>(
     url: string,
     query?: Query,
-    options?: GetOptions
+    options?: GetOptions,
   ): AsyncResult<Response> {
     const response = await this.api.get<Response, AxiosResponse<Response>>(
       url,
@@ -153,7 +154,7 @@ export class ApiService implements ApiServiceDefinition {
         paramsSerializer: {
           indexes: true,
         },
-      }
+      },
     );
 
     options?.onStatusCode && options.onStatusCode[response.status]?.();

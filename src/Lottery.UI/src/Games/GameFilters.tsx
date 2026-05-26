@@ -1,5 +1,4 @@
 import {
-  Badge,
   Button,
   Collapse,
   Container,

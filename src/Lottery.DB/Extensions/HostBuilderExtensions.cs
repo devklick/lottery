@@ -23,12 +23,12 @@ public static class HostBuilderExtensions
 
         var dataSource = dataSourceBuilder.Build();
 
-        builder.Services.Configure<EFMigrationSettings>(
-            builder.Configuration.GetSection(nameof(EFMigrationSettings)));
+        var migrationSettings = builder.Configuration.GetSection(nameof(EFMigrationSettings));
+        builder.Services.Configure<EFMigrationSettings>(migrationSettings);
 
         builder.Services.AddDbContext<TContext>(options => options.UseNpgsql(dataSource, options =>
         {
-            var settings = builder.Configuration.GetSection(nameof(EFMigrationSettings)).Get<EFMigrationSettings>()
+            var settings = migrationSettings.Get<EFMigrationSettings>()
                 ?? throw new Exception("No EFMigrationSettings found");
 
             options.MigrationsHistoryTable(tableName: settings.TableName, schema: settings.SchemaName);
@@ -42,13 +42,16 @@ public static class HostBuilderExtensions
         var connectionString = builder.Configuration.GetConnectionString("Default")
             ?? throw new Exception("No default connection string found");
 
-        var dbPassword = builder.Configuration["ConnectionStrings:Default:Password"];
+        var csb = new NpgsqlConnectionStringBuilder(connectionString);
 
-        if (!string.IsNullOrWhiteSpace(dbPassword))
-        {
-            connectionString = connectionString.TrimEnd();
-            connectionString += $";Password={dbPassword};";
-        }
-        return connectionString;
+        // when running locally, most of the connection string is defined in appsettings, 
+        // however password wil be stored more security and added to configuration.
+        var dbPassword = builder.Configuration["ConnectionStrings:Default:Password"];
+        var dbUser = builder.Configuration["ConnectionStrings:Default:User"];
+
+        if (!string.IsNullOrWhiteSpace(dbPassword)) csb.Password = dbPassword;
+        if (!string.IsNullOrWhiteSpace(dbUser)) csb.Username = dbUser;
+
+        return csb.ConnectionString;
     }
 }

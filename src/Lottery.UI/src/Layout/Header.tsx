@@ -14,7 +14,7 @@ import {
   IconSun,
   IconUserPlus,
 } from "@tabler/icons-react";
-import { UserType } from "../Account/SignIn/signIn.schema";
+import { UserType } from "../common/schemas";
 
 interface HeaderProps {
   burgerOpened: boolean;

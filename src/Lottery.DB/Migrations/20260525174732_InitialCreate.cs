@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -117,6 +117,42 @@ namespace Lottery.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "app_user_invite",
+                schema: "idt",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
+                    token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    expiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    account_type = table.Column<int>(type: "integer", nullable: false),
+                    app_user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    state_last_updated_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_app_user_invite", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_app_user_invite_app_user_app_user_id",
+                        column: x => x.app_user_id,
+                        principalSchema: "idt",
+                        principalTable: "app_user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_app_user_invite_app_user_created_by_id",
+                        column: x => x.created_by_id,
+                        principalSchema: "idt",
+                        principalTable: "app_user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "app_user_login",
                 schema: "idt",
                 columns: table => new
@@ -194,9 +230,11 @@ namespace Lottery.DB.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     start_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    close_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     draw_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    resulted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    numbers_required = table.Column<int>(type: "integer", nullable: false),
+                    selections_required_for_entry = table.Column<int>(type: "integer", nullable: false),
                     created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     state = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
@@ -211,6 +249,33 @@ namespace Lottery.DB.Migrations
                         column: x => x.created_by_id,
                         principalSchema: "idt",
                         principalTable: "app_user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "app_user_invite_role",
+                schema: "idt",
+                columns: table => new
+                {
+                    app_user_invite_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    app_role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_app_user_invite_role", x => new { x.app_user_invite_id, x.app_role_id });
+                    table.ForeignKey(
+                        name: "FK_app_user_invite_role_app_role_app_role_id",
+                        column: x => x.app_role_id,
+                        principalSchema: "idt",
+                        principalTable: "app_role",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_app_user_invite_role_app_user_invite_app_user_invite_id",
+                        column: x => x.app_user_invite_id,
+                        principalSchema: "idt",
+                        principalTable: "app_user_invite",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -440,10 +505,10 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "ab02ef94ec384cc49049fc2a5c5b3061", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
-                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "3cea94e0ff784364b49c9df292555af0", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
-                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "ed2350457c1b4c18afc9d13c23ed5a05", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
-                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), "cf7a8e8a2eef4e13b6dfeeeed3064cda", "Role to be assumed by user accounts used by backend services.", "Service Account", "ServiceAccount", "SERVICEACCOUNT" }
+                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "b10a7e5e8875420a8d90a55e38b11fb0", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
+                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "76c43f385c2b405fba3d946f2bcea6b1", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
+                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "4cdc4513a4804f46aa2ef1538249c2d1", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
+                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), "0b1e458292f14381be395229b68a6e3c", "Role to be assumed by user accounts used by backend services.", "Service Account", "ServiceAccount", "SERVICEACCOUNT" }
                 });
 
             migrationBuilder.InsertData(
@@ -452,8 +517,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "0c057e3ddbb746aa9fd1ad3f9b98488d", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAIAAYagAAAAEPkZPfF6vAdFP7EW+fw9L7JDwvGLMYtp2AMuTgnRudV7tBRtVxrBdOAPm2mAOwNtXA==", null, false, "d2761ece200c4ead95f643a5227218a5", false, "GameAdmin" },
-                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "6cd1f1703ac548e2a9295d2568fdc229", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEDwIZYUsECFbX8jyI6oujyQNsZphVSpLCXTaBoW8ta2Td2yhrkBMUQuLx4R8CoRdfw==", null, false, "421123fe685b4be1a9b63c6d809583e5", false, "SystemAdmin" }
+                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "d2761ece200c4ead95f643a5227218a5", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw==", null, false, "0c057e3ddbb746aa9fd1ad3f9b98488d", false, "GameAdmin" },
+                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "421123fe685b4be1a9b63c6d809583e5", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w==", null, false, "6cd1f1703ac548e2a9295d2568fdc229", false, "SystemAdmin" }
                 });
 
             migrationBuilder.InsertData(
@@ -462,8 +527,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "account_type", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ff152f04ba8649f196c20b5f090b7659", "Lottery.Api@Lottery.Game", true, false, null, "LOTTERY.API@LOTTERY.GAME", "LOTTERY.API", null, null, false, "bc1b6b3b3982424f8f5e93d05c4eeb44", false, "Lottery.Api" },
-                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "b0851a4bec7c489aaf7a37f311a6a946", "Lottery.ResultService@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE@LOTTERY.GAME", "LOTTERY.RESULTSERVICE", null, null, false, "d440692d809e4e2f921e06722aed9ef3", false, "Lottery.ResultService" }
+                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ConcurrencyStamp", "Lottery.Api.User@Lottery.Game", true, false, null, "LOTTERY.API.USER@LOTTERY.GAME", "LOTTERY.API.USER", null, null, false, "801f9eb0a8cf40fc8a8c621d70ffe214", false, "Lottery.Api.User" },
+                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "87d73fa701bf494b9ef9c5f193278a3f", "Lottery.ResultService.User@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME", "LOTTERY.RESULTSERVICE.USER", null, null, false, "bdd00b91be02492cb91154dabb5ce5a2", false, "Lottery.ResultService.User" }
                 });
 
             migrationBuilder.InsertData(
@@ -509,6 +574,31 @@ namespace Lottery.DB.Migrations
                 schema: "idt",
                 table: "app_user_claim",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_app_user_invite_app_user_id",
+                schema: "idt",
+                table: "app_user_invite",
+                column: "app_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_app_user_invite_created_by_id",
+                schema: "idt",
+                table: "app_user_invite",
+                column: "created_by_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_app_user_invite_email",
+                schema: "idt",
+                table: "app_user_invite",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_app_user_invite_role_app_role_id",
+                schema: "idt",
+                table: "app_user_invite_role",
+                column: "app_role_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_app_user_login_user_id",
@@ -586,13 +676,6 @@ namespace Lottery.DB.Migrations
                 column: "created_by_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_game_prize_game_id_number_match_count",
-                schema: "dbo",
-                table: "game_prize",
-                columns: new[] { "game_id", "number_match_count" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_game_prize_game_id_position",
                 schema: "dbo",
                 table: "game_prize",
@@ -631,52 +714,32 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "game_id", "selection_number" },
                 unique: true);
 
-            // Create role for API
-            migrationBuilder.Sql($@"
-                DO
-                $do$
-                BEGIN
-                IF NOT EXISTS (
-                    SELECT FROM pg_catalog.pg_roles
-                    WHERE  rolname = 'Lottery.Api.Role')
-                    THEN
-                        CREATE ROLE ""Lottery.Api.Role"";
-                        GRANT CONNECT ON DATABASE lottery TO ""Lottery.Api.Role"";
-                        GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.Api.Role"";
-                        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.Api.Role"";
-                END IF;
-                END
-                $do$;
-            ");
+            CreateUsers(migrationBuilder);
+        }
 
-            // Create user for API
-            // migrationBuilder.Sql($"CREATE USER \"Lottery.Api.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS")}';");
-            IdempotentCreateUser(migrationBuilder, "Lottery.Api.User", GetRequiredEnvVar("LOTTERY_API_DB_USER_PASS"));
-            // Assign role to user
-            migrationBuilder.Sql($"GRANT \"Lottery.Api.Role\" TO \"Lottery.Api.User\";");
+        /// <summary>
+        /// A bit of a hacky solution to create users that the various services in the stack will use to interact with the DB.
+        /// 
+        /// This probably shouldnt be done in EF.
+        /// 
+        /// They should also be removed on Down (to save worrying about idempotency), but never mind...
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
+        private static void CreateUsers(MigrationBuilder migrationBuilder)
+        {
+            // Create user & role for API
+            var apiDBUser = GetRequiredEnvVar("API_DB_USER");
+            var apiDBUserRole = $"{apiDBUser}_role";
+            IdempotentCreateRole(migrationBuilder, apiDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
+            IdempotentCreateUser(migrationBuilder, apiDBUser, GetRequiredEnvVar("API_DB_PASSWORD"));
+            migrationBuilder.Sql($"GRANT \"{apiDBUserRole}\" TO \"{apiDBUser}\";");
 
-            // Create role for result service
-            migrationBuilder.Sql($@"
-                DO
-                $do$
-                BEGIN
-                IF NOT EXISTS (
-                    SELECT FROM pg_catalog.pg_roles
-                    WHERE  rolname = 'Lottery.ResultService.Role')
-                    THEN
-                        CREATE ROLE ""Lottery.ResultService.Role"";
-                        GRANT CONNECT ON DATABASE lottery TO ""Lottery.ResultService.Role"";
-                        GRANT USAGE ON SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
-                        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dbo,idt TO ""Lottery.ResultService.Role"";
-                END IF;
-                END
-                $do$;
-            ");
-            // Create user for result service
-            // migrationBuilder.Sql($"CREATE USER \"Lottery.ResultService.User\" WITH PASSWORD '{GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS")}'");
-            IdempotentCreateUser(migrationBuilder, "Lottery.ResultService.User", GetRequiredEnvVar("LOTTERY_RESULT_SRV_DB_USER_PASS"));
-            // Assign role to user
-            migrationBuilder.Sql($"GRANT \"Lottery.ResultService.Role\" TO \"Lottery.ResultService.User\";");
+            // Create user & role for result service
+            var resultsDBUser = GetRequiredEnvVar("RESULTS_DB_USER");
+            var resultsDBUserRole = $"{resultsDBUser}_role";
+            IdempotentCreateRole(migrationBuilder, resultsDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
+            IdempotentCreateUser(migrationBuilder, resultsDBUser, GetRequiredEnvVar("RESULTS_DB_PASSWORD"));
+            migrationBuilder.Sql($"GRANT \"{resultsDBUserRole}\" TO \"{resultsDBUser}\";");
         }
 
         /// <inheritdoc />
@@ -688,6 +751,10 @@ namespace Lottery.DB.Migrations
 
             migrationBuilder.DropTable(
                 name: "app_user_claim",
+                schema: "idt");
+
+            migrationBuilder.DropTable(
+                name: "app_user_invite_role",
                 schema: "idt");
 
             migrationBuilder.DropTable(
@@ -715,6 +782,10 @@ namespace Lottery.DB.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "app_user_invite",
+                schema: "idt");
+
+            migrationBuilder.DropTable(
                 name: "app_role",
                 schema: "idt");
 
@@ -739,11 +810,30 @@ namespace Lottery.DB.Migrations
                 schema: "idt");
         }
 
-        private string GetRequiredEnvVar(string name)
+        private static string GetRequiredEnvVar(string name)
             => Environment.GetEnvironmentVariable(name)
             ?? throw new KeyNotFoundException($"No environment with name {name} could be found");
 
-        private void IdempotentCreateUser(MigrationBuilder migrationBuilder, string username, string password)
+        private static void IdempotentCreateRole(MigrationBuilder migrationBuilder, string roleName, string[] privileges, string[] schemas)
+        {
+            migrationBuilder.Sql($@"
+                DO
+                $do$
+                BEGIN
+                IF NOT EXISTS (
+                    SELECT FROM pg_catalog.pg_roles
+                    WHERE  rolname = '{roleName}')
+                    THEN
+                        CREATE ROLE ""{roleName}"";
+                        GRANT CONNECT ON DATABASE lottery TO ""{roleName}"";
+                        GRANT USAGE ON SCHEMA {string.Join(',', schemas)} TO ""{roleName}"";
+                        GRANT {string.Join(',', privileges)} ON ALL TABLES IN SCHEMA {string.Join(',', schemas)} TO ""{roleName}"";
+                END IF;
+                END
+                $do$;
+            ");
+        }
+        private static void IdempotentCreateUser(MigrationBuilder migrationBuilder, string username, string password)
         {
             migrationBuilder.Sql($@"
                 DO
@@ -760,6 +850,4 @@ namespace Lottery.DB.Migrations
             ");
         }
     }
-
-
 }

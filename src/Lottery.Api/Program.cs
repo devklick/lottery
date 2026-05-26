@@ -102,6 +102,6 @@ public class Program
 
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)
     {
-        builder.Services.AddAutoMapper(typeof(Program));
+        builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
     }
 }

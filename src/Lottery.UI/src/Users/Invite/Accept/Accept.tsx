@@ -17,7 +17,6 @@ import {
   Paper,
   PasswordInput,
   Stack,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -26,12 +25,14 @@ import { useNavigate } from "react-router-dom";
 
 interface AcceptProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function Accept({}: AcceptProps) {
-  const [inviteVerified, setInviteVerified] = useState<boolean | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setInviteVerified] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
   const queryValidation = useValidatedQueryParams(
-    verifyInviteRequestQuerySchema
+    verifyInviteRequestQuerySchema,
   );
 
   const verifyInviteQuery = useQuery({

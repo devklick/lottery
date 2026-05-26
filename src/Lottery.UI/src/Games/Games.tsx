@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import gameService from "./gameService";
 import {
   Center,
@@ -54,16 +54,17 @@ function searchParamsToFilters(params: URLSearchParams): SearchGamesRequest {
     sortBy: params.get("sortBy") ?? defaultFilters.sortBy,
     sortDirection: params.get("sortDirection") ?? defaultFilters.sortDirection,
     name: params.get("name") ?? defaultFilters.name,
-  } as any as SearchGamesRequest;
+  } as unknown as SearchGamesRequest;
   // TODO: Implement this properly at some point...
 }
 
 interface GamesProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function Games({}: GamesProps) {
   const [searchParams, setSearchParams] = useMergedSearchParams(defaultFilters);
   const [filters, setFilters] = useState<SearchGamesRequest>(
-    searchParamsToFilters(searchParams)
+    searchParamsToFilters(searchParams),
   );
 
   useEffect(() => {
@@ -130,12 +131,12 @@ function Games({}: GamesProps) {
           <Pagination
             total={Math.max(
               Math.ceil((query.data?.total ?? 0) / filters.limit),
-              1
+              1,
             )}
             value={filters.page}
             onChange={(value) =>
               setSearchParams(
-                new QueryParams({ ...filters, page: Number(value) })
+                new QueryParams({ ...filters, page: Number(value) }),
               )
             }
           />
@@ -146,7 +147,7 @@ function Games({}: GamesProps) {
             data={["12", "24", "48"]}
             onChange={(value) =>
               setSearchParams(
-                new QueryParams({ ...filters, limit: Number(value) })
+                new QueryParams({ ...filters, limit: Number(value) }),
               )
             }
             allowDeselect={false}

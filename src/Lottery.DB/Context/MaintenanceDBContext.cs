@@ -48,7 +48,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 NormalizedName = "SYSTEMADMINISTRATOR",
                 DisplayName = "System Administrator",
                 Description = "Elevated permissions across the entire system.",
-                ConcurrencyStamp = Guid.NewGuid().ToString("N")
+                ConcurrencyStamp = "b10a7e5e8875420a8d90a55e38b11fb0"
             },
             new AppRole
             {
@@ -56,7 +56,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 Name = "GameAdmin",
                 NormalizedName = "GAMEADMIN",
                 DisplayName = "Game Admin",
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                ConcurrencyStamp = "76c43f385c2b405fba3d946f2bcea6b1",
                 Description = "Permission to create and edit any games",
             },
             new AppRole
@@ -65,7 +65,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 Name = "BasicUser",
                 NormalizedName = "BASICUSER",
                 DisplayName = "Basic User",
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                ConcurrencyStamp = "4cdc4513a4804f46aa2ef1538249c2d1",
                 Description = "Permission to access the site and play games.",
             },
             new AppRole
@@ -74,7 +74,7 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 Name = "ServiceAccount",
                 NormalizedName = "SERVICEACCOUNT",
                 DisplayName = "Service Account",
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                ConcurrencyStamp = "0b1e458292f14381be395229b68a6e3c",
                 Description = "Role to be assumed by user accounts used by backend services.",
             }
         ]);
@@ -87,15 +87,9 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
             api = Guid.Parse("a3564302-1a9e-4917-8a48-1a70f211279e")
         };
 
-        var userPasswords = new
-        {
-            systemAdmin = GetRequiredConfigValue("MaintenanceDBContext:SystemAdminPassword"),
-            gameAdmin = GetRequiredConfigValue("MaintenanceDBContext:GameAdminPassword"),
-        };
-
         builder.Entity<AppUser>().HasData([
             // system admin
-            CreateUser(new AppUser{
+            new AppUser{
                 Id = userIds.systemAdmin,
                 Email = "SystemAdministrator@Lottery.Game",
                 NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
@@ -103,13 +97,14 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 UserName = "SystemAdmin",
                 NormalizedUserName = "SYSTEMADMIN",
                 LockoutEnabled = false,
-                SecurityStamp = Guid.NewGuid().ToString("N"),
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                SecurityStamp = "6cd1f1703ac548e2a9295d2568fdc229",
+                ConcurrencyStamp = "421123fe685b4be1a9b63c6d809583e5",
                 AccountType = AccountType.User,
-            }, userPasswords.systemAdmin),
+                PasswordHash = "AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w=="
+            },
             
             // game admin
-            CreateUser(new AppUser{
+            new AppUser{
                 Id = userIds.gameAdmin,
                 Email = "GameAdmin@Lottery.Game",
                 NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
@@ -117,13 +112,14 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 UserName = "GameAdmin",
                 NormalizedUserName = "GAMEADMIN",
                 LockoutEnabled = false,
-                SecurityStamp = Guid.NewGuid().ToString("N"),
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                SecurityStamp = "0c057e3ddbb746aa9fd1ad3f9b98488d",
+                ConcurrencyStamp = "d2761ece200c4ead95f643a5227218a5",
                 AccountType = AccountType.User,
-            }, userPasswords.gameAdmin),
+                PasswordHash = "AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw=="
+            },
             
             // api
-            CreateUser(new AppUser{
+            new AppUser{
                 Id = userIds.api,
                 Email = "Lottery.Api.User@Lottery.Game",
                 NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
@@ -131,14 +127,16 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 UserName = "Lottery.Api.User",
                 NormalizedUserName = "LOTTERY.API.USER",
                 LockoutEnabled = false,
-                SecurityStamp = Guid.NewGuid().ToString("N"),
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                SecurityStamp = "801f9eb0a8cf40fc8a8c621d70ffe214",
+                ConcurrencyStamp = "ConcurrencyStamp",
                 AccountType = AccountType.Service,
-            }, null), // no app account passwords for service accounts, 
-            // as we dont want to be able to log in as this account in the app
+                // no app account passwords for service accounts, 
+                // as we dont want to be able to log in as this account in the app
+                PasswordHash = null
+            },
 
             // result service
-            CreateUser(new AppUser{
+            new AppUser{
                 Id = userIds.resultService,
                 Email = "Lottery.ResultService.User@Lottery.Game",
                 NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
@@ -146,11 +144,13 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
                 UserName = "Lottery.ResultService.User",
                 NormalizedUserName = "LOTTERY.RESULTSERVICE.USER",
                 LockoutEnabled = false,
-                SecurityStamp = Guid.NewGuid().ToString("N"),
-                ConcurrencyStamp = Guid.NewGuid().ToString("N"),
+                SecurityStamp = "bdd00b91be02492cb91154dabb5ce5a2",
+                ConcurrencyStamp = "87d73fa701bf494b9ef9c5f193278a3f",
                 AccountType = AccountType.Service,
-            }, null), // no app account passwords for service accounts, 
-            // as we dont want to be able to log in as this account in the app
+                // no app account passwords for service accounts, 
+                // as we dont want to be able to log in as this account in the app
+                PasswordHash = null
+            },
         ]);
 
         builder.Entity<AppUserRole>().HasData([
@@ -159,15 +159,5 @@ internal class MaintenanceDBContext(DbContextOptions options, IConfiguration con
             new AppUserRole { RoleId = roleIds.serviceAccount, UserId = userIds.api },
             new AppUserRole { RoleId = roleIds.serviceAccount, UserId = userIds.resultService },
         ]);
-    }
-
-    private AppUser CreateUser(AppUser user, string? password = null)
-    {
-        if (!password.IsNullOrEmpty())
-        {
-            user.PasswordHash = _hasher.HashPassword(user, password);
-        }
-
-        return user;
     }
 }

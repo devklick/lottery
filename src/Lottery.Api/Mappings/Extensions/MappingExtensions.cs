@@ -2,6 +2,9 @@ using AutoMapper;
 
 namespace Lottery.Api.Mappings.Extensions;
 
+
+// TODO: Look into removing/replacing AutoMapper
+
 public static class MapperExtensions
 {
     public static TResult MergeInto<TResult>(this IMapper mapper, object item1, object item2)

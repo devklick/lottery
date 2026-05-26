@@ -8,7 +8,6 @@ import {
   Text,
 } from "@mantine/core";
 import { GameStatus } from "../../common/schemas";
-import { useEffect } from "react";
 
 interface GameStatusBadgeProps {
   loading: boolean;
@@ -19,7 +18,7 @@ interface GameStatusBadgeProps {
   };
 }
 
-export function getStatusColor(status: GameStatus): MantineColor {
+function getStatusColor(status: GameStatus): MantineColor {
   switch (status) {
     case "closed":
       return "orange";

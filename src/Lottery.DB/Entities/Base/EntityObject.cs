@@ -47,6 +47,7 @@ public abstract class EntityObject
     /// </summary>
     [Required]
     [SqlColumnDefaultConstraint(ItemState.Enabled)]
+    [SentinelValue(ItemState.Enabled)]
     public ItemState State { get; set; } = ItemState.Enabled;
 
     /// <summary>
