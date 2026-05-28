@@ -4,6 +4,10 @@ using Lottery.DB.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
+using DotEnv = DotNetEnv.Env;
+
+DotEnv.Load("../../.env");
+
 /*
     Simple program to allow the Lottery.DB project to act as a 
     stand-alone place to manage the DB and migrations.

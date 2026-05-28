@@ -18,6 +18,7 @@ public class EntryController(EntryService entryService) : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<CreateEntryResponse>> CreateEntry(CreateEntryRequest request)
     {
+        // TODO: Look into an issue where entries are allowed after the closing time.
         var result = await _entryService.CreateEntry(request, User);
 
         return CreateActionResult(result);

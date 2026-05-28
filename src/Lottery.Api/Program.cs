@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
 using Lottery.Api.Services;
-using Lottery.Api.Repositories;
 
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Idt;
@@ -9,7 +8,6 @@ using Lottery.DB.Extensions;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Repositories.Game;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Lottery.Api.Repositories.Entry;
 using Lottery.Resulting;
 using Lottery.Api.Utilities;
@@ -21,6 +19,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        // TODO: Load values from env rather than user secrets. 
+        // User secrets are great, but since the entire workflow is built around docker
+        // and docker doesnt natively support user secrets, it seems better to use env vars.
+        DotNetEnv.Env.Load("../../.env");
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -45,6 +48,8 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddLogging();
+
 
         builder.Services.Configure<UserServiceOptions>(
             builder.Configuration.GetSection(UserServiceOptions.Name));

@@ -20,17 +20,17 @@ POSTGRES_PASSWORD=<add> # The master password for the DB
 
 # A DB user will be created for the API that results the games.
 # These env vars are the credentials for this user
-API_DB_USER=lottery_api_service
+API_DB_USER=Lottery.Api.Service
 API_DB_PASSWORD=<add>
 
 # A DB user will be created for the service that results the games.
 # These env vars are the credentials for this user
-RESULTS_DB_USER=lottery_results_service
+RESULTS_DB_USER=Lottery.Result.Service
 RESULTS_DB_PASSWORD=<add>
 
 # A DB user will be created for the migrations to run under.
 # These env vars are the credentials for this user
-MIGRATOR_DB_USER=lottery_migration_service
+MIGRATOR_DB_USER=Lottery.Migration.Service
 MIGRATOR_DB_PASSWORD=<add>
 
 # Two app/site users will be created; GameAdmin and SystemAdmin.

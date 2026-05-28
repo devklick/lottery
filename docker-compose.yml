@@ -59,6 +59,11 @@ services:
   api:
     labels:
       - com.host.description=The API which is consumed by the lottery UI to manage and interact with lottery games
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
     build:
       context: .
       dockerfile: src/Lottery.Api/dockerfile
@@ -69,15 +74,33 @@ services:
     ports:
       - 5000:8080
 
-    depends_on:
-      - db
-
     environment:
       ConnectionStrings__Default: Host=db;Database=${POSTGRES_DB};Username=${API_DB_USER};Password=${API_DB_PASSWORD}
+
+  resulting:
+    labels:
+      - com.host.description=A background service which periodically checks games to be resulted and results them
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    build:
+      context: .
+      dockerfile: src/Lottery.ResultService/dockerfile
+
+    restart: unless-stopped
+
+    environment:
+      ConnectionStrings__Default: Host=db;Database=${POSTGRES_DB};Username=${RESULTS_DB_USER};Password=${RESULTS_DB_PASSWORD}
 
   ui:
     labels:
       - com.host.description=The UI to manage and interact with lottery games
+
+    depends_on:
+      - api
+
     build:
       context: src/Lottery.UI
       dockerfile: dockerfile

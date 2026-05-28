@@ -19,7 +19,7 @@ function CreateEntry({
 }: CreateEntryProps) {
   const [success, setSuccess] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState<ReadonlyArray<number>>(
-    []
+    [],
   );
 
   const [opened, { toggle }] = useDisclosure(false);
@@ -53,6 +53,7 @@ function CreateEntry({
     setSuccess(false);
   }
 
+  // TODO: Improve this, remove the annoying overlay on success
   return (
     <Stack justify="center" align="center" mt={50}>
       <Group style={{ alignSelf: "start" }} onClick={toggle}>
@@ -71,8 +72,8 @@ function CreateEntry({
               mutation.isPending
                 ? "submitting"
                 : success
-                ? "success"
-                : "waiting"
+                  ? "success"
+                  : "waiting"
             }
           />
         </Stack>

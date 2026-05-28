@@ -1,0 +1,27 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+WORKDIR /src
+
+COPY src/Lottery.ResultService/Lottery.ResultService.csproj src/Lottery.ResultService/
+COPY src/Lottery.Resulting/Lottery.Resulting.csproj src/Lottery.Resulting/
+COPY src/Lottery.DB/Lottery.DB.csproj src/Lottery.DB/
+
+RUN dotnet restore src/Lottery.ResultService/Lottery.ResultService.csproj
+
+COPY . .
+
+RUN dotnet publish src/Lottery.ResultService/Lottery.ResultService.csproj \
+    -c Release \
+    -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "Lottery.ResultService.dll"]

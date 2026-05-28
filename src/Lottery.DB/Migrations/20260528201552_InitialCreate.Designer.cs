@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lottery.DB.Migrations
 {
     [DbContext(typeof(MaintenanceDBContext))]
-    [Migration("20260525174732_InitialCreate")]
+    [Migration("20260528201552_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -665,11 +665,11 @@ namespace Lottery.DB.Migrations
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.API.USER",
+                            NormalizedUserName = "LOTTERY.API.SERVICE",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "801f9eb0a8cf40fc8a8c621d70ffe214",
                             TwoFactorEnabled = false,
-                            UserName = "Lottery.Api.User"
+                            UserName = "Lottery.Api.Service"
                         },
                         new
                         {
@@ -681,11 +681,11 @@ namespace Lottery.DB.Migrations
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.RESULTSERVICE.USER",
+                            NormalizedUserName = "LOTTERY.RESULT.SERVICE",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "bdd00b91be02492cb91154dabb5ce5a2",
                             TwoFactorEnabled = false,
-                            UserName = "Lottery.ResultService.User"
+                            UserName = "Lottery.Result.Service"
                         });
                 });
 

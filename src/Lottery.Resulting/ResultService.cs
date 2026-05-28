@@ -1,27 +1,34 @@
 using Lottery.Common.Models;
 using Lottery.DB.Entities.Dbo;
 
+using Microsoft.Extensions.Logging;
+
 namespace Lottery.Resulting;
 
-public class ResultService(ResultRepository repository)
+public class ResultService(ResultRepository repository, ILogger<ResultService> logger)
 {
     private readonly ResultRepository _repository = repository;
-
+    private readonly ILogger<ResultService> _logger = logger;
 
 
     public async Task<IEnumerable<Game>> GetGamesToResult()
     {
-        return await _repository.GetGamesToResult();
+        _logger.LogTrace(nameof(GetGamesToResult));
+        var games = await _repository.GetGamesToResult();
+        _logger.LogInformation("Found {count} games to result", games.Count);
+        return games;
     }
 
     public async Task<Result<Game>> ResultGame(Game game, IEnumerable<int> winningNumbers)
     {
+        _logger.LogTrace("{method} {gameId}, [{winningNumbers}]", nameof(ResultGame), game.Id, string.Join(',', winningNumbers));
+
         if (game.GameStatus != GameStatus.Closed)
         {
             return new Result<Game>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Unable to result game while its in a {game.GameStatus} state" }]
+                Errors = [new() { Message = $"Unable to result game {game.Id} while its in a {game.GameStatus} state" }]
             };
         }
 
@@ -49,6 +56,9 @@ public class ResultService(ResultRepository repository)
 
         // Pick the winning game selections
         var winningSelections = GetWinningSelections(game, winningNumbers, numbersToDraw);
+        var winningSelectionNumbers = winningSelections.Select(s => s.SelectionNumber);
+        _logger.LogInformation("Results for game {gameId} are [{winningNumbers}]", game.Id, string.Join(',', winningSelectionNumbers));
+
 
         var serviceUserId = await _repository.GetServiceUserId();
 
@@ -101,7 +111,22 @@ public class ResultService(ResultRepository repository)
         foreach (var (gamePrize, winningEntries) in prizeWinners)
         {
             // If there's no winners for this prize, move on
-            if (!winningEntries.Any()) continue;
+            if (winningEntries.Any())
+            {
+                _logger.LogInformation(
+                    "No winners for prize {prize} in game {game}",
+                    gamePrize.Position,
+                    gamePrize.GameId);
+
+                continue;
+            }
+
+            _logger.LogInformation(
+                "{count} winner(s) for prize {prize} in game {game}: [{entries}]",
+                winningEntries.Count(),
+                gamePrize.Position,
+                gamePrize.GameId,
+                winningEntries.Select(e => $"player {e.CreatedById} entry {e.Id}"));
 
             // Construct the entry prizes that link a game prize to a player
             entryPrizes.AddRange(winningEntries.Select(we => new EntryPrize

@@ -6,26 +6,26 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var host = SetupHost();
+using ResultingService = Lottery.Resulting.ResultService;
 
-using var serviceScope = host.Services.CreateScope();
-var service = serviceScope.ServiceProvider.GetRequiredService<ResultService>();
+namespace Lottery.ResultService;
 
-var games = await service.GetGamesToResult();
-
-foreach (var game in games)
+class Program
 {
-    await service.ResultGame(game, []);
-}
+    async static Task Main(params string[] args)
+    {
+        var builder = Host.CreateApplicationBuilder(args);
 
-IHost SetupHost()
-{
-    var builder = Host.CreateApplicationBuilder(args);
+        builder.Services.AddLogging();
+        builder.Configuration.AddUserSecrets<Program>();
+        builder.ConfigureEntityFramework<LotteryDBContext>();
+        builder.Services.AddScoped<ResultRepository>();
+        builder.Services.AddScoped<ResultingService>();
 
-    builder.Configuration.AddUserSecrets<Program>();
-    builder.ConfigureEntityFramework<LotteryDBContext>();
-    builder.Services.AddSingleton<ResultRepository>();
-    builder.Services.AddSingleton<ResultService>();
+        builder.Services.AddHostedService<ResultWorker>();
 
-    return builder.Build();
+        var host = builder.Build();
+
+        await host.RunAsync();
+    }
 }

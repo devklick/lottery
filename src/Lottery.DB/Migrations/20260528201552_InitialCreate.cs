@@ -1,5 +1,8 @@
 ﻿using System;
 
+using Lottery.Common.Helpers;
+
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -527,8 +530,8 @@ namespace Lottery.DB.Migrations
                 columns: new[] { "id", "access_failed_count", "account_type", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
                 values: new object[,]
                 {
-                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ConcurrencyStamp", "Lottery.Api.User@Lottery.Game", true, false, null, "LOTTERY.API.USER@LOTTERY.GAME", "LOTTERY.API.USER", null, null, false, "801f9eb0a8cf40fc8a8c621d70ffe214", false, "Lottery.Api.User" },
-                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "87d73fa701bf494b9ef9c5f193278a3f", "Lottery.ResultService.User@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME", "LOTTERY.RESULTSERVICE.USER", null, null, false, "bdd00b91be02492cb91154dabb5ce5a2", false, "Lottery.ResultService.User" }
+                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ConcurrencyStamp", "Lottery.Api.User@Lottery.Game", true, false, null, "LOTTERY.API.USER@LOTTERY.GAME", "LOTTERY.API.SERVICE", null, null, false, "801f9eb0a8cf40fc8a8c621d70ffe214", false, "Lottery.Api.Service" },
+                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "87d73fa701bf494b9ef9c5f193278a3f", "Lottery.ResultService.User@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME", "LOTTERY.RESULT.SERVICE", null, null, false, "bdd00b91be02492cb91154dabb5ce5a2", false, "Lottery.Result.Service" }
                 });
 
             migrationBuilder.InsertData(
@@ -717,31 +720,6 @@ namespace Lottery.DB.Migrations
             CreateUsers(migrationBuilder);
         }
 
-        /// <summary>
-        /// A bit of a hacky solution to create users that the various services in the stack will use to interact with the DB.
-        /// 
-        /// This probably shouldnt be done in EF.
-        /// 
-        /// They should also be removed on Down (to save worrying about idempotency), but never mind...
-        /// </summary>
-        /// <param name="migrationBuilder"></param>
-        private static void CreateUsers(MigrationBuilder migrationBuilder)
-        {
-            // Create user & role for API
-            var apiDBUser = GetRequiredEnvVar("API_DB_USER");
-            var apiDBUserRole = $"{apiDBUser}_role";
-            IdempotentCreateRole(migrationBuilder, apiDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
-            IdempotentCreateUser(migrationBuilder, apiDBUser, GetRequiredEnvVar("API_DB_PASSWORD"));
-            migrationBuilder.Sql($"GRANT \"{apiDBUserRole}\" TO \"{apiDBUser}\";");
-
-            // Create user & role for result service
-            var resultsDBUser = GetRequiredEnvVar("RESULTS_DB_USER");
-            var resultsDBUserRole = $"{resultsDBUser}_role";
-            IdempotentCreateRole(migrationBuilder, resultsDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
-            IdempotentCreateUser(migrationBuilder, resultsDBUser, GetRequiredEnvVar("RESULTS_DB_PASSWORD"));
-            migrationBuilder.Sql($"GRANT \"{resultsDBUserRole}\" TO \"{resultsDBUser}\";");
-        }
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -810,10 +788,30 @@ namespace Lottery.DB.Migrations
                 schema: "idt");
         }
 
-        private static string GetRequiredEnvVar(string name)
-            => Environment.GetEnvironmentVariable(name)
-            ?? throw new KeyNotFoundException($"No environment with name {name} could be found");
+        /// <summary>
+        /// A bit of a hacky solution to create users that the various services in the stack will use to interact with the DB.
+        /// 
+        /// This probably shouldnt be done in EF.
+        /// 
+        /// They should also be removed on Down (to save worrying about idempotency), but never mind...
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
+        private static void CreateUsers(MigrationBuilder migrationBuilder)
+        {
+            // Create user & role for API
+            var apiDBUser = Env.GetRequiredEnvVar("API_DB_USER");
+            var apiDBUserRole = $"{apiDBUser}_role";
+            IdempotentCreateRole(migrationBuilder, apiDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
+            IdempotentCreateUser(migrationBuilder, apiDBUser, Env.GetRequiredEnvVar("API_DB_PASSWORD"));
+            migrationBuilder.Sql($"GRANT \"{apiDBUserRole}\" TO \"{apiDBUser}\";");
 
+            // Create user & role for result service
+            var resultsDBUser = Env.GetRequiredEnvVar("RESULTS_DB_USER");
+            var resultsDBUserRole = $"{resultsDBUser}_role";
+            IdempotentCreateRole(migrationBuilder, resultsDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
+            IdempotentCreateUser(migrationBuilder, resultsDBUser, Env.GetRequiredEnvVar("RESULTS_DB_PASSWORD"));
+            migrationBuilder.Sql($"GRANT \"{resultsDBUserRole}\" TO \"{resultsDBUser}\";");
+        }
         private static void IdempotentCreateRole(MigrationBuilder migrationBuilder, string roleName, string[] privileges, string[] schemas)
         {
             migrationBuilder.Sql($@"

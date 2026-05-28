@@ -23,6 +23,9 @@ public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCon
 
     public async Task<List<(GamePrize Prize, IEnumerable<Entry> WinningEntries)>> GetPrizeWinners(Guid gameId, IEnumerable<Guid> winningGameSelectionIds)
     {
+        // TODO: Something not right here. When a prize is set up with NumberMatchDCount=1, players 
+        // who got 1 number correct are not winning a prize
+
         // Grab the prizes that are available to be won in this game
         var prizes = await _db.GamePrizes
             .Where(gp => gp.GameId == gameId)
