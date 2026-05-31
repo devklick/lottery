@@ -9,8 +9,6 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Lottery.DB.Migrations
 {
     /// <inheritdoc />
@@ -500,50 +498,6 @@ namespace Lottery.DB.Migrations
                         principalTable: "game_selection",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                schema: "idt",
-                table: "app_role",
-                columns: new[] { "id", "concurrency_stamp", "description", "display_name", "name", "normalized_name" },
-                values: new object[,]
-                {
-                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), "b10a7e5e8875420a8d90a55e38b11fb0", "Elevated permissions across the entire system.", "System Administrator", "SystemAdministrator", "SYSTEMADMINISTRATOR" },
-                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), "76c43f385c2b405fba3d946f2bcea6b1", "Permission to create and edit any games", "Game Admin", "GameAdmin", "GAMEADMIN" },
-                    { new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"), "4cdc4513a4804f46aa2ef1538249c2d1", "Permission to access the site and play games.", "Basic User", "BasicUser", "BASICUSER" },
-                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), "0b1e458292f14381be395229b68a6e3c", "Role to be assumed by user accounts used by backend services.", "Service Account", "ServiceAccount", "SERVICEACCOUNT" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "idt",
-                table: "app_user",
-                columns: new[] { "id", "access_failed_count", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
-                values: new object[,]
-                {
-                    { new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"), 0, "d2761ece200c4ead95f643a5227218a5", "GameAdmin@Lottery.Game", true, false, null, "GAMEADMIN@LOTTERY.GAME", "GAMEADMIN", "AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw==", null, false, "0c057e3ddbb746aa9fd1ad3f9b98488d", false, "GameAdmin" },
-                    { new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"), 0, "421123fe685b4be1a9b63c6d809583e5", "SystemAdministrator@Lottery.Game", true, false, null, "SYSTEMADMINISTRATOR@LOTTERY.GAME", "SYSTEMADMIN", "AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w==", null, false, "6cd1f1703ac548e2a9295d2568fdc229", false, "SystemAdmin" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "idt",
-                table: "app_user",
-                columns: new[] { "id", "access_failed_count", "account_type", "concurrency_stamp", "email", "email_confirmed", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "two_factor_enabled", "user_name" },
-                values: new object[,]
-                {
-                    { new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"), 0, 1, "ConcurrencyStamp", "Lottery.Api.User@Lottery.Game", true, false, null, "LOTTERY.API.USER@LOTTERY.GAME", "LOTTERY.API.SERVICE", null, null, false, "801f9eb0a8cf40fc8a8c621d70ffe214", false, "Lottery.Api.Service" },
-                    { new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"), 0, 1, "87d73fa701bf494b9ef9c5f193278a3f", "Lottery.ResultService.User@Lottery.Game", true, false, null, "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME", "LOTTERY.RESULT.SERVICE", null, null, false, "bdd00b91be02492cb91154dabb5ce5a2", false, "Lottery.Result.Service" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "idt",
-                table: "app_user_role",
-                columns: new[] { "role_id", "user_id" },
-                values: new object[,]
-                {
-                    { new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"), new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8") },
-                    { new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"), new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb") },
-                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), new Guid("a3564302-1a9e-4917-8a48-1a70f211279e") },
-                    { new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"), new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818") }
                 });
 
             migrationBuilder.CreateIndex(

@@ -18,6 +18,10 @@ you'll need a `.env` file in the root of the project:
 POSTGRES_DB=lottery # The name of the DB
 POSTGRES_PASSWORD=<add> # The master password for the DB
 
+# The ports that the UI and API will run on
+UI_PORT=3000
+API_PORT=5000
+
 # A DB user will be created for the API that results the games.
 # These env vars are the credentials for this user
 API_DB_USER=Lottery.Api.Service
@@ -59,28 +63,28 @@ You can log into the UI as either the Game Admin or System Admin:
 
 ### Debugging
 
-#### API
-
 Running the code in docker is great, but it's often useful to be able to attach 
-a debugger and step through the code. To do so, start by initializing user secrets 
-for the API project:
-```
-dotnet user-secrets init --project Lottery.Api
-```
-Then add the username and password that the API will connect with - the ones you 
-specified in your `.env` file:
-```
-dotnet user-secrets set \
-    "ConnectionStrings:Default:User" \
-    "USER" \
-    --project Lottery.Api
+a debugger and step through the code. 
 
-dotnet user-secrets set \
-    "ConnectionStrings:Default:Password" \
-    "PASSWORD" \
-    --project Lottery.Api
+To do so, start by spinning up the service(s) in docker that you _dont_ need to debug, 
+e.g. you probably at least want the DB running in docker (and the migration).
+
+```
+docker compose up db migrate
 ```
 
-At run time, the API will take the `ConnectionStrings:Default` connection string
-from ['appsettings.json']('./src/Lottery.Api/appsettings.json) and append your 
-credentials to it.
+Then you can fire up the API either in a new terminal:
+```
+dotnet run --project src/Lottery.Api
+```
+
+Or run the [`API (Debug)` VSCode launch config](.vscode/launch.json)
+
+And you can run the UI via the terminal:
+```
+cd src/Lottery.IO && npm run dev
+```
+
+At this point, you'll have the UI hosted using vite and accessible on http://localhost:3000 
+(or whatever `UI_PORT` you used in your .env file), and the API hosted on http://localhost:5000 
+(or whatever port you used in your .env file).

@@ -14,8 +14,10 @@ namespace Lottery.Api.Repositories.Game;
 using GameEntity = DB.Entities.Dbo.Game;
 
 
-public partial class GameRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
+public partial class GameRepository(LotteryDBContext db, TimeProvider timeProvider) : RepositoryBase<LotteryDBContext>(db)
 {
+    private readonly TimeProvider _timeProvider = timeProvider;
+
     public async Task<GameEntity> CreateGame(GameEntity game)
     {
         var result = await _db.Games.AddAsync(game);
@@ -91,7 +93,7 @@ public partial class GameRepository(LotteryDBContext db) : RepositoryBase<Lotter
         }
 
         query = query
-            .FilterByGameStatuses(gamesFilter.GameStatus)
+            .FilterByGameStatuses(gamesFilter.GameStatus, _timeProvider.GetUtcNow())
             .SortBy(gamesFilter.SortBy.Column, gamesFilter.SortBy.Direction);
 
         var total = await query.CountAsync();

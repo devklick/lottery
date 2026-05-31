@@ -464,44 +464,6 @@ namespace Lottery.DB.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("app_role", "idt");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f"),
-                            ConcurrencyStamp = "b10a7e5e8875420a8d90a55e38b11fb0",
-                            Description = "Elevated permissions across the entire system.",
-                            DisplayName = "System Administrator",
-                            Name = "SystemAdministrator",
-                            NormalizedName = "SYSTEMADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea"),
-                            ConcurrencyStamp = "76c43f385c2b405fba3d946f2bcea6b1",
-                            Description = "Permission to create and edit any games",
-                            DisplayName = "Game Admin",
-                            Name = "GameAdmin",
-                            NormalizedName = "GAMEADMIN"
-                        },
-                        new
-                        {
-                            Id = new Guid("5ca47808-83c0-4eab-a034-1a48cefa3c4a"),
-                            ConcurrencyStamp = "4cdc4513a4804f46aa2ef1538249c2d1",
-                            Description = "Permission to access the site and play games.",
-                            DisplayName = "Basic User",
-                            Name = "BasicUser",
-                            NormalizedName = "BASICUSER"
-                        },
-                        new
-                        {
-                            Id = new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58"),
-                            ConcurrencyStamp = "0b1e458292f14381be395229b68a6e3c",
-                            Description = "Role to be assumed by user accounts used by backend services.",
-                            DisplayName = "Service Account",
-                            Name = "ServiceAccount",
-                            NormalizedName = "SERVICEACCOUNT"
-                        });
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppRoleClaim", b =>
@@ -616,74 +578,6 @@ namespace Lottery.DB.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("app_user", "idt");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"),
-                            AccessFailedCount = 0,
-                            AccountType = 0,
-                            ConcurrencyStamp = "421123fe685b4be1a9b63c6d809583e5",
-                            Email = "SystemAdministrator@Lottery.Game",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SYSTEMADMINISTRATOR@LOTTERY.GAME",
-                            NormalizedUserName = "SYSTEMADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "6cd1f1703ac548e2a9295d2568fdc229",
-                            TwoFactorEnabled = false,
-                            UserName = "SystemAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"),
-                            AccessFailedCount = 0,
-                            AccountType = 0,
-                            ConcurrencyStamp = "d2761ece200c4ead95f643a5227218a5",
-                            Email = "GameAdmin@Lottery.Game",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "GAMEADMIN@LOTTERY.GAME",
-                            NormalizedUserName = "GAMEADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "0c057e3ddbb746aa9fd1ad3f9b98488d",
-                            TwoFactorEnabled = false,
-                            UserName = "GameAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"),
-                            AccessFailedCount = 0,
-                            AccountType = 1,
-                            ConcurrencyStamp = "ConcurrencyStamp",
-                            Email = "Lottery.Api.User@Lottery.Game",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.API.SERVICE",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "801f9eb0a8cf40fc8a8c621d70ffe214",
-                            TwoFactorEnabled = false,
-                            UserName = "Lottery.Api.Service"
-                        },
-                        new
-                        {
-                            Id = new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"),
-                            AccessFailedCount = 0,
-                            AccountType = 1,
-                            ConcurrencyStamp = "87d73fa701bf494b9ef9c5f193278a3f",
-                            Email = "Lottery.ResultService.User@Lottery.Game",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
-                            NormalizedUserName = "LOTTERY.RESULT.SERVICE",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "bdd00b91be02492cb91154dabb5ce5a2",
-                            TwoFactorEnabled = false,
-                            UserName = "Lottery.Result.Service"
-                        });
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserClaim", b =>
@@ -843,28 +737,6 @@ namespace Lottery.DB.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("app_user_role", "idt");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("5621cc59-6211-42d2-a4e3-e9584c248adb"),
-                            RoleId = new Guid("19b7d67e-1ad8-4407-b627-d5f56534952f")
-                        },
-                        new
-                        {
-                            UserId = new Guid("295c6034-e0ff-4c22-a94a-14fb4b6659a8"),
-                            RoleId = new Guid("226919e5-1ad7-41d2-b04f-4aaa1a1bb2ea")
-                        },
-                        new
-                        {
-                            UserId = new Guid("a3564302-1a9e-4917-8a48-1a70f211279e"),
-                            RoleId = new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58")
-                        },
-                        new
-                        {
-                            UserId = new Guid("aeb0bc13-14d4-4999-82c3-ec4b95a56818"),
-                            RoleId = new Guid("db16d273-ae17-4822-bbf8-120cec7e3a58")
-                        });
                 });
 
             modelBuilder.Entity("Lottery.DB.Entities.Idt.AppUserToken", b =>

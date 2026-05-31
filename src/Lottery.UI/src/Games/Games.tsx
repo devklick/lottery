@@ -116,7 +116,10 @@ function Games({}: GamesProps) {
               <GameCard
                 key={i}
                 {...game}
-                numbersRequired={game.selectionsRequiredForEntry}
+                numbersRequired={
+                  game.prizes.find((p) => p.position === 1)?.numberMatchCount ??
+                  5
+                }
                 selectionNumbers={game.selections.map((s) => s.selectionNumber)}
                 gameStatus={game.gameStatus}
                 loading={query.isLoading}

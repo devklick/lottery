@@ -1,6 +1,5 @@
 using Lottery.Api.Repositories.Entry.Filters;
 using Lottery.DB.Context;
-using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Repositories;
 
 using Microsoft.EntityFrameworkCore;

@@ -72,6 +72,6 @@ public class EditGameRequestBody : IValidatableObject
         public int NumberMatchCount { get; set; }
 
         public static implicit operator GameValidation.PrizeValidation.Prize(Prize prize)
-                => new() { NumberMatchCount = prize.NumberMatchCount, Position = prize.Position };
+            => new() { NumberMatchCount = prize.NumberMatchCount, Position = prize.Position };
     }
 }

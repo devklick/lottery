@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lottery.Resulting;
 
-public class ResultRepository(LotteryDBContext db) : RepositoryBase<LotteryDBContext>(db)
+public class ResultRepository(LotteryDBContext db, TimeProvider timeProvider) : RepositoryBase<LotteryDBContext>(db)
 {
+    private readonly TimeProvider _timeProvider = timeProvider;
+
     public async Task<List<Game>> GetGamesToResult()
     {
         return await _db.Games
-            .Where(g => g.State == ItemState.Enabled && g.DrawTime <= DateTime.UtcNow)
+            .Where(g => g.State == ItemState.Enabled && g.DrawTime <= _timeProvider.GetUtcNow())
             .Include(g => g.Selections)
             .Include(g => g.Prizes)
             .ToListAsync();

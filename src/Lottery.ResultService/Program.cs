@@ -18,9 +18,10 @@ class Program
 
         builder.Services.AddLogging();
         builder.Configuration.AddUserSecrets<Program>();
-        builder.ConfigureEntityFramework<LotteryDBContext>();
+        builder.ConfigureEntityFramework<LotteryDBContext>("RESULTS_DB_USER", "RESULTS_DB_PASSWORD");
         builder.Services.AddScoped<ResultRepository>();
         builder.Services.AddScoped<ResultingService>();
+        builder.Services.AddSingleton(TimeProvider.System);
 
         builder.Services.AddHostedService<ResultWorker>();
 

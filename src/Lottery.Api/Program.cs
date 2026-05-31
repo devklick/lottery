@@ -26,6 +26,12 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            var port = int.Parse(Environment.GetEnvironmentVariable("API_PORT") ?? "5000");
+            options.ListenAnyIP(port);
+        });
+
         // Add services to the container.
 
         if (builder.Environment.IsDevelopment())
@@ -34,12 +40,13 @@ public class Program
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins("https://localhost:3000").AllowAnyMethod();
+                    var port = int.Parse(Environment.GetEnvironmentVariable("UI_PORT") ?? "3000");
+                    policy.WithOrigins($"http://localhost:{port}").AllowAnyMethod();
                 });
             });
         }
 
-        builder.ConfigureEntityFramework<LotteryDBContext>();
+        builder.ConfigureEntityFramework<LotteryDBContext>("API_DB_USER", "API_DB_PASSWORD");
         ConfigureIdentity(builder);
         ConfigureAutoMapper(builder);
         ConfigureServices(builder);
@@ -103,6 +110,7 @@ public class Program
         builder.Services.AddScoped<EntryRepository>();
         builder.Services.AddScoped<ResultRepository>();
         builder.Services.AddScoped<UserRepository>();
+        builder.Services.AddSingleton(TimeProvider.System);
     }
 
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)

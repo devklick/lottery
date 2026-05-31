@@ -111,7 +111,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
         foreach (var (gamePrize, winningEntries) in prizeWinners)
         {
             // If there's no winners for this prize, move on
-            if (winningEntries.Any())
+            if (!winningEntries.Any())
             {
                 _logger.LogInformation(
                     "No winners for prize {prize} in game {game}",

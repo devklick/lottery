@@ -16,11 +16,9 @@ using Lottery.DB.Entities.Base;
 
 namespace Lottery.DB.Context;
 
-public class LotteryDBContext(DbContextOptions options, IConfiguration config)
+public class LotteryDBContext(DbContextOptions options)
     : IdentityDbContext<AppUser, AppRole, Guid, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>(options)
 {
-    protected readonly IConfiguration _config = config;
-
     public DbSet<Game> Games { get; set; }
     public DbSet<GameSelection> GameSelections { get; set; }
     public DbSet<GameResult> GameResults { get; set; }
@@ -162,7 +160,4 @@ public class LotteryDBContext(DbContextOptions options, IConfiguration config)
 
         return await base.SaveChangesAsync(cancellationToken);
     }
-
-    protected string GetRequiredConfigValue(string key)
-        => _config[key] ?? throw new KeyNotFoundException($"No config value with key {key} could be found");
 }

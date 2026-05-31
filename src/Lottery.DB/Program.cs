@@ -20,6 +20,6 @@ DotEnv.Load("../../.env");
 */
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.ConfigureEntityFramework<MaintenanceDBContext>();
+builder.ConfigureEntityFramework<MaintenanceDBContext>("MIGRATOR_DB_USER", "MIGRATOR_DB_PASSWORD");
 builder.Configuration.AddUserSecrets<Program>();
 builder.Build();
