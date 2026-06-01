@@ -48,8 +48,8 @@ public static class TestUsers
     public static readonly AppRole BasicRole = new()
     {
         Id = Guid.Parse("115b1a46-a50b-4e7a-906b-b7d7b25e7e45"),
-        Name = "Basic",
-        DisplayName = "Basic",
+        Name = "BasicUser",
+        DisplayName = "Basic User",
         Description = "Basic user access",
     };
 

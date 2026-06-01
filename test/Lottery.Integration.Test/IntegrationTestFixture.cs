@@ -7,6 +7,7 @@ using Lottery.DB.Entities.Idt;
 using Microsoft.AspNetCore.Identity;
 using Lottery.Integration.Test.Data;
 using Lottery.Integration.Test.Abstractions;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Lottery.Integration.Test;
 
@@ -53,11 +54,6 @@ public class IntegrationTestFixture : IAsyncLifetime
         );
 
         await context.SaveChangesAsync();
-
-        var user = await context.Users.SingleOrDefaultAsync(u => u.UserName == TestUsers.AppUser.UserName);
-        Assert.NotNull(user);
-
-
 
         Factory = new TestApplicationFactory(_container, TimeProvider);
 

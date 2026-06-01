@@ -17,13 +17,15 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
 {
     private CancellationToken CancellationToken => testContextAccessor.Current.CancellationToken;
 
-    [Fact]
-    public async Task SignIn_UsernameMissing_BadRequest()
+    [Theory]
+    [InlineData(null, "value", "Username")]
+    [InlineData("value", null, "Password")]
+    public async Task SignIn_MissingField_BadRequest(string? username, string? password, string field)
     {
         var request = new SignInRequestBody
         {
-            Username = null!,
-            Password = "value",
+            Username = username!,
+            Password = password!,
         };
 
         var response = await fixture.Client.PostAsync(
@@ -36,31 +38,8 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         var body = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(CancellationToken);
 
         Assert.NotNull(body);
-        Assert.Contains("Username", body.Errors.Keys);
-        Assert.Equal("The Username field is required.", body.Errors["Username"][0]);
-    }
-
-    [Fact]
-    public async Task SignIn_PasswordMissing_BadRequest()
-    {
-        var request = new SignInRequestBody
-        {
-            Username = "value",
-            Password = null!,
-        };
-
-        var response = await fixture.Client.PostAsync(
-            "/account/signIn",
-            JsonContent.Create(request),
-            CancellationToken);
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        var body = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(CancellationToken);
-
-        Assert.NotNull(body);
-        Assert.Contains("Password", body.Errors.Keys);
-        Assert.Equal("The Password field is required.", body.Errors["Username"][0]);
+        Assert.Contains(field, body.Errors.Keys);
+        Assert.Equal($"The {field} field is required.", body.Errors[field][0]);
     }
 
     [Fact]
