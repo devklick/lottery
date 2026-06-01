@@ -15,17 +15,12 @@ using Lottery.Common.Models;
 
 namespace Lottery.Api.Services;
 
-public class EntryService(EntryRepository entryRepository, GameRepository gameRepository, UserService userService, IMapper mapper)
+public class EntryService(EntryRepository entryRepository, GameRepository gameRepository, UserService userService, IMapper mapper, TimeProvider timeProvider)
 {
-    private readonly UserService _userService = userService;
-    private readonly IMapper _mapper = mapper;
-    private readonly EntryRepository _entryRepository = entryRepository;
-    private readonly GameRepository _gameRepository = gameRepository;
-
     public async Task<Result<CreateEntryResponse>> CreateEntry(CreateEntryRequest request, ClaimsPrincipal user)
     {
         // Grab the user Id that's creating the entry
-        var userIdResult = _userService.GetUserId(user);
+        var userIdResult = userService.GetUserId(user);
 
         if (userIdResult.Status != ResultStatus.Ok)
         {
@@ -39,7 +34,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         request.Unbound.CreatedById = userIdResult.Value;
 
         // Grab the game to be sure it exists
-        var game = await _gameRepository.GetGame(request.Body.GameId,
+        var game = await gameRepository.GetGame(request.Body.GameId,
             selectionsFilter: new()
             {
                 Include = true
@@ -62,6 +57,15 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
+        if (game.CloseTime <= timeProvider.GetUtcNow())
+        {
+            return new Result<CreateEntryResponse>
+            {
+                Status = ResultStatus.BadRequest,
+                Errors = [new() { Message = $"Game {request.Body.GameId} is closed" }]
+            };
+        }
+
         // Make sure the correct number of selections are present on the entry
         if (request.Body.Selections.Count != game.SelectionsRequiredForEntry)
         {
@@ -73,7 +77,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         }
 
         // convert the entry request to an entry entity
-        var entry = _mapper.Map<Entry>(request);
+        var entry = mapper.Map<Entry>(request);
         entry.Selections = [];
 
         // We need to look up the game selections using the entry selection numbers
@@ -103,18 +107,21 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             s.State = entry.State;
         });
 
-        var result = await _entryRepository.CreateEntry(entry);
+        var result = await entryRepository.CreateEntry(entry);
 
         return new Result<CreateEntryResponse>
         {
             Status = ResultStatus.Ok,
-            Value = new CreateEntryResponse()
+            Value = new CreateEntryResponse
+            {
+                Id = result.Id
+            }
         };
     }
 
     public async Task<Result<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request, ClaimsPrincipal user)
     {
-        var userIdResult = _userService.GetUserId(user);
+        var userIdResult = userService.GetUserId(user);
         if (userIdResult.Status != ResultStatus.Ok)
         {
             return new Result<SearchEntriesResponse>
@@ -124,7 +131,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
-        var (entries, total) = await _entryRepository.SearchEntries(
+        var (entries, total) = await entryRepository.SearchEntries(
             request.Query.Page, request.Query.Limit,
             entryFilter: new SearchEntries.EntryFilter
             {
@@ -151,7 +158,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             Status = ResultStatus.Ok,
             Value = new SearchEntriesResponse
             {
-                Items = _mapper.Map<IEnumerable<SearchEntriesResponseItem>>(entries),
+                Items = mapper.Map<IEnumerable<SearchEntriesResponseItem>>(entries),
                 Limit = request.Query.Limit,
                 Page = request.Query.Page,
                 Total = total,
@@ -162,7 +169,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
     public async Task<Result<EditEntryResponse>> EditEntry(EditEntryRequest request, ClaimsPrincipal user)
     {
         // get the player
-        var userIdResult = _userService.GetUserId(user);
+        var userIdResult = userService.GetUserId(user);
         if (userIdResult.Status != ResultStatus.Ok)
         {
             return new Result<EditEntryResponse>
@@ -173,7 +180,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         }
 
         // get the players entry
-        var entry = await _entryRepository.GetEntry(request.Route.EntryId,
+        var entry = await entryRepository.GetEntry(request.Route.EntryId,
             gamesFilter: new GetEntry.GameFilter
             {
                 Include = true,
@@ -242,7 +249,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             };
         }
 
-        await _entryRepository.UpdateEntry(entry);
+        await entryRepository.UpdateEntry(entry);
 
         // The selections list currently includes disabled ones. 
         // Inlcude only enabled entry selections in the response
@@ -251,7 +258,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         return new Result<EditEntryResponse>
         {
             Status = ResultStatus.Ok,
-            Value = _mapper.Map<EditEntryResponse>(entry)
+            Value = mapper.Map<EditEntryResponse>(entry)
         };
     }
 }

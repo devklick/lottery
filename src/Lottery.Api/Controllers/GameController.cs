@@ -5,7 +5,6 @@ using Lottery.Api.Models.Game.Result;
 using Lottery.Api.Models.Game.Search;
 using Lottery.Api.Services;
 
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,6 +51,7 @@ public class GameController(GameService gameService) : ApiControllerBase
         return CreateActionResult(response);
     }
 
+    [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost("{gameId}/result")]
     public async Task<ActionResult<ResultGameResponse>> ResultGame(ResultGameRequest request)
     {

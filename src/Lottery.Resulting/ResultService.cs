@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lottery.Resulting;
 
-public class ResultService(ResultRepository repository, ILogger<ResultService> logger)
+public class ResultService(ResultRepository repository, ILogger<ResultService> logger, TimeProvider timeProvider)
 {
     private readonly ResultRepository _repository = repository;
     private readonly ILogger<ResultService> _logger = logger;
@@ -65,7 +65,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
         // Store the winning numbers as game results
         // Only do this if there are not yet any results. 
         // This allows us to re-process anything where an error previously
-        // occured between drawing the numbers but not assigning prizes to the winners.
+        // occurred between drawing the numbers but not assigning prizes to the winners.
         if (game.Results.Count == 0)
         {
             game.Results = winningSelections.Select(s => new GameResult
@@ -81,7 +81,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
 
         await AssignPrizes(game.Id, winningSelections, serviceUserId);
 
-        game.ResultedAt = DateTime.UtcNow;
+        game.ResultedAt = timeProvider.GetUtcNow().UtcDateTime;
 
         await _repository.SaveChangesAsync();
 

@@ -24,7 +24,7 @@ public static class TestUsers
     };
 
     public static readonly string AppUserName = "user";
-    public static readonly string AppUserPassword = "test";
+    public static readonly string AppUserPassword = "user-password";
     /// <summary>
     /// The app account which tests will log into the app with.
     /// </summary>
@@ -36,6 +36,18 @@ public static class TestUsers
         Email = "user@lottery.test",
         EmailConfirmed = true,
         SecurityStamp = "7a2de86b608d4ed29210006b8b80b210"
+    };
+
+    public static readonly string GameAdminUserName = "admin";
+    public static readonly string GameAdminUserPassword = "admin-password";
+    public static readonly AppUser GameAdminUser = new()
+    {
+        UserName = GameAdminUserName,
+        NormalizedUserName = GameAdminUserName.ToUpperInvariant(),
+        Id = Guid.Parse("1c41f977-1576-4821-91ad-5b56c80054db"),
+        Email = "game.admin@lottery.test",
+        EmailConfirmed = true,
+        SecurityStamp = "373283d9b3cb427bbff338eaa3e48151"
     };
 
     public static readonly AppRole ServiceRole = new()
@@ -53,9 +65,18 @@ public static class TestUsers
         Description = "Basic user access",
     };
 
+    public static readonly AppRole GameAdminRole = new()
+    {
+        Id = Guid.Parse("447104c9-021e-4414-a22a-126afc57ec73"),
+        Name = "GameAdmin",
+        DisplayName = "Game Admin",
+        Description = "Game Admin",
+    };
+
     static TestUsers()
     {
         var hasher = new PasswordHasher<AppUser>();
         AppUser.PasswordHash = hasher.HashPassword(AppUser, AppUserPassword);
+        GameAdminUser.PasswordHash = hasher.HashPassword(GameAdminUser, GameAdminUserPassword);
     }
 }

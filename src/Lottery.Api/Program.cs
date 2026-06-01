@@ -130,7 +130,6 @@ public class Program
         builder.Services.AddScoped<EntryRepository>();
         builder.Services.AddScoped<ResultRepository>();
         builder.Services.AddScoped<UserRepository>();
-        // builder.Services.AddSingleton(TimeProvider.System);
     }
 
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)

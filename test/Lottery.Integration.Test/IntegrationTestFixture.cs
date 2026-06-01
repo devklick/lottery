@@ -46,11 +46,12 @@ public class IntegrationTestFixture : IAsyncLifetime
 
         await context.Database.MigrateAsync();
 
-        await context.Users.AddRangeAsync(TestUsers.ServiceUser, TestUsers.AppUser);
-        await context.Roles.AddRangeAsync(TestUsers.ServiceRole, TestUsers.BasicRole);
+        await context.Users.AddRangeAsync(TestUsers.ServiceUser, TestUsers.AppUser, TestUsers.GameAdminUser);
+        await context.Roles.AddRangeAsync(TestUsers.ServiceRole, TestUsers.BasicRole, TestUsers.GameAdminRole);
         await context.UserRoles.AddRangeAsync(
             new AppUserRole { RoleId = TestUsers.ServiceRole.Id, UserId = TestUsers.ServiceUser.Id },
-            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser.Id }
+            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser.Id },
+            new AppUserRole { RoleId = TestUsers.GameAdminRole.Id, UserId = TestUsers.GameAdminUser.Id }
         );
 
         await context.SaveChangesAsync();
