@@ -1,4 +1,4 @@
-import { useForm, zodResolver } from "@mantine/form";
+import { useForm, schemaResolver } from "@mantine/form";
 import {
   UserInviteRequest,
   UserInviteRequestBody,
@@ -28,7 +28,7 @@ function Invite({}: InviteProps) {
     userType: "Basic",
   };
   const form = useForm<UserInviteRequestBody>({
-    validate: zodResolver(userInviteRequestBodySchema),
+    validate: schemaResolver(userInviteRequestBodySchema),
     initialValues,
   });
 
@@ -45,7 +45,7 @@ function Invite({}: InviteProps) {
       <Paper shadow="xl" p={24} radius={10}>
         <form
           onSubmit={form.onSubmit((data) =>
-            mutation.mutateAsync({ body: data })
+            mutation.mutateAsync({ body: data }),
           )}
         >
           <Stack>
@@ -60,7 +60,7 @@ function Invite({}: InviteProps) {
               {...form.getInputProps("userType")}
               style={{ textAlign: "left" }}
               data={Object.values(allUserTypesWithLabel).filter(
-                (x) => x.value !== "Guest"
+                (x) => x.value !== "Guest",
               )}
               allowDeselect={false}
             />

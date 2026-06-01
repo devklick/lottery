@@ -35,7 +35,7 @@ export const searchGamesRequestFilterSchema = z.object({
 });
 
 export const searchGamesRequestSchema = pagedRequestSchema.merge(
-  searchGamesRequestFilterSchema
+  searchGamesRequestFilterSchema,
 );
 
 export const searchGamesResponseItemSchema = z.object({
@@ -50,14 +50,14 @@ export const searchGamesResponseItemSchema = z.object({
     z.object({
       id: z.string().uuid(),
       selectionNumber: z.number(),
-    })
+    }),
   ),
   prizes: z.array(
     z.object({
       id: z.string().uuid(),
       position: z.number().positive(),
       numberMatchCount: z.number(),
-    })
+    }),
   ),
 });
 
@@ -80,15 +80,15 @@ export function validateSelectionsRequiredForEntry(
     selectionsRequiredForEntry,
     maxSelections,
   }: { selectionsRequiredForEntry: number; maxSelections: number },
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ) {
   if (selectionsRequiredForEntry > maxSelections) {
     ctx.addIssue({
       code: "too_big",
+      maximum: maxSelections,
+      origin: "number",
       path: ["selectionsRequiredForEntry"],
       message: "Cannot be greater than the maximum selections",
-      maximum: maxSelections,
-      type: "number",
       inclusive: true,
     });
   }
@@ -102,13 +102,14 @@ export function validateNumberMatchCount(
     prizes: Array<{ numberMatchCount: number }>;
     selectionsRequiredForEntry: number;
   },
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ) {
   prizes.forEach(({ numberMatchCount }, i) => {
     if (numberMatchCount > selectionsRequiredForEntry) {
       ctx.addIssue({
         type: "number",
-        code: z.ZodIssueCode.too_big,
+        code: "too_big",
+        origin: "number",
         maximum: selectionsRequiredForEntry,
         inclusive: true,
         message: "Cannot be greater than the number of selections per entry",
@@ -120,7 +121,7 @@ export function validateNumberMatchCount(
 
 export function validateUniquePrizes(
   { prizes }: { prizes: Array<{ position: number; numberMatchCount: number }> },
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ) {
   prizes.forEach((prize, i) => {
     if (prizes.filter((p) => p.position === prize.position).length > 1) {
@@ -145,7 +146,7 @@ export function validateUniquePrizes(
 
 export function validatePrizesStartFromOne(
   { prizes }: { prizes: Array<{ position: number }> },
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ) {
   const indexed = prizes
     .map((prize, index) => ({ prize, index }))
@@ -162,7 +163,7 @@ export function validatePrizesStartFromOne(
 
 export function validatePrizesSequential(
   { prizes }: { prizes: Array<{ position: number }> },
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ) {
   const indexed = prizes
     .map((prize, index) => ({ prize, index }))

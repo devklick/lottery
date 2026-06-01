@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 as build
+
+WORKDIR /src
+
+COPY src/Lottery.DB.Bootstrap/Lottery.DB.Bootstrap.csproj src/Lottery.DB.Bootstrap/
+COPY src/Lottery.DB/Lottery.DB.csproj src/Lottery.DB/
+COPY src/Lottery.Common/Lottery.Common.csproj src/Lottery.Common/
+
+RUN dotnet restore src/Lottery.DB.Bootstrap/Lottery.DB.Bootstrap.csproj
+
+COPY . .
+
+RUN dotnet publish src/Lottery.DB.Bootstrap/Lottery.DB.Bootstrap.csproj \
+    -c Release \
+    -o /app/publish 
+
+FROM mcr.microsoft.com/dotnet/runtime:10.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENTRYPOINT ["dotnet", "Lottery.DB.Bootstrap.dll"]

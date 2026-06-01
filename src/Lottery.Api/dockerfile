@@ -5,14 +5,17 @@ WORKDIR /src
 
 COPY src/Lottery.Api/Lottery.Api.csproj src/Lottery.Api/
 COPY src/Lottery.DB/Lottery.DB.csproj src/Lottery.DB/
+COPY src/Lottery.Resulting/Lottery.Resulting.csproj src/Lottery.Resulting/
+COPY src/Lottery.Common/Lottery.Common.csproj src/Lottery.Common/
 
-RUN dotnet restore src/Lottery.Api/Lottery.Api.csproj
+RUN dotnet restore src/Lottery.Api/Lottery.Api.csproj -v diag
 
 COPY . .
 
 RUN dotnet publish src/Lottery.Api/Lottery.Api.csproj \
     -c Release \
-    -o /app/publish
+    -o /app/publish \
+    --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0

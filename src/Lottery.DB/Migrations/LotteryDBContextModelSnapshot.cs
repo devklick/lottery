@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Lottery.DB.Migrations
 {
-    [DbContext(typeof(MaintenanceDBContext))]
-    partial class MaintenanceDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(LotteryDBContext))]
+    partial class LotteryDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

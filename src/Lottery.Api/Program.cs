@@ -12,6 +12,8 @@ using Lottery.Api.Repositories.Entry;
 using Lottery.Resulting;
 using Lottery.Api.Utilities;
 using Lottery.Api.Repositories.User;
+using DotNetEnv.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lottery.Api;
 
@@ -19,12 +21,9 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        // TODO: Load values from env rather than user secrets. 
-        // User secrets are great, but since the entire workflow is built around docker
-        // and docker doesnt natively support user secrets, it seems better to use env vars.
-        DotNetEnv.Env.Load("../../.env");
-
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Configuration.AddDotNetEnv("../../.env");
 
         builder.WebHost.ConfigureKestrel(options =>
         {
@@ -36,14 +35,14 @@ public class Program
 
         if (builder.Environment.IsDevelopment())
         {
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(policy =>
-                {
-                    var port = int.Parse(Environment.GetEnvironmentVariable("UI_PORT") ?? "3000");
-                    policy.WithOrigins($"http://localhost:{port}").AllowAnyMethod();
-                });
-            });
+            // builder.Services.AddCors(options =>
+            // {
+            //     options.AddDefaultPolicy(policy =>
+            //     {
+            //         var port = int.Parse(Environment.GetEnvironmentVariable("UI_PORT") ?? "3000");
+            //         policy.WithOrigins($"http://localhost:{port}").AllowAnyMethod();
+            //     });
+            // });
         }
 
         builder.ConfigureEntityFramework<LotteryDBContext>("API_DB_USER", "API_DB_PASSWORD");
@@ -52,10 +51,31 @@ public class Program
         ConfigureServices(builder);
 
         builder.Services.AddControllers();
+        // builder.Services.AddControllers().ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
+        // {
+        //     var problemDetails = new ProblemDetails
+        //     {
+        //         Status = StatusCodes.Status400BadRequest,
+        //         Title = "Validation failed"
+        //     };
+
+        //     problemDetails.Extensions["errors"] = context.ModelState
+        //         .Where(x => x.Value?.Errors.Count > 0)
+        //         .ToDictionary(
+        //             kvp => kvp.Key,
+        //             kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
+        //         );
+        //     return new BadRequestObjectResult(problemDetails);
+        // });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddLogging();
+
+        // builder.Services.Configure<ApiBehaviorOptions>(options =>
+        // {
+        //     options.SuppressModelStateInvalidFilter = true;
+        // });
 
 
         builder.Services.Configure<UserServiceOptions>(
@@ -73,7 +93,7 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            app.UseCors();
+            // app.UseCors();
         }
 
         app.UseHttpsRedirection();
@@ -110,7 +130,7 @@ public class Program
         builder.Services.AddScoped<EntryRepository>();
         builder.Services.AddScoped<ResultRepository>();
         builder.Services.AddScoped<UserRepository>();
-        builder.Services.AddSingleton(TimeProvider.System);
+        // builder.Services.AddSingleton(TimeProvider.System);
     }
 
     private static void ConfigureAutoMapper(WebApplicationBuilder builder)

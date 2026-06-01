@@ -20,7 +20,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
+import { useForm, schemaResolver } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 
 interface AcceptProps {}
@@ -43,7 +43,9 @@ function Accept({}: AcceptProps) {
     refetchOnMount: false,
     refetchOnReconnect: false,
     queryFn: () =>
-      queryValidation.success && userService.verifyInvite(queryValidation.data),
+      queryValidation.success
+        ? userService.verifyInvite(queryValidation.data)
+        : undefined,
   });
 
   const acceptInviteMutation = useMutation<
@@ -55,7 +57,7 @@ function Accept({}: AcceptProps) {
   });
 
   const form = useForm<AcceptInviteRequestBody>({
-    validate: zodResolver(acceptInviteRequestBodySchema),
+    validate: schemaResolver(acceptInviteRequestBodySchema),
     validateInputOnChange: true,
     initialValues: {
       email: queryValidation.success ? queryValidation.data.email : "",

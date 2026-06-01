@@ -1,3 +1,4 @@
+using Lottery.Common.Extensions;
 using Lottery.DB.Configuration;
 using Lottery.DB.Context;
 using Lottery.DB.Entities.Ref;
@@ -17,7 +18,7 @@ public static class HostBuilderExtensions
     public static IHostApplicationBuilder ConfigureEntityFramework<TContext>(this IHostApplicationBuilder builder, string usernameConfigKey, string passwordConfigKey)
         where TContext : LotteryDBContext
     {
-        var connectionString = GetConnectionString(builder, usernameConfigKey, passwordConfigKey);
+        var connectionString = ConfigExtensions.GetConnectionString(builder.Configuration, usernameConfigKey, passwordConfigKey);
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.MapEnum<ItemState>();
 
@@ -35,23 +36,5 @@ public static class HostBuilderExtensions
         }));
 
         return builder;
-    }
-
-    private static string GetConnectionString(IHostApplicationBuilder builder, string usernameConfigKey, string passwordConfigKey)
-    {
-        var connectionString = builder.Configuration.GetConnectionString("Default")
-            ?? throw new Exception("No default connection string found");
-
-        var csb = new NpgsqlConnectionStringBuilder(connectionString);
-
-        // when running locally, most of the connection string is defined in appsettings, 
-        // however password wil be stored more securely and added to configuration.
-        var dbUser = builder.Configuration[usernameConfigKey];
-        var dbPassword = builder.Configuration[passwordConfigKey];
-
-        if (!string.IsNullOrWhiteSpace(dbPassword)) csb.Password = dbPassword;
-        if (!string.IsNullOrWhiteSpace(dbUser)) csb.Username = dbUser;
-
-        return csb.ConnectionString;
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -16,7 +15,7 @@ using Lottery.DB.Entities.Base;
 
 namespace Lottery.DB.Context;
 
-public class LotteryDBContext(DbContextOptions options)
+public class LotteryDBContext(DbContextOptions<LotteryDBContext> options)
     : IdentityDbContext<AppUser, AppRole, Guid, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>(options)
 {
     public DbSet<Game> Games { get; set; }

@@ -68,7 +68,7 @@ function GameDetail({}: GameDetailProps) {
       <Text c={"dimmed"}>Enter from:</Text>
       {dateFormat(
         query.data?.startTime ?? placeholders.startTime,
-        "dd/mm/yyyy HH:MM"
+        "dd/mm/yyyy HH:MM",
       )}
     </>
   );
@@ -79,7 +79,7 @@ function GameDetail({}: GameDetailProps) {
       <Text>
         {dateFormat(
           query.data?.closeTime ?? placeholders.closeTime,
-          "dd/mm/yyyy HH:MM"
+          "dd/mm/yyyy HH:MM",
         )}
       </Text>
     </>
@@ -91,7 +91,7 @@ function GameDetail({}: GameDetailProps) {
       <Text>
         {dateFormat(
           query.data?.drawTime ?? placeholders.drawTime,
-          "dd/mm/yyyy HH:MM"
+          "dd/mm/yyyy HH:MM",
         )}
       </Text>
     </>
@@ -134,7 +134,7 @@ function GameDetail({}: GameDetailProps) {
           loading={query.isLoading}
           state={query.data?.gameStatus}
         />
-        <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
+        <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
             <Skeleton visible={loading}>
               <Group>{startTime}</Group>
@@ -173,7 +173,7 @@ function GameDetail({}: GameDetailProps) {
           <CreateEntry
             gameId={id!}
             selectionNumbers={query.data?.selections.map(
-              (s) => s.selectionNumber
+              (s) => s.selectionNumber,
             )}
             selectionsRequired={query.data?.selectionsRequiredForEntry!}
           />

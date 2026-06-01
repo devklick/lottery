@@ -89,7 +89,7 @@ function CreateGame({}: CreateGameProps) {
         <form
           onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
-          <Grid justify="center" gutter={"xl"}>
+          <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>
               <TextInput
                 label="Name"
@@ -194,7 +194,7 @@ function CreateGame({}: CreateGameProps) {
                     >
                       <NumberInput
                         {...form.getInputProps(
-                          `prizes.${index}.numberMatchCount`
+                          `prizes.${index}.numberMatchCount`,
                         )}
                       />
                     </Grid.Col>

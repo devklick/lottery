@@ -27,19 +27,13 @@ public class UserService(
     IOptions<CookieAuthenticationOptions> cookieOptions,
     SignInManager<AppUser> signInManager,
     Hasher hasher,
-    UserRepository userRepository)
+    UserRepository userRepository,
+    TimeProvider timeProvider)
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
-    private readonly IMapper _mapper = mapper;
-    private readonly IOptions<UserServiceOptions> _userServiceOptions = userServiceOptions;
-    private readonly IOptions<CookieAuthenticationOptions> _cookieOptions = cookieOptions;
-    private readonly Hasher _hasher = hasher;
-    private readonly SignInManager<AppUser> _signInManager = signInManager;
-    private readonly UserRepository _userRepository = userRepository;
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
     {
-        var id = _userManager.GetUserId(user);
+        var id = userManager.GetUserId(user);
 
         if (id == null)
         {
@@ -59,18 +53,18 @@ public class UserService(
 
     public async Task<Result<SignInResponse>> SignIn(SignInRequest request)
     {
-        var user = await _userManager.FindByNameAsync(request.Body.Username);
+        var user = await userManager.FindByNameAsync(request.Body.Username);
 
         if (user == null)
         {
             return new Result<SignInResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = "User name not registered" }]
+                Errors = [new() { Message = "Username not registered" }]
             };
         }
 
-        var result = await _signInManager.PasswordSignInAsync(request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);
+        var result = await signInManager.PasswordSignInAsync(request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);
 
         if (!result.Succeeded)
         {
@@ -81,14 +75,14 @@ public class UserService(
             };
         }
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, "GameAdmin");
+        var isAdmin = await userManager.IsInRoleAsync(user, "GameAdmin");
 
         return new Result<SignInResponse>
         {
             Status = ResultStatus.Ok,
             Value = new SignInResponse
             {
-                SessionExpiry = DateTime.UtcNow.Add(_cookieOptions.Value.ExpireTimeSpan),
+                SessionExpiry = timeProvider.GetUtcNow().Add(cookieOptions.Value.ExpireTimeSpan).DateTime,
                 UserType = isAdmin ? UserType.Admin : UserType.Basic
             }
         };
@@ -96,12 +90,12 @@ public class UserService(
 
     public async Task<Result<SignUpResponse>> CreateAccount(SignUpRequest request, IEnumerable<string>? roles = null)
     {
-        var appUser = _mapper.Map<AppUser>(request);
+        var appUser = mapper.Map<AppUser>(request);
 
-        appUser.EmailConfirmed = _userServiceOptions.Value.AutoConfirmNewAccounts;
-        appUser.PasswordHash = _hasher.HashPassword(appUser, request.Body.Password);
+        appUser.EmailConfirmed = userServiceOptions.Value.AutoConfirmNewAccounts;
+        appUser.PasswordHash = hasher.HashPassword(appUser, request.Body.Password);
 
-        var userResult = await _userManager.CreateAsync(appUser);
+        var userResult = await userManager.CreateAsync(appUser);
 
         if (!userResult.Succeeded)
         {
@@ -119,7 +113,7 @@ public class UserService(
 
         foreach (var role in roles)
         {
-            var roleResult = await _userManager.AddToRoleAsync(appUser, role);
+            var roleResult = await userManager.AddToRoleAsync(appUser, role);
 
             if (!roleResult.Succeeded)
             {
@@ -149,7 +143,7 @@ public class UserService(
         }
 
         // Get the role which the user is being invited to
-        var role = await _userRepository.GetRole(request.Body.UserType);
+        var role = await userRepository.GetRole(request.Body.UserType);
         if (role == null)
         {
             return new Result<UserInviteResponse>
@@ -163,13 +157,13 @@ public class UserService(
         {
             Id = Guid.NewGuid(),
             Email = request.Body.Email,
-            Token = _hasher.GetString(128),
+            Token = hasher.GetString(128),
             CreatedById = userIdResult.Value,
-            Expiry = DateTime.UtcNow.Add(_userServiceOptions.Value.UserInviteValidFor),
+            Expiry = timeProvider.GetUtcNow().Add(userServiceOptions.Value.UserInviteValidFor).DateTime,
         };
 
         // Create the invite
-        var inviteResult = await _userRepository.CreateUserInvite(invite);
+        var inviteResult = await userRepository.CreateUserInvite(invite);
 
         var inviteRole = new AppUserInviteRole
         {
@@ -178,9 +172,9 @@ public class UserService(
         };
 
         // Link the invite to the role that the user is being invited to
-        await _userRepository.CreateUserInviteRoles(inviteRole);
+        await userRepository.CreateUserInviteRoles(inviteRole);
 
-        await _userRepository.SaveChangesAsync();
+        await userRepository.SaveChangesAsync();
 
         // Send email to invite user - not going to implement this
 
@@ -197,14 +191,14 @@ public class UserService(
 
     public async Task<Result<VerifyUserInviteResponse>> FindUserInvite(VerifyUserInviteRequest request)
     {
-        var invite = await _userRepository.FindUserInvite(request.Query.Email, request.Query.Token);
+        var invite = await userRepository.FindUserInvite(request.Query.Email, request.Query.Token);
 
         if (invite == null)
         {
             return new Result<VerifyUserInviteResponse> { Status = ResultStatus.NotFound };
         }
 
-        if (invite.Expiry < DateTime.UtcNow)
+        if (invite.Expiry < timeProvider.GetUtcNow())
         {
             return new Result<VerifyUserInviteResponse>
             {
@@ -227,7 +221,7 @@ public class UserService(
 
     public async Task<Result<AcceptUserInviteResponse>> AcceptUserInvite(AcceptUserInviteRequest request)
     {
-        var invite = await _userRepository.FindUserInvite(request.Body.Email, request.Body.Token,
+        var invite = await userRepository.FindUserInvite(request.Body.Email, request.Body.Token,
             rolesFilter: new()
             {
                 Include = true
@@ -239,7 +233,7 @@ public class UserService(
             return new Result<AcceptUserInviteResponse> { Status = ResultStatus.NotFound };
         }
 
-        if (invite.Expiry < DateTime.UtcNow)
+        if (invite.Expiry < timeProvider.GetUtcNow())
         {
             return new Result<AcceptUserInviteResponse>
             {

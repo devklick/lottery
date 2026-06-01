@@ -35,7 +35,8 @@ public class GameService(GameRepository gameRepository, UserService userService,
                 Errors = userIdResult.Errors,
                 Status = userIdResult.Status
             };
-        };
+        }
+        ;
 
         request.Unbound.CreatedById = userIdResult.Value;
 
@@ -66,7 +67,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         };
     }
 
-    public async Task<Result<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
+    public async Task<Result<SearchGamesResponse>> SearchGames(SearchGamesRequest request)
     {
 
         var (games, total) = await _gameRepository.SearchGames(
@@ -98,10 +99,10 @@ public class GameService(GameRepository gameRepository, UserService userService,
                 State = ItemState.Enabled,
             });
 
-        return new Result<SearchGamesResonse>
+        return new Result<SearchGamesResponse>
         {
             Status = ResultStatus.Ok,
-            Value = new SearchGamesResonse
+            Value = new SearchGamesResponse
             {
                 Items = _mapper.Map<IEnumerable<SearchGamesResponseItem>>(games),
                 Limit = request.Query.Limit,

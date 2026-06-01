@@ -106,7 +106,7 @@ function Games({}: GamesProps) {
             setSearchParams(new QueryParams({ ...filters, ...newFilters }))
           }
         />
-        <Grid gutter={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
+        <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           {(query.data?.items ?? placeholder).map((game, i) => (
             <Grid.Col
               key={`game-${game.id}`}

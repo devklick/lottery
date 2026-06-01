@@ -14,7 +14,7 @@
       "cwd": "${workspaceFolder}/src/Lottery.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
-        "action": "openExternally",
+        // "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
       "env": {
@@ -39,6 +39,17 @@
       "name": ".NET Core Attach",
       "type": "coreclr",
       "request": "attach"
+    },
+    {
+      "name": "DB Bootstrap (Debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Lottery.DB.Bootstrap/bin/Debug/net10.0/Lottery.DB.Bootstrap.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Lottery.DB.Bootstrap",
+      "stopAtEntry": false,
+      "console": "internalConsole"
     }
   ]
 }

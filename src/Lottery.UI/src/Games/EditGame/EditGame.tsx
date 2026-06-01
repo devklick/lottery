@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import gameService from "../gameService";
-import { useForm, zodResolver } from "@mantine/form";
+import { useForm, schemaResolver } from "@mantine/form";
 import {
   EditGamePrizeRequest,
   EditGameRequestBody,
@@ -69,7 +69,7 @@ function EditGame({}: EditGameProps) {
   });
 
   const form = useForm<EditGameRequestBody>({
-    validate: zodResolver(editGameRequestBodySchema),
+    validate: schemaResolver(editGameRequestBodySchema),
     validateInputOnChange: true,
     validateInputOnBlur: true,
     initialValues: {
@@ -117,7 +117,7 @@ function EditGame({}: EditGameProps) {
         <form
           onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
-          <Grid justify="center" gutter={"xl"}>
+          <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>
               <Skeleton visible={query.isLoading}>
                 <TextInput
@@ -252,7 +252,7 @@ function EditGame({}: EditGameProps) {
                       <Skeleton visible={query.isLoading}>
                         <NumberInput
                           {...form.getInputProps(
-                            `prizes.${index}.numberMatchCount`
+                            `prizes.${index}.numberMatchCount`,
                           )}
                           disabled={query.data?.gameStatus != "future"}
                         />

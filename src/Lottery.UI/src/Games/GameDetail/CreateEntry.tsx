@@ -60,7 +60,7 @@ function CreateEntry({
         <Title size={"h2"}>{`Pick your numbers`}</Title>
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
-      <Collapse in={opened}>
+      <Collapse expanded={opened}>
         <Stack align="center">
           <SelectionPicker
             requiredCount={selectionsRequired}

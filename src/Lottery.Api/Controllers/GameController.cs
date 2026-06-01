@@ -45,7 +45,7 @@ public class GameController(GameService gameService) : ApiControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<SearchGamesResonse>> SearchGames(SearchGamesRequest request)
+    public async Task<ActionResult<SearchGamesResponse>> SearchGames(SearchGamesRequest request)
     {
         var response = await _gameService.SearchGames(request);
 

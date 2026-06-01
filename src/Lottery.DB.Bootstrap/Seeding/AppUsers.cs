@@ -2,13 +2,14 @@ using Lottery.Common.Helpers;
 using Lottery.DB.Entities.Idt;
 using Lottery.DB.Entities.Ref;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lottery.DB.Seeding;
+namespace Lottery.DB.Bootstrap.Seeding;
 
-internal static class UsersAndRoles
+internal static class AppUsers
 {
-    public static void Seed(DbContext context, Microsoft.AspNetCore.Identity.IPasswordHasher<AppUser> hasher)
+    public static async Task SeedAsync(DbContext context, IPasswordHasher<AppUser> hasher)
     {
 
         var systemAdminRole = new AppRole
@@ -128,22 +129,22 @@ internal static class UsersAndRoles
         foreach (var role in roles)
         {
             var set = context.Set<AppRole>();
-            var existing = set.FirstOrDefault(r => r.Id == role.Id);
-            if (existing is null) context.Set<AppRole>().Add(role);
+            var existing = await set.FirstOrDefaultAsync(r => r.Id == role.Id);
+            if (existing is null) await context.Set<AppRole>().AddAsync(role);
         }
         foreach (var user in users)
         {
             var set = context.Set<AppUser>();
-            var existing = set.FirstOrDefault(r => r.Id == user.Id);
-            if (existing is null) context.Set<AppUser>().Add(user);
+            var existing = await set.FirstOrDefaultAsync(r => r.Id == user.Id);
+            if (existing is null) await context.Set<AppUser>().AddAsync(user);
         }
         foreach (var userRole in appUserRoles)
         {
             var set = context.Set<AppUserRole>();
-            var existing = set.FirstOrDefault(r => r.UserId == userRole.UserId && r.RoleId == userRole.RoleId);
-            if (existing is null) context.Set<AppUserRole>().Add(userRole);
+            var existing = await set.FirstOrDefaultAsync(r => r.UserId == userRole.UserId && r.RoleId == userRole.RoleId);
+            if (existing is null) await context.Set<AppUserRole>().AddAsync(userRole);
         }
 
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 }

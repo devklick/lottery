@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Lottery.DB.Migrations
 {
-    [DbContext(typeof(MaintenanceDBContext))]
-    [Migration("20260531152929_InitialCreate")]
+    [DbContext(typeof(LotteryDBContext))]
+    [Migration("20260531231930_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

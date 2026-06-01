@@ -59,7 +59,7 @@ export function createGameService({
     const result = await api.post<CreateGameRequest, CreateGameResponse>(
       "/game",
       request,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (!result.success) throw result.error;
 
@@ -69,13 +69,13 @@ export function createGameService({
       return valid.data;
     }
 
-    throw new Error(valid.error.errors.map((e) => e.message).join(". "));
+    throw new Error(valid.error.issues.map((e) => e.message).join(". "));
   };
 
   const searchGames: GameService["searchGames"] = async (request) => {
     const result = await api.get<SearchGamesRequest, SearchGamesResponse>(
       "/game/search",
-      request
+      request,
     );
     if (!result.success) throw result.error;
 
@@ -85,7 +85,7 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   const getGame: GameService["getGame"] = async (request) => {
@@ -98,7 +98,7 @@ export function createGameService({
       return valid.data;
     }
 
-    throw new Error(valid.error.errors.map((e) => e.message).join("."));
+    throw new Error(valid.error.issues.map((e) => e.message).join("."));
   };
 
   const createEntry: GameService["createEntry"] = async (request) => {
@@ -107,7 +107,7 @@ export function createGameService({
       request.body,
       {
         withCredentials: true,
-      }
+      },
     );
     if (!result.success) throw result.error;
 
@@ -117,14 +117,14 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   const getEntries: GameService["getEntries"] = async (request) => {
     const result = await api.get<GetEntriesRequestQuery, GetEntriesResponse>(
       "/entry",
       request.query,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (!result.success) throw result.error;
 
@@ -134,14 +134,14 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   const editGame: GameService["editGame"] = async (request) => {
     const result = await api.post<EditGameRequestBody, EditGameResponse>(
       `/game/${request.route.id}/edit`,
       request.body,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (!result.success) throw result.error;
 
@@ -151,14 +151,14 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   const editEntry: GameService["editEntry"] = async (request) => {
     const result = await api.post<EditEntryRequestBody, EditEntryResponse>(
       `/entry/${request.route.entryId}/edit`,
       request.body,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (!result.success) throw result.error;
 
@@ -168,14 +168,14 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   const resultGame: GameService["resultGame"] = async (request) => {
     const result = await api.post<ResultGameRequestBody, ResultGameResponse>(
       `/game/${request.route.gameId}/result`,
       request.body,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (!result.success) throw result.error;
 
@@ -185,7 +185,7 @@ export function createGameService({
       return valid.data;
     }
 
-    throw valid.error.errors.map((e) => e.message);
+    throw valid.error.issues.map((e) => e.message);
   };
 
   return {

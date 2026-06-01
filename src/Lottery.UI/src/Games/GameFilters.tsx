@@ -9,7 +9,7 @@ import {
   Select,
   TextInput,
 } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
+import { useForm, schemaResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import {
@@ -31,7 +31,7 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
   const [opened, { toggle }] = useDisclosure(false);
 
   const form = useForm<SearchGamesRequestFilter>({
-    validate: zodResolver(searchGamesRequestFilterSchema),
+    validate: schemaResolver(searchGamesRequestFilterSchema),
     initialValues,
   });
 
@@ -39,7 +39,7 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
 
   return (
     <Container p={0}>
-      <Collapse in={opened}>
+      <Collapse expanded={opened}>
         <form onSubmit={form.onSubmit((data) => onUpdateClicked(data))}>
           <Grid>
             <Grid.Col key={"name"} {...colProps}>

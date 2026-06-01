@@ -26,42 +26,39 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql
+      # Run an init script to create the migration user that db-bootstrap will use
       - ./db/init_users.sh:/docker-entrypoint-initdb.d/init_users.sh
 
-  migrate:
+  db-bootstrap:
     labels:
-      - com.host.description=Runs the EF migration
+      - com.host.description=Runs the EF migration and seeds any initial data
     build:
       context: .
-      dockerfile: src/Lottery.DB/dockerfile
+      dockerfile: src/Lottery.DB.Bootstrap/dockerfile
 
     depends_on:
       db:
         condition: service_healthy
 
     environment:
+      ConnectionStrings__Default: "Host=db;Database=${POSTGRES_DB};Username=${MIGRATOR_DB_USER};Password=${MIGRATOR_DB_PASSWORD}"
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      # bootstrap needs to know DB credentials for users that need to be created
       API_DB_USER: ${API_DB_USER}
       API_DB_PASSWORD: ${API_DB_PASSWORD}
       RESULTS_DB_USER: ${RESULTS_DB_USER}
       RESULTS_DB_PASSWORD: ${RESULTS_DB_PASSWORD}
-      ConnectionStrings__Default: "Host=db;Database=${POSTGRES_DB};Username=${MIGRATOR_DB_USER};Password=${MIGRATOR_DB_PASSWORD}"
-
-    command:
-      [
-        "database",
-        "update",
-        "--project",
-        "src/Lottery.DB",
-        "--context",
-        "MaintenanceDBContext",
-      ]
+      # bootstrap needs to know app credentials the app service accounts
+      SYSTEM_ADMIN_PASSWORD: ${SYSTEM_ADMIN_PASSWORD}
+      GAME_ADMIN_PASSWORD: ${GAME_ADMIN_PASSWORD}
 
   api:
     labels:
       - com.host.description=The API which is consumed by the lottery UI to manage and interact with lottery games
 
     depends_on:
-      migrate:
+      db-bootstrap:
         condition: service_completed_successfully
 
     build:
@@ -71,10 +68,14 @@ services:
     container_name: lottery-api
     restart: unless-stopped
 
+    # API will always run on 8080 in the container,
+    # but we can access the API outside the container via API_PORT env var
+    # 8080 is required in the container, as this is what the UI server proxies to
     ports:
-      - 5000:8080
+      - ${API_PORT}:8080
 
     environment:
+      API_PORT: 8080
       ConnectionStrings__Default: Host=db;Database=${POSTGRES_DB};Username=${API_DB_USER};Password=${API_DB_PASSWORD}
 
   resulting:
@@ -82,7 +83,7 @@ services:
       - com.host.description=A background service which periodically checks games to be resulted and results them
 
     depends_on:
-      migrate:
+      db-bootstrap:
         condition: service_completed_successfully
 
     build:
@@ -108,9 +109,10 @@ services:
     container_name: lottery-ui
     restart: unless-stopped
 
-    # Map localhost port 3000 to 80. Nginx config will listen on 80.
+    # UI will always be hosted on port 80 in the container,
+    # but can be accessed from outside the container on UI_PORT
     ports:
-      - "3000:80"
+      - ${UI_PORT}:80
 
 volumes:
   postgres_data:

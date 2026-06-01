@@ -72,7 +72,7 @@ function YourEntries({
     if (!winningSelections?.length) return "blue";
 
     return winningSelections.find(
-      (ws) => ws.selectionNumber === selectionNumber
+      (ws) => ws.selectionNumber === selectionNumber,
     )
       ? "green"
       : "gray";
@@ -80,7 +80,7 @@ function YourEntries({
 
   function getSelection(
     entryId: string,
-    selection: { id: string; selectionNumber: number }
+    selection: { id: string; selectionNumber: number },
   ) {
     return (
       <Badge
@@ -161,7 +161,7 @@ function YourEntries({
         <Title size={"h2"}>{`Your entries`}</Title>
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
-      <Collapse in={opened}>
+      <Collapse expanded={opened}>
         {!user.authenticated() ? (
           <Text span>
             <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
