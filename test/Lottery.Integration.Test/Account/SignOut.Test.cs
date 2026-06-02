@@ -7,10 +7,8 @@ using Lottery.Integration.Test.Data;
 namespace Lottery.Integration.Test.Account;
 
 [Collection("Integration")]
-public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture)
+public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture) : IntegrationTestBase(testContextAccessor, fixture)
 {
-    private CancellationToken CancellationToken => testContextAccessor.Current.CancellationToken;
-
     [Fact]
     public async Task SignUp_MissingField_BadRequest()
     {
@@ -21,7 +19,7 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
             Password = TestUsers.AppUserPassword,
         };
 
-        var signInResponse = await fixture.Client.PostAsync(
+        var signInResponse = await TestContext.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -29,13 +27,13 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
         signInResponse.EnsureSuccessStatusCode();
 
         // check protected endpoint
-        var entriesResponse = await fixture.Client.GetAsync(
+        var entriesResponse = await TestContext.Client.GetAsync(
             "/entry",
             CancellationToken);
 
         Assert.NotEqual(HttpStatusCode.Forbidden, entriesResponse.StatusCode);
 
-        var signOutResponse = await fixture.Client.PostAsync(
+        var signOutResponse = await TestContext.Client.PostAsync(
             "/account/signOut",
             null,
             CancellationToken);
@@ -43,7 +41,7 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
         signOutResponse.EnsureSuccessStatusCode();
 
         // check protected endpoint
-        var entriesResponse2 = await fixture.Client.PostAsync(
+        var entriesResponse2 = await TestContext.Client.PostAsync(
             "/entry",
             null,
             CancellationToken);

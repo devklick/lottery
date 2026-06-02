@@ -9,9 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lottery.Integration.Test.Account;
 
 [Collection("Integration")]
-public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture)
+public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture) : IntegrationTestBase(testContextAccessor, fixture)
 {
-    private CancellationToken CancellationToken => testContextAccessor.Current.CancellationToken;
 
     [Theory]
     [InlineData(null, "value", "test@test.com", "Username")]
@@ -26,7 +25,7 @@ public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Email = email!
         };
 
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signUp",
             JsonContent.Create(request),
             CancellationToken);
@@ -50,7 +49,7 @@ public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Email = "test@test.com"
         };
 
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signUp",
             JsonContent.Create(request),
             CancellationToken);

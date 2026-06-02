@@ -54,6 +54,7 @@ public static class TestUsers
     {
         Id = Guid.Parse("66ab643e-0098-4c6a-a027-32e33d2b7a02"),
         Name = "Service",
+        NormalizedName = "Service".ToUpperInvariant(),
         DisplayName = "Service",
         Description = "Role for service accounts to use",
     };
@@ -61,6 +62,7 @@ public static class TestUsers
     {
         Id = Guid.Parse("115b1a46-a50b-4e7a-906b-b7d7b25e7e45"),
         Name = "BasicUser",
+        NormalizedName = "BasicUser".ToUpperInvariant(),
         DisplayName = "Basic User",
         Description = "Basic user access",
     };
@@ -69,6 +71,7 @@ public static class TestUsers
     {
         Id = Guid.Parse("447104c9-021e-4414-a22a-126afc57ec73"),
         Name = "GameAdmin",
+        NormalizedName = "GameAdmin".ToUpperInvariant(),
         DisplayName = "Game Admin",
         Description = "Game Admin",
     };

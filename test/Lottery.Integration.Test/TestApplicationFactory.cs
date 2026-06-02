@@ -28,7 +28,6 @@ public class TestApplicationFactory(PostgreSqlContainer postgres, FakeTimeProvid
         });
 
         builder.ConfigureAppConfiguration((context, config) =>
-        {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["POSTGRES_DB"] = "lottery",
@@ -38,12 +37,6 @@ public class TestApplicationFactory(PostgreSqlContainer postgres, FakeTimeProvid
                 ["RESULTS_DB_PASSWORD"] = "mock-results-db-pass",
                 ["SYSTEM_ADMIN_PASSWORD"] = "mock-system-admin-pass",
                 ["GAME_ADMIN_PASSWORD"] = "mock-game-admin-pass",
-            });
-        });
+            }));
     }
-}
-
-[CollectionDefinition("Integration")]
-public class TestApplicationFactoryCollection : ICollectionFixture<TestApplicationFactory>
-{
 }

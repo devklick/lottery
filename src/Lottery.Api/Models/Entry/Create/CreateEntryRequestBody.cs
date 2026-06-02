@@ -14,6 +14,9 @@ public class CreateEntryRequestBody
 
     public class Selection : IEquatable<Selection>
     {
+        public static Selection Create(int selectionNumber)
+            => new() { SelectionNumber = selectionNumber };
+
         [Required]
         public int SelectionNumber { get; set; }
 

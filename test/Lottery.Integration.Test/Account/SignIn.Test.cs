@@ -13,10 +13,8 @@ namespace Lottery.Integration.Test.Account;
 
 #pragma warning disable xUnit1041
 [Collection("Integration")]
-public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture)
+public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture) : IntegrationTestBase(testContextAccessor, fixture)
 {
-    private CancellationToken CancellationToken => testContextAccessor.Current.CancellationToken;
-
     [Theory]
     [InlineData(null, "value", "Username")]
     [InlineData("value", null, "Password")]
@@ -28,7 +26,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Password = password!,
         };
 
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -50,7 +48,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Username = "value",
             Password = "value",
         };
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -73,7 +71,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Username = TestUsers.AppUser.UserName!,
             Password = "wrong",
         };
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -91,14 +89,14 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     [Fact]
     public async Task SignIn_BasicUser_Success()
     {
-        fixture.TimeProvider.UtcNow = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        TestContext.SetCurrentTime(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var request = new SignInRequestBody
         {
             Username = TestUsers.AppUser.UserName!,
             Password = TestUsers.AppUserPassword,
         };
-        var response = await fixture.Client.PostAsync(
+        var response = await TestContext.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -109,7 +107,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         Assert.Equal(ResultStatus.Ok, body.Status);
         Assert.NotNull(body.Value);
         // The magic 14 here comes from cookie options and should ideally be controlled during test
-        Assert.Equal(fixture.TimeProvider.UtcNow.AddDays(14), body.Value.SessionExpiry);
+        Assert.Equal(TestContext.TimeProvider.UtcNow.AddDays(14), body.Value.SessionExpiry);
         Assert.Equal(UserType.Basic, body.Value.UserType);
         Assert.Null(body.Errors);
     }

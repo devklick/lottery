@@ -148,6 +148,8 @@ public class LotteryDBContext(DbContextOptions<LotteryDBContext> options)
                     var stateProp = entry.Properties.First(w => w.Metadata.Name == nameof(entity.State));
 
                     // TODO: Look into why IsModified is incorrectly true when CurrentValue and OriginalValue are the same. 
+                    // This may have been due to ItemState not having a sentinel value applied, in which case it may now be resolved. 
+                    // Still to be investigated
 
                     if (stateProp.IsModified)
                     {

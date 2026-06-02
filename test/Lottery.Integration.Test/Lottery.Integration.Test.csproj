@@ -6,17 +6,18 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4"/>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.8"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
-    <PackageReference Include="xunit.v3" Version="3.2.2"/>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Respawn" Version="7.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <Using Include="Xunit"/>
+    <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lottery.Test.Common\Lottery.Test.Common.csproj"/>
-    <ProjectReference Include="..\..\src\Lottery.Api\Lottery.Api.csproj"/>
+    <ProjectReference Include="..\Lottery.Test.Common\Lottery.Test.Common.csproj" />
+    <ProjectReference Include="..\..\src\Lottery.Api\Lottery.Api.csproj" />
   </ItemGroup>
 </Project>

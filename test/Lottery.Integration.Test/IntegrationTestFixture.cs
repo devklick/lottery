@@ -3,72 +3,71 @@
 using Testcontainers.PostgreSql;
 
 using Lottery.DB.Context;
-using Lottery.DB.Entities.Idt;
-using Microsoft.AspNetCore.Identity;
-using Lottery.Integration.Test.Data;
 using Lottery.Integration.Test.Abstractions;
-using Microsoft.AspNetCore.Mvc.Testing;
-
 namespace Lottery.Integration.Test;
 
 
+/// <summary>
+/// Enables sharing the fixture between other related integration tests.
+/// 
+/// This allows us to re-use the same container for every all integration tests, 
+/// which helps speed up the tests.
+/// </summary>
+[CollectionDefinition("Integration")]
+public class IntegrationTestCollection : ICollectionFixture<IntegrationTestFixture>
+{ }
+
+/// <summary>
+/// A fixture providing access to the the high-level resources that integration 
+/// tests require access to.
+/// </summary>
 public class IntegrationTestFixture : IAsyncLifetime
 {
     private PostgreSqlContainer _container = null!;
+    private string ConnectionString => _container.GetConnectionString();
 
-    public TestApplicationFactory Factory { get; private set; } = null!;
-    public HttpClient Client { get; private set; } = null!;
-    public string ConnectionString => _container.GetConnectionString();
-    public FakeTimeProvider TimeProvider { get; private set; } = new FakeTimeProvider
+    /// <summary>
+    /// Creates a new <see cref="IntegrationTestContext"/> so that each test can
+    /// get it's own resources, in order to prevent tests interfering with each other.
+    /// </summary>
+    public async Task<IntegrationTestContext> CreateTestContext()
     {
-        UtcNow = new DateTimeOffset(2026, 1, 1, 12, 0, 0, TimeSpan.Zero)
-    };
+        var timeProvider = new FakeTimeProvider();
+        var factory = new TestApplicationFactory(_container, timeProvider);
 
-    public LotteryDBContext CreateContext()
-    {
-        var options = new DbContextOptionsBuilder<LotteryDBContext>()
-            .UseNpgsql(ConnectionString)
-            .Options;
-
-        return new LotteryDBContext(options);
+        return await IntegrationTestContext.CreateAsync(timeProvider, factory, ConnectionString);
     }
 
+    /// <summary>
+    /// Called before every test collection that uses this fixture.
+    /// 
+    /// Creates a postgres DB in docker and deploys the lottery schema to it.
+    /// /// </summary>
     async ValueTask IAsyncLifetime.InitializeAsync()
     {
         _container = new PostgreSqlBuilder("postgres:18")
             .WithUsername("postgres")
             .WithPassword("postgres")
+            .WithDatabase("lottery")
             .Build();
 
         await _container.StartAsync();
 
-        await using var context = CreateContext();
+        using var migrationContext = new LotteryDBContext(
+            new DbContextOptionsBuilder<LotteryDBContext>()
+                .UseNpgsql(ConnectionString)
+                .Options);
 
-        await context.Database.MigrateAsync();
-
-        await context.Users.AddRangeAsync(TestUsers.ServiceUser, TestUsers.AppUser, TestUsers.GameAdminUser);
-        await context.Roles.AddRangeAsync(TestUsers.ServiceRole, TestUsers.BasicRole, TestUsers.GameAdminRole);
-        await context.UserRoles.AddRangeAsync(
-            new AppUserRole { RoleId = TestUsers.ServiceRole.Id, UserId = TestUsers.ServiceUser.Id },
-            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser.Id },
-            new AppUserRole { RoleId = TestUsers.GameAdminRole.Id, UserId = TestUsers.GameAdminUser.Id }
-        );
-
-        await context.SaveChangesAsync();
-
-        Factory = new TestApplicationFactory(_container, TimeProvider);
-
-        Client = Factory.CreateClient();
+        await migrationContext.Database.MigrateAsync();
     }
 
+    /// <summary>
+    /// Called after every test collection that uses this fixture.
+    /// </summary>
+    /// <returns></returns>
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        Client.Dispose();
-        await Factory.DisposeAsync();
         await _container.DisposeAsync();
     }
 }
 
-[CollectionDefinition("Integration")]
-public class IntegrationTestCollection : ICollectionFixture<IntegrationTestFixture>
-{ }

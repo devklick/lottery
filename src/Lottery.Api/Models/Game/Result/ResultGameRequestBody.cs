@@ -11,6 +11,9 @@ public class ResultGameRequestBody
 
     public class GameSelection : IEquatable<GameSelection>
     {
+        public static GameSelection Create(int selectionNumber)
+            => new() { SelectionNumber = selectionNumber };
+
         [Required, Range(0, 100)]
         public required int SelectionNumber { get; set; }
 
