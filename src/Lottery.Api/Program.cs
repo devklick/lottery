@@ -33,50 +33,17 @@ public class Program
 
         // Add services to the container.
 
-        if (builder.Environment.IsDevelopment())
-        {
-            // builder.Services.AddCors(options =>
-            // {
-            //     options.AddDefaultPolicy(policy =>
-            //     {
-            //         var port = int.Parse(Environment.GetEnvironmentVariable("UI_PORT") ?? "3000");
-            //         policy.WithOrigins($"http://localhost:{port}").AllowAnyMethod();
-            //     });
-            // });
-        }
-
         builder.ConfigureEntityFramework<LotteryDBContext>("API_DB_USER", "API_DB_PASSWORD");
         ConfigureIdentity(builder);
         ConfigureAutoMapper(builder);
         ConfigureServices(builder);
 
         builder.Services.AddControllers();
-        // builder.Services.AddControllers().ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
-        // {
-        //     var problemDetails = new ProblemDetails
-        //     {
-        //         Status = StatusCodes.Status400BadRequest,
-        //         Title = "Validation failed"
-        //     };
 
-        //     problemDetails.Extensions["errors"] = context.ModelState
-        //         .Where(x => x.Value?.Errors.Count > 0)
-        //         .ToDictionary(
-        //             kvp => kvp.Key,
-        //             kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
-        //         );
-        //     return new BadRequestObjectResult(problemDetails);
-        // });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddLogging();
-
-        // builder.Services.Configure<ApiBehaviorOptions>(options =>
-        // {
-        //     options.SuppressModelStateInvalidFilter = true;
-        // });
-
 
         builder.Services.Configure<UserServiceOptions>(
             builder.Configuration.GetSection(UserServiceOptions.Name));

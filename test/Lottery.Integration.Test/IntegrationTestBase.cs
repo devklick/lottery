@@ -28,7 +28,7 @@ namespace Lottery.Integration.Test;
 /// <param name="fixture"></param>
 public abstract class IntegrationTestBase(ITestContextAccessor testContextAccessor, IntegrationTestFixture fixture) : IAsyncLifetime
 {
-    public IntegrationTestContext TestContext = null!;
+    public IntegrationTestContextProvider TestContext = null!;
     protected CancellationToken CancellationToken => testContextAccessor.Current.CancellationToken;
 
     /// <summary>
@@ -37,7 +37,12 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     public async ValueTask InitializeAsync()
     {
         // Each test case gets it's own integration test context
-        TestContext = await fixture.CreateTestContext();
+        var defaultTestContext = await fixture.CreateTestContext();
+        TestContext = new IntegrationTestContextProvider
+        {
+            Default = defaultTestContext,
+            Builder = fixture.TestContextBuilder
+        };
     }
 
     /// <summary>
@@ -45,16 +50,21 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        await TestContext.DisposeAsync();
+        await TestContext.Default.DisposeAsync();
     }
 
     protected async Task AdminSignIn()
-        => await SignIn(TestUsers.GameAdminUserName, TestUsers.GameAdminUserPassword);
+        => await AdminSignIn(TestContext.Default);
+    protected async Task AdminSignIn(IntegrationTestContext context)
+        => await SignIn(context, TestUsers.GameAdminUserName, TestUsers.GameAdminUserPassword);
 
-    protected async Task UserSignIn()
-        => await SignIn(TestUsers.AppUserName, TestUsers.AppUserPassword);
+    protected async Task UserSignIn() => await UserSignIn(TestContext.Default);
+    protected async Task UserSignIn(IntegrationTestContext context)
+        => await SignIn(context, TestUsers.AppUserName, TestUsers.AppUserPassword);
 
     protected async Task SignIn(string username, string password)
+        => await SignIn(TestContext.Default, username, password);
+    protected async Task SignIn(IntegrationTestContext context, string username, string password)
     {
         var requestBody = new SignInRequestBody
         {
@@ -62,7 +72,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             Password = password
         };
 
-        var response = await TestContext.Client.PostAsJsonAsync(
+        var response = await context.Client.PostAsJsonAsync(
             "/account/signIn",
             requestBody,
             CancellationToken);
@@ -71,8 +81,10 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task SignOut()
+        => await SignOut(TestContext.Default);
+    protected async Task SignOut(IntegrationTestContext context)
     {
-        var response = await TestContext.Client.PostAsync(
+        var response = await context.Client.PostAsync(
             "/account/signOut",
             null,
             CancellationToken);
@@ -81,12 +93,14 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task<CreateGameResponse> CreateGame(CreateGameRequestBody? request = null)
+        => await CreateGame(TestContext.Default, request);
+    protected async Task<CreateGameResponse> CreateGame(IntegrationTestContext context, CreateGameRequestBody? request = null)
     {
         request ??= new CreateGameRequestBody
         {
-            StartTime = TestContext.TimeProvider.UtcNow.AddMinutes(5).UtcDateTime,
-            CloseTime = TestContext.TimeProvider.UtcNow.AddMinutes(10).UtcDateTime,
-            DrawTime = TestContext.TimeProvider.UtcNow.AddMinutes(15).UtcDateTime,
+            StartTime = context.TimeProvider.UtcNow.AddMinutes(5).UtcDateTime,
+            CloseTime = context.TimeProvider.UtcNow.AddMinutes(10).UtcDateTime,
+            DrawTime = context.TimeProvider.UtcNow.AddMinutes(15).UtcDateTime,
             MaxSelections = 50,
             Name = "Test Game",
             Prizes = [
@@ -100,7 +114,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             State = ItemState.Enabled
         };
 
-        var response = await TestContext.Client.PostAsJsonAsync(
+        var response = await context.Client.PostAsJsonAsync(
             "/game",
             request,
             CancellationToken);
@@ -117,6 +131,8 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task<IEnumerable<SearchGamesResponseItem>> SearchGames(SearchGamesRequestQuery? request = null, int? expectedTotalGames = 1)
+        => await SearchGames(TestContext.Default, request, expectedTotalGames);
+    protected async Task<IEnumerable<SearchGamesResponseItem>> SearchGames(IntegrationTestContext context, SearchGamesRequestQuery? request = null, int? expectedTotalGames = 1)
     {
         request ??= new SearchGamesRequestQuery
         {
@@ -129,7 +145,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         };
 
         var queryString = BuildQueryString(request);
-        var response = await TestContext.Client.GetAsync(
+        var response = await context.Client.GetAsync(
             $"/game/search?{queryString}",
             CancellationToken);
 
@@ -152,9 +168,10 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         return body.Value.Items;
     }
 
-    protected async Task<GetGameResponse> GetGame(Guid gameId)
+    protected async Task<GetGameResponse> GetGame(Guid gameId) => await GetGame(TestContext.Default, gameId);
+    protected async Task<GetGameResponse> GetGame(IntegrationTestContext context, Guid gameId)
     {
-        var response = await TestContext.Client.GetFromJsonAsync<Result<GetGameResponse>>(
+        var response = await context.Client.GetFromJsonAsync<Result<GetGameResponse>>(
             $"/game/{gameId}",
             CancellationToken);
 
@@ -166,6 +183,8 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task<CreateEntryResponse> CreateEntry(Guid gameId, IEnumerable<int>? selectionNumbers = null)
+        => await CreateEntry(TestContext.Default, gameId, selectionNumbers);
+    protected async Task<CreateEntryResponse> CreateEntry(IntegrationTestContext context, Guid gameId, IEnumerable<int>? selectionNumbers = null)
     {
         selectionNumbers ??= [11, 12, 13, 14, 15];
 
@@ -175,7 +194,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             Selections = selectionNumbers.Select(CreateEntryRequestBody.Selection.Create).ToList()
         };
 
-        var response = await TestContext.Client.PostAsJsonAsync(
+        var response = await context.Client.PostAsJsonAsync(
             "/entry",
             requestBody,
             CancellationToken);
@@ -191,13 +210,15 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task EditEntry(Guid entryId, IEnumerable<int>? selectionNumbers = null)
+        => await EditEntry(TestContext.Default, entryId, selectionNumbers);
+    protected async Task EditEntry(IntegrationTestContext context, Guid entryId, IEnumerable<int>? selectionNumbers = null)
     {
         selectionNumbers ??= [21, 22, 23, 24, 25];
         var requestBody = new EditEntryRequestBody
         {
             Selections = [.. selectionNumbers.Select(EditEntryRequestBody.Selection.Create)]
         };
-        var response = await TestContext.Client.PostAsJsonAsync(
+        var response = await context.Client.PostAsJsonAsync(
             $"/entry/{entryId}/edit",
             requestBody,
             CancellationToken);
@@ -212,6 +233,8 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task AdminResultGame(Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)
+        => await AdminResultGame(TestContext.Default, gameId, winningSelectionNumbers, randomWinningSelectionNumbers);
+    protected async Task AdminResultGame(IntegrationTestContext context, Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)
     {
         if (randomWinningSelectionNumbers)
         {
@@ -227,7 +250,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             WinningSelections = [.. winningSelectionNumbers.Select(ResultGameRequestBody.GameSelection.Create)]
 
         };
-        var response = await TestContext.Client.PostAsync(
+        var response = await context.Client.PostAsync(
             $"/game/{gameId}/result",
             JsonContent.Create(request),
             CancellationToken);
@@ -243,13 +266,15 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task<IEnumerable<SearchEntriesResponseItem>> SearchEntries(Guid? gameId = null)
+        => await SearchEntries(TestContext.Default, gameId);
+    protected async Task<IEnumerable<SearchEntriesResponseItem>> SearchEntries(IntegrationTestContext context, Guid? gameId = null)
     {
         var request = new SearchEntriesRequestQuery
         {
             GameId = gameId,
         };
 
-        var response = await TestContext.Client.GetFromJsonAsync<Result<SearchEntriesResponse>>(
+        var response = await context.Client.GetFromJsonAsync<Result<SearchEntriesResponse>>(
             $"/entry?{BuildQueryString(request)}",
             CancellationToken);
 
@@ -260,14 +285,15 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         return response.Value.Items;
     }
 
-    protected async Task TryUserResultGame_ExpectForbidden(Guid gameId)
+    protected async Task TryUserResultGame_ExpectForbidden(Guid gameId) => await TryUserResultGame_ExpectForbidden(TestContext.Default, gameId);
+    protected async Task TryUserResultGame_ExpectForbidden(IntegrationTestContext context, Guid gameId)
     {
         var request = new ResultGameRequestBody
         {
             WinningSelections = []
         };
 
-        var response = await TestContext.Client.PostAsync(
+        var response = await context.Client.PostAsync(
             $"/game/{gameId}/result",
             JsonContent.Create(request),
             CancellationToken);
@@ -276,6 +302,8 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     }
 
     protected async Task TryEnterClosedGame_ExpectBadRequest(Guid gameId)
+        => await TryEnterClosedGame_ExpectBadRequest(TestContext.Default, gameId);
+    protected async Task TryEnterClosedGame_ExpectBadRequest(IntegrationTestContext context, Guid gameId)
     {
         var requestBody = new CreateEntryRequestBody
         {
@@ -289,7 +317,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             ]
         };
 
-        var response = await TestContext.Client.PostAsJsonAsync(
+        var response = await context.Client.PostAsJsonAsync(
             "/entry",
             requestBody,
             CancellationToken);

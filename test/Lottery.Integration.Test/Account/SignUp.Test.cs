@@ -25,7 +25,7 @@ public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Email = email!
         };
 
-        var response = await TestContext.Client.PostAsync(
+        var response = await TestContext.Default.Client.PostAsync(
             "/account/signUp",
             JsonContent.Create(request),
             CancellationToken);
@@ -49,7 +49,7 @@ public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Email = "test@test.com"
         };
 
-        var response = await TestContext.Client.PostAsync(
+        var response = await TestContext.Default.Client.PostAsync(
             "/account/signUp",
             JsonContent.Create(request),
             CancellationToken);

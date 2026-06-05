@@ -6,7 +6,10 @@ using Lottery.Api.Models.Common;
 using Lottery.Common.Models;
 using Lottery.Integration.Test.Data;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lottery.Integration.Test.Account;
 
@@ -26,7 +29,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Password = password!,
         };
 
-        var response = await TestContext.Client.PostAsync(
+        var response = await TestContext.Default.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -48,7 +51,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Username = "value",
             Password = "value",
         };
-        var response = await TestContext.Client.PostAsync(
+        var response = await TestContext.Default.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -71,7 +74,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
             Username = TestUsers.AppUser.UserName!,
             Password = "wrong",
         };
-        var response = await TestContext.Client.PostAsync(
+        var response = await TestContext.Default.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -89,14 +92,23 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     [Fact]
     public async Task SignIn_BasicUser_Success()
     {
-        TestContext.SetCurrentTime(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var cookieExpiryTimespan = TimeSpan.FromDays(1);
+
+        await using var context = await TestContext.Builder()
+            .WithServiceOverride(services =>
+                services.PostConfigure<CookieAuthenticationOptions>(options =>
+                    options.ExpireTimeSpan = cookieExpiryTimespan))
+            .BuildAsync();
+
+        context.SetCurrentTime(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
 
         var request = new SignInRequestBody
         {
             Username = TestUsers.AppUser.UserName!,
             Password = TestUsers.AppUserPassword,
         };
-        var response = await TestContext.Client.PostAsync(
+
+        var response = await context.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -106,8 +118,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.Ok, body.Status);
         Assert.NotNull(body.Value);
-        // The magic 14 here comes from cookie options and should ideally be controlled during test
-        Assert.Equal(TestContext.TimeProvider.UtcNow.AddDays(14), body.Value.SessionExpiry);
+        Assert.Equal(context.TimeProvider.UtcNow.Add(cookieExpiryTimespan), body.Value.SessionExpiry);
         Assert.Equal(UserType.Basic, body.Value.UserType);
         Assert.Null(body.Errors);
     }

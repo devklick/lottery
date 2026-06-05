@@ -20,7 +20,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // Time progresses so that the game is now open for entry, 
         // user creates an entry into the game
-        TestContext.SetCurrentTime(game.StartTime);
+        TestContext.Default.SetCurrentTime(game.StartTime);
         var createdEntry = await CreateEntry(gameId, [11, 12, 13, 14, 15]);
         var entryId = createdEntry.Id;
 
@@ -28,12 +28,12 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
         await EditEntry(entryId, [21, 22, 23, 24, 25]);
 
         // Time progresses and the game is now closed
-        TestContext.SetCurrentTime(game.CloseTime);
+        TestContext.Default.SetCurrentTime(game.CloseTime);
         // User cannot submit an entry on a closed game
         await TryEnterClosedGame_ExpectBadRequest(gameId);
 
         // Time progresses and the game is now ready for resulting
-        TestContext.SetCurrentTime(game.DrawTime);
+        TestContext.Default.SetCurrentTime(game.DrawTime);
         // User cannot result a game
         await TryUserResultGame_ExpectForbidden(gameId);
 
@@ -69,7 +69,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // Time progresses so that the game is now open for entry, 
         // user creates an entry into the game
-        TestContext.SetCurrentTime(game.StartTime);
+        TestContext.Default.SetCurrentTime(game.StartTime);
 
         int[] winningNumbers = [1, 2, 3, 4, 5];
 
@@ -78,7 +78,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
         var createdEntry2 = await CreateEntry(gameId, [10, 11, 12, 13, 14]);
 
         // Time progresses and the game is now ready for resulting
-        TestContext.SetCurrentTime(game.DrawTime);
+        TestContext.Default.SetCurrentTime(game.DrawTime);
 
         // Admin signs in and results the game
         await SignOut();
@@ -119,7 +119,8 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // Time progresses so that the game is now open for entry, 
         // user creates an entry into the game
-        TestContext.SetCurrentTime(game.StartTime);
+        TestContext.Default.SetCurrentTime(game.StartTime);
+
 
         int[] winningNumbers = [1, 2, 3, 4, 5];
 
@@ -130,7 +131,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
         var createdEntry5 = await CreateEntry(gameId, [1, 6, 7, 8, 9]); // 1 matching
 
         // Time progresses and the game is now ready for resulting
-        TestContext.SetCurrentTime(game.DrawTime);
+        TestContext.Default.SetCurrentTime(game.DrawTime);
 
         // Admin signs in and results the game
         await SignOut();
@@ -192,7 +193,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // Time progresses so that the game is now open for entry, 
         // user creates an entry into the game
-        TestContext.SetCurrentTime(game.StartTime);
+        TestContext.Default.SetCurrentTime(game.StartTime);
 
         int[] winningNumbers = [1, 2, 3, 4, 5];
 
@@ -201,7 +202,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
             CreateEntry(gameId, [1, 2, 3, 20, 21])); // 3 matching
 
         // Time progresses and the game is now ready for resulting
-        TestContext.SetCurrentTime(game.DrawTime);
+        TestContext.Default.SetCurrentTime(game.DrawTime);
 
         // Admin signs in and results the game
         await SignOut();

@@ -7,7 +7,7 @@ public class GameTest(ITestContextAccessor testContextAccessor, IntegrationTestF
     [Fact]
     public async Task Games_UnauthenticatedUser_OK()
     {
-        var response = await TestContext.Client.GetAsync("/game/search", CancellationToken);
+        var response = await TestContext.Default.Client.GetAsync("/game/search", CancellationToken);
         response.EnsureSuccessStatusCode();
     }
 }

@@ -19,7 +19,7 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
             Password = TestUsers.AppUserPassword,
         };
 
-        var signInResponse = await TestContext.Client.PostAsync(
+        var signInResponse = await TestContext.Default.Client.PostAsync(
             "/account/signIn",
             JsonContent.Create(request),
             CancellationToken);
@@ -27,13 +27,13 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
         signInResponse.EnsureSuccessStatusCode();
 
         // check protected endpoint
-        var entriesResponse = await TestContext.Client.GetAsync(
+        var entriesResponse = await TestContext.Default.Client.GetAsync(
             "/entry",
             CancellationToken);
 
         Assert.NotEqual(HttpStatusCode.Forbidden, entriesResponse.StatusCode);
 
-        var signOutResponse = await TestContext.Client.PostAsync(
+        var signOutResponse = await TestContext.Default.Client.PostAsync(
             "/account/signOut",
             null,
             CancellationToken);
@@ -41,7 +41,7 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
         signOutResponse.EnsureSuccessStatusCode();
 
         // check protected endpoint
-        var entriesResponse2 = await TestContext.Client.PostAsync(
+        var entriesResponse2 = await TestContext.Default.Client.PostAsync(
             "/entry",
             null,
             CancellationToken);

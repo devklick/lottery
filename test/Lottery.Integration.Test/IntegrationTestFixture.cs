@@ -38,6 +38,9 @@ public class IntegrationTestFixture : IAsyncLifetime
         return await IntegrationTestContext.CreateAsync(timeProvider, factory, ConnectionString);
     }
 
+    public IntegrationTestContextBuilder TestContextBuilder()
+        => new(_container);
+
     /// <summary>
     /// Called before every test collection that uses this fixture.
     /// 
