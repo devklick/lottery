@@ -41,7 +41,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         TestContext = new IntegrationTestContextProvider
         {
             Default = defaultTestContext,
-            Builder = fixture.TestContextBuilder
+            CreateBuilder = fixture.TestContextBuilder
         };
     }
 

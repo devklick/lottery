@@ -94,7 +94,8 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     {
         var cookieExpiryTimespan = TimeSpan.FromDays(1);
 
-        await using var context = await TestContext.Builder()
+        await using var context = await TestContext
+            .CreateBuilder()
             .WithServiceOverride(services =>
                 services.PostConfigure<CookieAuthenticationOptions>(options =>
                     options.ExpireTimeSpan = cookieExpiryTimespan))

@@ -171,5 +171,5 @@ public class IntegrationTestContextProvider
     /// Allows custom configuration of the test context, including customizing 
     /// the services used by the Web API being tested.
     /// </summary>
-    public required Func<IntegrationTestContextBuilder> Builder { get; init; }
+    public required Func<IntegrationTestContextBuilder> CreateBuilder { get; init; }
 }
