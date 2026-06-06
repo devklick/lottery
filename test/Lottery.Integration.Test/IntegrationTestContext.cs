@@ -69,11 +69,12 @@ public class IntegrationTestContext : IAsyncDisposable
     private async Task SeedData()
     {
         if (!_shouldSeed) return;
-        await _seedContext.Users.AddRangeAsync(TestUsers.ServiceUser, TestUsers.AppUser, TestUsers.GameAdminUser);
+        await _seedContext.Users.AddRangeAsync(TestUsers.ServiceUser, TestUsers.AppUser1, TestUsers.AppUser2, TestUsers.GameAdminUser);
         await _seedContext.Roles.AddRangeAsync(TestUsers.ServiceRole, TestUsers.BasicRole, TestUsers.GameAdminRole);
         await _seedContext.UserRoles.AddRangeAsync(
             new AppUserRole { RoleId = TestUsers.ServiceRole.Id, UserId = TestUsers.ServiceUser.Id },
-            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser.Id },
+            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser1.Id },
+            new AppUserRole { RoleId = TestUsers.BasicRole.Id, UserId = TestUsers.AppUser2.Id },
             new AppUserRole { RoleId = TestUsers.GameAdminRole.Id, UserId = TestUsers.GameAdminUser.Id }
         );
 

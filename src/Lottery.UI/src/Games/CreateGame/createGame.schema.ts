@@ -14,7 +14,7 @@ export const createGamePrizeRequestSchema = z.object({
 });
 
 export const createGamePrizesRequestSchema = z.array(
-  createGamePrizeRequestSchema
+  createGamePrizeRequestSchema,
 );
 
 export const createGameRequestSchema = z
@@ -35,7 +35,7 @@ export const createGameRequestSchema = z
   .superRefine(validatePrizesSequential);
 
 export const createGameResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   startTime: z.string().pipe(z.coerce.date()),
   closeTime: z.date().or(z.string()).pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
@@ -43,16 +43,16 @@ export const createGameResponseSchema = z.object({
   selectionsRequiredForEntry: z.number(),
   selections: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       selectionNumber: z.number(),
-    })
+    }),
   ),
   prizes: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       position: z.number(),
       numberMatchCount: z.number(),
-    })
+    }),
   ),
 });
 

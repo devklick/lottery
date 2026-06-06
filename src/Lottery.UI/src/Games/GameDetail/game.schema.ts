@@ -8,7 +8,7 @@ import {
 } from "../../common/schemas";
 
 const getGameRequestRouteSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 
 export const getGameRequestSchema = z.object({
@@ -16,7 +16,7 @@ export const getGameRequestSchema = z.object({
 });
 
 export const getGameResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   startTime: z.string().pipe(z.coerce.date()),
   closeTime: z.string().pipe(z.coerce.date()),
   drawTime: z.string().pipe(z.coerce.date()),
@@ -27,22 +27,22 @@ export const getGameResponseSchema = z.object({
   state: camelCaseEnum(States),
   selections: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       selectionNumber: z.number(),
-    })
+    }),
   ),
   results: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       selectionNumber: z.number(),
-    })
+    }),
   ),
   prizes: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       position: z.number(),
       numberMatchCount: z.number(),
-    })
+    }),
   ),
 });
 
@@ -50,11 +50,11 @@ export type GetGameRequest = z.infer<typeof getGameRequestSchema>;
 export type GetGameResponse = z.infer<typeof getGameResponseSchema>;
 
 export const createEntryRequestBodySchema = z.object({
-  gameId: z.string().uuid(),
+  gameId: z.uuid(),
   selections: z.array(
     z.object({
       selectionNumber: z.number(),
-    })
+    }),
   ),
 });
 
@@ -71,13 +71,13 @@ export type CreateEntryRequest = z.infer<typeof createEntryRequestSchema>;
 export type CreateEntryResponse = z.infer<typeof createEntryResponseSchema>;
 
 export const editEntryRequestRouteSchema = z.object({
-  entryId: z.string().uuid(),
+  entryId: z.uuid(),
 });
 export const editEntryRequestBodySchema = z.object({
   selections: z.array(
     z.object({
       selectionNumber: z.number().positive(),
-    })
+    }),
   ),
 });
 export const editEntryRequestSchema = z.object({
@@ -96,17 +96,17 @@ export const getEntriesRequestSchema = z.object({
   query: getEntriesRequestQuerySchema,
 });
 export const getEntriesResponseItemSchema = z.object({
-  gameId: z.string().uuid(),
-  id: z.string().uuid(),
+  gameId: z.uuid(),
+  id: z.uuid(),
   selections: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       selectionNumber: z.number(),
-    })
+    }),
   ),
   prize: z
     .object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       position: z.number(),
       numberMatchCount: z.number(),
     })

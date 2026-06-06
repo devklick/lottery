@@ -71,7 +71,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     {
         var request = new SignInRequestBody
         {
-            Username = TestUsers.AppUser.UserName!,
+            Username = TestUsers.AppUser1.UserName!,
             Password = "wrong",
         };
         var response = await TestContext.Default.Client.PostAsync(
@@ -105,8 +105,8 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
 
         var request = new SignInRequestBody
         {
-            Username = TestUsers.AppUser.UserName!,
-            Password = TestUsers.AppUserPassword,
+            Username = TestUsers.AppUser1.UserName!,
+            Password = TestUsers.AppUser1Password,
         };
 
         var response = await context.Client.PostAsync(

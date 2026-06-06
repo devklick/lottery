@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const resultGameRequestRouteSchema = z.object({
-  gameId: z.string().uuid(),
+  gameId: z.uuid(),
 });
 
 export const resultGameRequestBodySchema = z.object({
   winningSelections: z.array(
     z.object({
       selectionNumber: z.number().positive(),
-    })
+    }),
   ),
 });
 

@@ -1,17 +1,20 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import {
+  ApiErrors,
+  ApiErrorsResponse,
+  apiErrorsResponseSchema,
+  ApiResponse,
+  ApiSuccessResponse,
+  apiSuccessResponseSchema,
+} from "../common/schemas";
 
-export function isBasicError(value: unknown): value is BasicError {
-  return (
-    !!value &&
-    typeof value === "object" &&
-    "errors" in value &&
-    Array.isArray(value.errors)
-  );
+export function isApiError(value: unknown): value is ApiErrorsResponse {
+  return apiErrorsResponseSchema.safeParse(value).success;
 }
 
-type BasicError = {
-  errors: Array<{ message: string }>;
-};
+export function isApiSuccess(value: unknown): value is ApiSuccessResponse {
+  return apiSuccessResponseSchema.safeParse(value).success;
+}
 
 type SuccessResult<T> = {
   success: true;
@@ -23,7 +26,7 @@ type ErrorResult<T> = {
   error: T;
 };
 
-type Result<SuccessData> = SuccessResult<SuccessData> | ErrorResult<BasicError>;
+type Result<SuccessData> = SuccessResult<SuccessData> | ErrorResult<ApiErrors>;
 
 type AsyncResult<SuccessData> = Promise<Result<SuccessData>>;
 
@@ -82,7 +85,7 @@ export class ApiService implements ApiServiceDefinition {
     console.info("Calling API", { url, request, options });
     const response = await this.api.post<
       Response,
-      AxiosResponse<Response | BasicError>,
+      AxiosResponse<Response>,
       Request
     >(url, request, {
       withCredentials: options?.withCredentials,
@@ -92,19 +95,20 @@ export class ApiService implements ApiServiceDefinition {
 
     if (
       response.status.toString().startsWith("2") &&
-      !isBasicError(response.data)
+      isApiSuccess(response.data)
     ) {
+      console.log("API Response - success", response.data);
       return {
         success: true,
-        data: response.data,
+        data: response.data.value,
       };
     }
 
     return {
       success: false,
-      error: isBasicError(response.data)
-        ? response.data
-        : { errors: [{ message: "Unknown error info received" }] },
+      error: isApiError(response.data)
+        ? response.data.errors
+        : [{ message: "Unknown error info received" }],
     };
   }
 
@@ -115,7 +119,7 @@ export class ApiService implements ApiServiceDefinition {
   ): AsyncResult<Response> {
     const response = await this.api.put<
       Response,
-      AxiosResponse<Response | BasicError>,
+      AxiosResponse<Response>,
       Request
     >(url, request, {
       withCredentials: options?.withCredentials,
@@ -125,19 +129,19 @@ export class ApiService implements ApiServiceDefinition {
 
     if (
       response.status.toString().startsWith("2") &&
-      !isBasicError(response.data)
+      isApiSuccess(response.data)
     ) {
       return {
         success: true,
-        data: response.data,
+        data: response.data.value,
       };
     }
 
     return {
       success: false,
-      error: isBasicError(response.data)
-        ? response.data
-        : { errors: [{ message: "Unknown error info received" }] },
+      error: isApiError(response.data)
+        ? response.data.errors
+        : [{ message: "Unknown error info received" }],
     };
   }
 
@@ -161,19 +165,19 @@ export class ApiService implements ApiServiceDefinition {
 
     if (
       response.status.toString().startsWith("2") &&
-      !isBasicError(response.data)
+      isApiSuccess(response.data)
     ) {
       return {
         success: true,
-        data: response.data,
+        data: response.data.value,
       };
     }
 
     return {
       success: false,
-      error: isBasicError(response.data)
-        ? response.data
-        : { errors: [{ message: "Unknown error info received" }] },
+      error: isApiError(response.data)
+        ? response.data.errors
+        : [{ message: "Unknown error info received" }],
     };
   }
 }

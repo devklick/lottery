@@ -1,4 +1,6 @@
-import { z, EnumLike } from "zod";
+import { z } from "zod";
+
+type EnumLike = Record<string, string | number>;
 
 export const userTypes = {
   Guest: "Guest",
@@ -9,7 +11,7 @@ export const userTypes = {
 
 export const allUserTypes = Object.keys(userTypes);
 
-export const userTypeSchema = z.nativeEnum(userTypes);
+export const userTypeSchema = z.enum(userTypes);
 
 export type UserType = z.infer<typeof userTypeSchema>;
 
@@ -34,9 +36,32 @@ type ValuesAndLabels<Value extends string> = Record<
 export function camelCaseEnum<T extends EnumLike>(e: T) {
   return z.preprocess(
     (val) => String(val)[0].toLowerCase() + String(val).slice(1),
-    z.nativeEnum(e)
+    z.enum(e),
   );
 }
+
+export const apiErrorSchema = z.object({
+  message: z.string(),
+});
+export const apiErrorsSchema = z.array(apiErrorSchema);
+
+export const apiErrorsResponseSchema = z.object({
+  errors: apiErrorsSchema.element.required().array(),
+  status: z.number(),
+});
+export const apiSuccessResponseSchema = z.object({
+  value: z.any(),
+  status: z.number(),
+});
+
+export const apiResponseSchema = apiSuccessResponseSchema.or(
+  apiErrorsResponseSchema,
+);
+
+export type ApiErrors = z.infer<typeof apiErrorsSchema>;
+export type ApiErrorsResponse = z.infer<typeof apiErrorsResponseSchema>;
+export type ApiResponse = z.infer<typeof apiResponseSchema>;
+export type ApiSuccessResponse = z.infer<typeof apiSuccessResponseSchema>;
 //#endregion
 
 // region ======== Item State ========
@@ -46,7 +71,7 @@ export const States = {
 } as const;
 
 export const allStates = Object.keys(States);
-export const stateSchema = z.nativeEnum(States);
+export const stateSchema = z.enum(States);
 export type State = z.infer<typeof stateSchema>;
 export const allStatesWithLabel: Record<State, ValueAndLabel<State>> = {
   enabled: { label: "Enabled", value: "enabled" },
@@ -95,7 +120,7 @@ export const SortDirections = {
 
 export const allSortDirections = Object.keys(SortDirections);
 
-export const sortDirectionSchema = z.nativeEnum(SortDirections);
+export const sortDirectionSchema = z.enum(SortDirections);
 
 export type SortDirection = z.infer<typeof sortDirectionSchema>;
 
@@ -103,5 +128,4 @@ export const allSortDirectionsWithLabel: ValuesAndLabels<SortDirection> = {
   asc: { label: "Ascending", value: "asc" },
   desc: { label: "Descending", value: "desc" },
 };
-
 //#endregion

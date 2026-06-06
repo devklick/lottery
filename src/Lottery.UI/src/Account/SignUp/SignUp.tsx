@@ -1,5 +1,4 @@
-import { useForm } from "@mantine/form";
-import { zodResolver } from "mantine-form-zod-resolver";
+import { schemaResolver, useForm } from "@mantine/form";
 import {
   SignUpRequest,
   SignUpResponse,
@@ -24,7 +23,7 @@ interface SignUpProps {}
 
 function SignUp({}: SignUpProps) {
   const form = useForm<SignUpRequest>({
-    validate: zodResolver(signUpRequestSchema),
+    validate: schemaResolver(signUpRequestSchema),
     validateInputOnChange: true,
   });
 

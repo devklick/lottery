@@ -23,19 +23,34 @@ public static class TestUsers
         SecurityStamp = "f41a7b24363c4bbc96762bb5976d3eff"
     };
 
-    public static readonly string AppUserName = "user";
-    public static readonly string AppUserPassword = "user-password";
+    public static readonly string AppUser1Name = "user-1";
+    public static readonly string AppUser1Password = "user-password-1";
     /// <summary>
     /// The app account which tests will log into the app with.
     /// </summary>
-    public static readonly AppUser AppUser = new()
+    public static readonly AppUser AppUser1 = new()
     {
-        UserName = AppUserName,
-        NormalizedUserName = AppUserName.ToUpperInvariant(),
+        UserName = AppUser1Name,
+        NormalizedUserName = AppUser1Name.ToUpperInvariant(),
         Id = Guid.Parse("5df2b28c-0a0f-4075-a972-7912d5b113f7"),
-        Email = "user@lottery.test",
+        Email = "user-1@lottery.test",
         EmailConfirmed = true,
         SecurityStamp = "7a2de86b608d4ed29210006b8b80b210"
+    };
+
+    public static readonly string AppUser2Name = "user-2";
+    public static readonly string AppUser2Password = "user-password-2";
+    /// <summary>
+    /// The app account which tests will log into the app with.
+    /// </summary>
+    public static readonly AppUser AppUser2 = new()
+    {
+        UserName = AppUser2Name,
+        NormalizedUserName = AppUser2Name.ToUpperInvariant(),
+        Id = Guid.Parse("6afae819-9789-40f6-9696-9d0483f4f00f"),
+        Email = "user-2@lottery.test",
+        EmailConfirmed = true,
+        SecurityStamp = "bfddf1e2cd7047d3a9bc13c1f6f60844"
     };
 
     public static readonly string GameAdminUserName = "admin";
@@ -79,7 +94,8 @@ public static class TestUsers
     static TestUsers()
     {
         var hasher = new PasswordHasher<AppUser>();
-        AppUser.PasswordHash = hasher.HashPassword(AppUser, AppUserPassword);
+        AppUser1.PasswordHash = hasher.HashPassword(AppUser1, AppUser1Password);
+        AppUser2.PasswordHash = hasher.HashPassword(AppUser2, AppUser2Password);
         GameAdminUser.PasswordHash = hasher.HashPassword(GameAdminUser, GameAdminUserPassword);
     }
 }

@@ -13,7 +13,6 @@ using Lottery.Resulting;
 using Lottery.Api.Utilities;
 using Lottery.Api.Repositories.User;
 using DotNetEnv.Configuration;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Lottery.Api;
 
@@ -27,13 +26,13 @@ public class Program
 
         builder.WebHost.ConfigureKestrel(options =>
         {
-            var port = int.Parse(Environment.GetEnvironmentVariable("API_PORT") ?? "5000");
+            var port = int.Parse(Environment.GetEnvironmentVariable("LOTTERY_API_PORT") ?? "5000");
             options.ListenAnyIP(port);
         });
 
         // Add services to the container.
 
-        builder.ConfigureEntityFramework<LotteryDBContext>("API_DB_USER", "API_DB_PASSWORD");
+        builder.ConfigureEntityFramework<LotteryDBContext>("LOTTERY_API_DB_USER", "LOTTERY_API_DB_PASSWORD");
         ConfigureIdentity(builder);
         ConfigureAutoMapper(builder);
         ConfigureServices(builder);
@@ -60,7 +59,6 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            // app.UseCors();
         }
 
         app.UseHttpsRedirection();

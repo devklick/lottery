@@ -15,32 +15,32 @@
 The easiest way to run the application is with docker compose. But before doing so, 
 you'll need a `.env` file in the root of the project:
 ```sh
-POSTGRES_DB=lottery # The name of the DB
-POSTGRES_PASSWORD=<add> # The master password for the DB
+LOTTERY_POSTGRES_DB=lottery # The name of the DB
+LOTTERY_POSTGRES_PASSWORD=<add> # The master password for the DB
 
 # The ports that the UI and API will run on
-UI_PORT=3000
-API_PORT=5000
+LOTTERY_UI_PORT=3000
+LOTTERY_API_PORT=5000
 
 # A DB user will be created for the API that results the games.
 # These env vars are the credentials for this user
-API_DB_USER=Lottery.Api.Service
-API_DB_PASSWORD=<add>
+LOTTERY_API_DB_USER=Lottery.Api.Service
+LOTTERY_API_DB_PASSWORD=<add>
 
 # A DB user will be created for the service that results the games.
 # These env vars are the credentials for this user
-RESULTS_DB_USER=Lottery.Result.Service
-RESULTS_DB_PASSWORD=<add>
+LOTTERY_RESULTS_DB_USER=Lottery.Result.Service
+LOTTERY_RESULTS_DB_PASSWORD=<add>
 
 # A DB user will be created for the migrations to run under.
 # These env vars are the credentials for this user
-MIGRATOR_DB_USER=Lottery.Migration.Service
-MIGRATOR_DB_PASSWORD=<add>
+LOTTERY_MIGRATOR_DB_USER=Lottery.Migration.Service
+LOTTERY_MIGRATOR_DB_PASSWORD=<add>
 
 # Two app/site users will be created; GameAdmin and SystemAdmin.
 # These env vars are the passwords for these users.
-SYSTEM_ADMIN_PASSWORD=<add>
-GAME_ADMIN_PASSWORD=<add>
+LOTTERY_SYSTEM_ADMIN_PASSWORD=<add>
+LOTTERY_GAME_ADMIN_PASSWORD=<add>
 ```
 
 One your env vars are defined, you can now run:
@@ -54,11 +54,11 @@ You can log into the UI as either the Game Admin or System Admin:
 
 #### Game Admin
 - Username: `GameAdmin`
-- Password: Defined in your `GAME_ADMIN_PASSWORD` env var
+- Password: Defined in your `LOTTERY_GAME_ADMIN_PASSWORD` env var
 
 #### System Admin
 - Username: `SystemAdmin`
-- Password: Defined in your `SYSTEM_ADMIN_PASSWORD` env var
+- Password: Defined in your `LOTTERY_SYSTEM_ADMIN_PASSWORD` env var
 
 
 ### Debugging
@@ -86,5 +86,5 @@ cd src/Lottery.IO && npm run dev
 ```
 
 At this point, you'll have the UI hosted using vite and accessible on http://localhost:3000 
-(or whatever `UI_PORT` you used in your .env file), and the API hosted on http://localhost:5000 
+(or whatever `LOTTERY_UI_PORT` you used in your .env file), and the API hosted on http://localhost:5000 
 (or whatever port you used in your .env file).

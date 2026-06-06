@@ -1,7 +1,7 @@
 import {
   SignUpRequest,
-  SignUpResponse,
   signUpResponseSchema,
+  SignUpResponse,
 } from "./SignUp/signUp.schema";
 import {
   SignInRequest,
@@ -25,7 +25,7 @@ export function createAccountService({
     const result = await api.post<SignUpRequest, SignUpResponse>(
       "/account/signUp",
       request,
-      { withCredentials: true }
+      { withCredentials: true },
     );
 
     if (!result.success) {
@@ -35,7 +35,7 @@ export function createAccountService({
     const valid = signUpResponseSchema.safeParse(result.data);
 
     if (valid.success) {
-      return valid.data;
+      return valid.data.value;
     }
 
     throw valid.error.message;
@@ -45,7 +45,7 @@ export function createAccountService({
     const result = await api.post<SignInRequest, SignInResponse>(
       "/account/signIn",
       request,
-      { withCredentials: true }
+      { withCredentials: true },
     );
 
     if (!result.success) {

@@ -1,6 +1,5 @@
 using System.Net;
 
-using Lottery.Api.Models.Common;
 using Lottery.Common.Models;
 
 using Microsoft.AspNetCore.Mvc;

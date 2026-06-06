@@ -9,19 +9,19 @@ public static class DatabaseUsers
 {
     public static async Task SeedAsync(LotteryDBContext context)
     {
-        var db = Env.GetRequiredEnvVar("POSTGRES_DB");
+        var db = Env.GetRequiredEnvVar("LOTTERY_POSTGRES_DB");
         // Create user & role for API
-        var apiDBUser = Env.GetRequiredEnvVar("API_DB_USER");
+        var apiDBUser = Env.GetRequiredEnvVar("LOTTERY_API_DB_USER");
         var apiDBUserRole = $"{apiDBUser}_Role";
         await IdempotentCreateRole(context, db, apiDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
-        await IdempotentCreateUser(context, apiDBUser, Env.GetRequiredEnvVar("API_DB_PASSWORD"));
+        await IdempotentCreateUser(context, apiDBUser, Env.GetRequiredEnvVar("LOTTERY_API_DB_PASSWORD"));
         await GrantRoleToUser(context, apiDBUserRole, apiDBUser);
 
         // Create user & role for result service
-        var resultsDBUser = Env.GetRequiredEnvVar("RESULTS_DB_USER");
+        var resultsDBUser = Env.GetRequiredEnvVar("LOTTERY_RESULTS_DB_USER");
         var resultsDBUserRole = $"{resultsDBUser}_Role";
         await IdempotentCreateRole(context, db, resultsDBUserRole, ["SELECT", "INSERT", "UPDATE", "DELETE"], ["dbo", "idt"]);
-        await IdempotentCreateUser(context, resultsDBUser, Env.GetRequiredEnvVar("RESULTS_DB_PASSWORD"));
+        await IdempotentCreateUser(context, resultsDBUser, Env.GetRequiredEnvVar("LOTTERY_RESULTS_DB_PASSWORD"));
         await GrantRoleToUser(context, resultsDBUserRole, resultsDBUser);
     }
 

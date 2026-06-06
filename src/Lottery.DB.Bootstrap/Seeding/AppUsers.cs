@@ -67,7 +67,7 @@ internal static class AppUsers
             ConcurrencyStamp = "421123fe685b4be1a9b63c6d809583e5",
             AccountType = AccountType.User,
         };
-        systemAdminUser.PasswordHash = hasher.HashPassword(systemAdminUser, Env.GetRequiredEnvVar("SYSTEM_ADMIN_PASSWORD")); //"AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w=="
+        systemAdminUser.PasswordHash = hasher.HashPassword(systemAdminUser, Env.GetRequiredEnvVar("LOTTERY_SYSTEM_ADMIN_PASSWORD")); //"AQAAAAEAACcQAAAAEMBfcZEx4+P6j8kjngjP548MXLwVIEC4bSHvrvHZ7CtTNNaHwcofmAy8kHcQ8eT64w=="
 
         var gameAdminUser = new AppUser
         {
@@ -82,7 +82,7 @@ internal static class AppUsers
             ConcurrencyStamp = "d2761ece200c4ead95f643a5227218a5",
             AccountType = AccountType.User,
         };
-        gameAdminUser.PasswordHash = hasher.HashPassword(gameAdminUser, Env.GetRequiredEnvVar("GAME_ADMIN_PASSWORD")); //"AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw=="
+        gameAdminUser.PasswordHash = hasher.HashPassword(gameAdminUser, Env.GetRequiredEnvVar("LOTTERY_GAME_ADMIN_PASSWORD")); //"AQAAAAEAACcQAAAAELjUDpUY+Ew4tf3+b2aD4PB5dHyOllNrAhl10GpgXC49Qo4Rl1bthnXm/wD1Dry7Qw=="
 
         var apiUser = new AppUser
         {
@@ -90,8 +90,8 @@ internal static class AppUsers
             Email = "Lottery.Api.User@Lottery.Game",
             NormalizedEmail = "LOTTERY.API.USER@LOTTERY.GAME",
             EmailConfirmed = true,
-            UserName = Env.GetRequiredEnvVar("API_DB_USER"),
-            NormalizedUserName = Env.GetRequiredEnvVar("API_DB_USER").ToUpperInvariant(),
+            UserName = Env.GetRequiredEnvVar("LOTTERY_API_DB_USER"),
+            NormalizedUserName = Env.GetRequiredEnvVar("LOTTERY_API_DB_USER").ToUpperInvariant(),
             LockoutEnabled = false,
             SecurityStamp = "801f9eb0a8cf40fc8a8c621d70ffe214",
             ConcurrencyStamp = "ConcurrencyStamp",
@@ -107,8 +107,8 @@ internal static class AppUsers
             Email = "Lottery.ResultService.User@Lottery.Game",
             NormalizedEmail = "LOTTERY.RESULTSERVICE.USER@LOTTERY.GAME",
             EmailConfirmed = true,
-            UserName = Env.GetRequiredEnvVar("RESULTS_DB_USER"),
-            NormalizedUserName = Env.GetRequiredEnvVar("RESULTS_DB_USER").ToUpperInvariant(),
+            UserName = Env.GetRequiredEnvVar("LOTTERY_RESULTS_DB_USER"),
+            NormalizedUserName = Env.GetRequiredEnvVar("LOTTERY_RESULTS_DB_USER").ToUpperInvariant(),
             LockoutEnabled = false,
             SecurityStamp = "bdd00b91be02492cb91154dabb5ce5a2",
             ConcurrencyStamp = "87d73fa701bf494b9ef9c5f193278a3f",

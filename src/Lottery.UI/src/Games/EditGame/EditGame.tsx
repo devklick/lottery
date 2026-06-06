@@ -70,6 +70,7 @@ function EditGame({}: EditGameProps) {
 
   const form = useForm<EditGameRequestBody>({
     validate: schemaResolver(editGameRequestBodySchema),
+    transformValues: editGameRequestBodySchema.parse,
     validateInputOnChange: true,
     validateInputOnBlur: true,
     initialValues: {

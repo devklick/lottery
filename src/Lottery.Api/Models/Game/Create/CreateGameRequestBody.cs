@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 
 using Lottery.Api.Models.Game.Validation;
 using Lottery.Api.Models.Validation;
-using Lottery.DB.Entities.Dbo;
 using Lottery.DB.Entities.Ref;
 
 namespace Lottery.Api.Models.Game.Create;

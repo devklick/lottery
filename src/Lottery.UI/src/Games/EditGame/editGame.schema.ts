@@ -33,7 +33,7 @@ export const editGameRequestBodySchema = z
   .superRefine(validatePrizesSequential);
 
 export const editGameRequestRouteSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 
 export const editGameRequestSchema = z.object({
@@ -42,7 +42,7 @@ export const editGameRequestSchema = z.object({
 });
 
 export const editGameResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 
 export type EditGamePrizeRequest = z.infer<typeof editGamePrizeRequestSchema>;

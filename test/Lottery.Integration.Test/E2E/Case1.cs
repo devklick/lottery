@@ -7,12 +7,10 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
     public async Task SingleGame_SinglePlayer_SingleEntry_WinLowestPrize_OK()
     {
         // Admin signs in and creates a game that starts in the future
-        await AdminSignIn();
-        await CreateGame();
+        await Do_AdminCreateGame();
 
         // User signs in and searches for games, finds a game and opens it
-        await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var foundGames = await SearchGames();
         var foundGame = Assert.Single(foundGames);
         var gameId = foundGame.Id;
@@ -44,7 +42,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and see's they have won a prize
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var entries = await SearchEntries(gameId);
         var entry = Assert.Single(entries);
         Assert.NotNull(entry.Prize);
@@ -56,12 +54,10 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
     public async Task SingleGame_SinglePlayer_MultipleEntries_SinglePrize_WinLowestPrize_OK()
     {
         // Admin signs in and creates a game that starts in the future
-        await AdminSignIn();
-        await CreateGame();
+        await Do_AdminCreateGame();
 
         // User signs in and searches for games, finds a game and opens it
-        await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var foundGames = await SearchGames();
         var foundGame = Assert.Single(foundGames);
         var gameId = foundGame.Id;
@@ -87,7 +83,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and see's they have won a prize
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var entries = await SearchEntries(gameId);
         Assert.Equal(2, entries.Count());
 
@@ -111,7 +107,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and searches for games, finds a game and opens it
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var foundGames = await SearchGames();
         var foundGame = Assert.Single(foundGames);
         var gameId = foundGame.Id;
@@ -140,7 +136,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and see's they have won a prize
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var entries = await SearchEntries(gameId);
         Assert.Equal(5, entries.Count());
         var entry1 = entries.First(e => e.Id == createdEntry1.Id);
@@ -185,7 +181,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and searches for games, finds a game and opens it
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var foundGames = await SearchGames();
         var foundGame = Assert.Single(foundGames);
         var gameId = foundGame.Id;
@@ -211,7 +207,7 @@ public class Case1(ITestContextAccessor testContextAccessor, IntegrationTestFixt
 
         // User signs in and see's they have won a prize
         await SignOut();
-        await UserSignIn();
+        await User1SignIn();
         var entries = await SearchEntries(gameId);
         Assert.Equal(2, entries.Count());
         foreach (var entry in entries)

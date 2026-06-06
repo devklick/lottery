@@ -1,10 +1,9 @@
-import { useForm } from "@mantine/form";
+import { schemaResolver, useForm } from "@mantine/form";
 import {
   SignInRequest,
   SignInResponse,
   signInRequestSchema,
 } from "./signIn.schema";
-import { zodResolver } from "mantine-form-zod-resolver";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
@@ -33,7 +32,7 @@ function SignIn({}: SignInProps) {
     staySignedIn: true,
   };
   const form = useForm<SignInRequest>({
-    validate: zodResolver(signInRequestSchema),
+    validate: schemaResolver(signInRequestSchema),
     initialValues,
     validateInputOnChange: true,
   });

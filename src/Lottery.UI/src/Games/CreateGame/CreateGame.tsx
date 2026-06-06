@@ -24,11 +24,11 @@ import {
   Title,
 } from "@mantine/core";
 
-import { useForm } from "@mantine/form";
-import { zodResolver } from "mantine-form-zod-resolver";
+import { schemaResolver, useForm } from "@mantine/form";
 import { allStatesWithLabel } from "../../common/schemas";
 import { IconTrash } from "@tabler/icons-react";
 import React from "react";
+import z from "zod";
 
 interface CreateGameProps {}
 
@@ -67,7 +67,8 @@ function CreateGame({}: CreateGameProps) {
   });
 
   const form = useForm<CreateGameRequest>({
-    validate: zodResolver(createGameRequestSchema),
+    validate: schemaResolver(createGameRequestSchema),
+    transformValues: createGameRequestSchema.parse,
     validateInputOnChange: true,
     initialValues: initialValues,
   });
@@ -87,7 +88,16 @@ function CreateGame({}: CreateGameProps) {
       <Title>Create Game</Title>
       <Paper shadow="xl" p={24} radius={10}>
         <form
-          onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
+          onSubmit={form.onSubmit(async (data) => {
+            console.log(data.startTime);
+            console.log(typeof data.startTime);
+            console.log(JSON.stringify(data));
+
+            const schema = z.date().or(z.string()).pipe(z.coerce.date());
+            const validation = schema.safeParse("2026-06-06 19:40:00");
+            console.log(validation);
+            mutation.mutateAsync(data);
+          })}
         >
           <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>

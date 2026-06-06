@@ -41,13 +41,13 @@ public class TestApplicationFactory(
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 // stub basic env vars
-                ["POSTGRES_DB"] = "lottery",
-                ["API_DB_USER"] = "mock-api-db-user",
-                ["API_DB_PASSWORD"] = "mock-api-db-pass",
-                ["RESULTS_DB_USER"] = "mock-results-db-user",
-                ["RESULTS_DB_PASSWORD"] = "mock-results-db-pass",
-                ["SYSTEM_ADMIN_PASSWORD"] = "mock-system-admin-pass",
-                ["GAME_ADMIN_PASSWORD"] = "mock-game-admin-pass",
+                ["LOTTERY_POSTGRES_DB"] = "lottery",
+                ["LOTTERY_API_DB_USER"] = "mock-api-db-user",
+                ["LOTTERY_API_DB_PASSWORD"] = "mock-api-db-pass",
+                ["LOTTERY_RESULTS_DB_USER"] = "mock-results-db-user",
+                ["LOTTERY_RESULTS_DB_PASSWORD"] = "mock-results-db-pass",
+                ["LOTTERY_SYSTEM_ADMIN_PASSWORD"] = "mock-system-admin-pass",
+                ["LOTTERY_GAME_ADMIN_PASSWORD"] = "mock-game-admin-pass",
             }));
     }
 }

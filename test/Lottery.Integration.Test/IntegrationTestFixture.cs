@@ -71,6 +71,7 @@ public class IntegrationTestFixture : IAsyncLifetime
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         await _container.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }
 

@@ -14,7 +14,7 @@ export const SortByValues = {
 
 export const allSortByValues = Object.keys(SortByValues);
 
-export const sortBySchema = z.nativeEnum(SortByValues);
+export const sortBySchema = z.enum(SortByValues);
 
 export type SortBy = z.infer<typeof sortBySchema>;
 
@@ -39,7 +39,7 @@ export const searchGamesRequestSchema = pagedRequestSchema.merge(
 );
 
 export const searchGamesResponseItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   startTime: z.string().pipe(z.coerce.date()),
   closeTime: z.string().pipe(z.coerce.date()),
@@ -48,13 +48,13 @@ export const searchGamesResponseItemSchema = z.object({
   gameStatus: gameStatusSchema,
   selections: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       selectionNumber: z.number(),
     }),
   ),
   prizes: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       position: z.number().positive(),
       numberMatchCount: z.number(),
     }),

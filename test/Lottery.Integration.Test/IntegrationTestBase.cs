@@ -58,9 +58,13 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     protected async Task AdminSignIn(IntegrationTestContext context)
         => await SignIn(context, TestUsers.GameAdminUserName, TestUsers.GameAdminUserPassword);
 
-    protected async Task UserSignIn() => await UserSignIn(TestContext.Default);
-    protected async Task UserSignIn(IntegrationTestContext context)
-        => await SignIn(context, TestUsers.AppUserName, TestUsers.AppUserPassword);
+    protected async Task User1SignIn() => await User1SignIn(TestContext.Default);
+    protected async Task User1SignIn(IntegrationTestContext context)
+        => await SignIn(context, TestUsers.AppUser1Name, TestUsers.AppUser1Password);
+
+    protected async Task User2SignIn() => await User2SignIn(TestContext.Default);
+    protected async Task User2SignIn(IntegrationTestContext context)
+        => await SignIn(context, TestUsers.AppUser2Name, TestUsers.AppUser2Password);
 
     protected async Task SignIn(string username, string password)
         => await SignIn(TestContext.Default, username, password);
@@ -90,6 +94,17 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             CancellationToken);
 
         response.EnsureSuccessStatusCode();
+    }
+
+    protected async Task<CreateGameResponse> Do_AdminCreateGame(CreateGameRequestBody? request = null)
+        => await Do_AdminCreateGame(TestContext.Default, request);
+
+    protected async Task<CreateGameResponse> Do_AdminCreateGame(IntegrationTestContext context, CreateGameRequestBody? request = null)
+    {
+        await AdminSignIn(context);
+        var game = await CreateGame(context, request);
+        await SignOut();
+        return game;
     }
 
     protected async Task<CreateGameResponse> CreateGame(CreateGameRequestBody? request = null)
@@ -232,6 +247,14 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         Assert.NotNull(body.Value);
     }
 
+    protected async Task Do_AdminResultGame(Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)
+        => await Do_AdminResultGame(TestContext.Default, gameId, winningSelectionNumbers, randomWinningSelectionNumbers);
+    protected async Task Do_AdminResultGame(IntegrationTestContext context, Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)
+    {
+        await AdminSignIn(context);
+        await AdminResultGame(context, gameId, winningSelectionNumbers, randomWinningSelectionNumbers);
+        await SignOut();
+    }
     protected async Task AdminResultGame(Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)
         => await AdminResultGame(TestContext.Default, gameId, winningSelectionNumbers, randomWinningSelectionNumbers);
     protected async Task AdminResultGame(IntegrationTestContext context, Guid gameId, IEnumerable<int>? winningSelectionNumbers = null, bool randomWinningSelectionNumbers = false)

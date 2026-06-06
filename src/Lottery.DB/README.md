@@ -65,7 +65,7 @@ Now that you have your database running and your secrets set up, you should be a
 > to use for each of the applications to connect to the DB.
 
 ```
-export LOTTERY_API_DB_USER_PASS="PASSWORD_HERE" \
+export LOTTERY_LOTTERY_API_DB_USER_PASS="PASSWORD_HERE" \
     LOTTERY_RESULT_SRV_DB_USER_PASS="PASSWORD_HERE"; \
     dotnet ef database update \
         --project ./src/Lottery.DB \
