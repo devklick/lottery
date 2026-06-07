@@ -120,7 +120,7 @@ function GameCard({
                     <Menu.Target>
                       <Button
                         fullWidth
-                        color={theme.colors.violet[9]}
+                        color={theme.colors.grape[9]}
                         leftSection={<IconBriefcase size={18} />}
                       >
                         Manage
@@ -128,6 +128,7 @@ function GameCard({
                     </Menu.Target>
                     <Menu.Dropdown>
                       <Menu.Item
+                        disabled={gameStatus === "resulted"}
                         leftSection={<IconEdit size={18} />}
                         onClick={() => navigate(`/games/${id}/edit`)}
                       >

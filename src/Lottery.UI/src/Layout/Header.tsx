@@ -108,8 +108,8 @@ function Header({
                   onClick={toggleColorScheme}
                   leftSection={
                     <Switch
-                      onLabel={<IconSun />}
-                      offLabel={<IconMoon />}
+                      onLabel={<IconSun size={16} />}
+                      offLabel={<IconMoon size={16} />}
                       checked={colorScheme === "light"}
                       style={{ pointerEvents: "none" }}
                     />
