@@ -97,7 +97,6 @@ export class ApiService implements ApiServiceDefinition {
       response.status.toString().startsWith("2") &&
       isApiSuccess(response.data)
     ) {
-      console.log("API Response - success", response.data);
       return {
         success: true,
         data: response.data.value,

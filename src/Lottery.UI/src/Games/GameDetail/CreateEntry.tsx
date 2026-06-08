@@ -31,7 +31,6 @@ function CreateEntry({
   });
 
   function handleMutationSuccess() {
-    console.log("Setting success true");
     setSuccess(true);
     queryClient.refetchQueries({ exact: false, queryKey: ["entries", gameId] });
   }
@@ -48,7 +47,6 @@ function CreateEntry({
   }
 
   function handleSelectionPickerDone() {
-    console.log("Hanlding picker done");
     setSelectedNumbers([]);
     setSuccess(false);
   }

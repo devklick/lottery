@@ -12,7 +12,6 @@ import path from "node:path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, path.join(process.cwd(), "..", ".."), "LOTTERY_");
-  console.log("env", env);
   return {
     plugins: [react()],
     server: {

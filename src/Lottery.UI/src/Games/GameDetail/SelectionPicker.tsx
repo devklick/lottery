@@ -59,8 +59,8 @@ function SelectionPicker({
       color: isSelected
         ? theme.colors.green[colorScheme === "light" ? 6 : 8]
         : allSelected
-        ? theme.colors.gray[colorScheme === "light" ? 2 : 8]
-        : "gray",
+          ? theme.colors.gray[colorScheme === "light" ? 2 : 8]
+          : "gray",
       style: {
         cursor: allSelected ? "not-allowed" : "default",
       },
@@ -81,10 +81,6 @@ function SelectionPicker({
         : "All numbers selected"}
     </Text>
   );
-
-  useEffect(() => {
-    console.log("selectedNumbers", selectedNumbers);
-  });
 
   return (
     <Stack align="center">
@@ -122,8 +118,8 @@ function SelectionPicker({
         {submitStatus === "submitting"
           ? "Submitting"
           : submitStatus == "success"
-          ? "Success"
-          : "Submit"}
+            ? "Success"
+            : "Submit"}
       </Button>
     </Stack>
   );

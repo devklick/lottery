@@ -89,16 +89,7 @@ function CreateGame({}: CreateGameProps) {
       <Title>Create Game</Title>
       <Paper shadow="xl" p={24} radius={10}>
         <form
-          onSubmit={form.onSubmit(async (data) => {
-            console.log(data.startTime);
-            console.log(typeof data.startTime);
-            console.log(JSON.stringify(data));
-
-            const schema = z.date().or(z.string()).pipe(z.coerce.date());
-            const validation = schema.safeParse("2026-06-06 19:40:00");
-            console.log(validation);
-            mutation.mutateAsync(data);
-          })}
+          onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
           <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>
