@@ -1,6 +1,6 @@
-import { MantineThemeOverride } from "@mantine/core";
+import { createTheme } from "@mantine/core";
 
-const theme: MantineThemeOverride = {
+export default createTheme({
   primaryColor: "blue",
   primaryShade: { dark: 8, light: 5 },
   white: "#d8d6dd",
@@ -115,6 +115,4 @@ const theme: MantineThemeOverride = {
       "#347339",
     ],
   },
-};
-
-export default theme;
+});

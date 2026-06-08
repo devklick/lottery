@@ -53,7 +53,7 @@ function CreateEntry({
 
   // TODO: Improve this, remove the annoying overlay on success
   return (
-    <Stack justify="center" align="center" mt={50}>
+    <Stack justify="center" align="center">
       <Group style={{ alignSelf: "start" }} onClick={toggle}>
         <Title size={"h2"}>{`Pick your numbers`}</Title>
         {opened ? <IconChevronUp /> : <IconChevronDown />}

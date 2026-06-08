@@ -9,6 +9,7 @@ import {
   Group,
   Paper,
   Skeleton,
+  Stack,
   Text,
   Title,
 } from "@mantine/core";
@@ -129,72 +130,76 @@ function GameDetail({}: GameDetailProps) {
 
   return (
     <Container p={0}>
-      <Group justify="start">
-        <Skeleton visible={loading} flex={"1 1 0"}>
-          <Title style={{ textAlign: "start" }}>
-            {query.data?.name ?? placeholders.name}
-          </Title>
-        </Skeleton>
-        <GameStatusBadge
-          loading={query.isLoading}
-          state={query.data?.gameStatus}
-        />
-        {isUserType("Admin") && (
-          <ManageGameButton
-            gameId={id}
-            gameStatus={query.data?.gameStatus ?? "closed"}
-            openResultGame={() => null}
-            width="fit-content"
+      <Stack gap={24}>
+        <Group justify="start">
+          <Skeleton visible={loading} flex={"1 1 0"}>
+            <Title style={{ textAlign: "start" }}>
+              {query.data?.name ?? placeholders.name}
+            </Title>
+          </Skeleton>
+          <GameStatusBadge
+            loading={query.isLoading}
+            state={query.data?.gameStatus}
           />
-        )}
-      </Group>
+          {isUserType("Admin") && (
+            <ManageGameButton
+              gameId={id}
+              gameStatus={query.data?.gameStatus ?? "closed"}
+              openResultGame={() => null}
+              width="fit-content"
+            />
+          )}
+        </Group>
 
-      <Paper shadow="xl" p={24} radius={10}>
-        <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
-          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-            <Skeleton visible={loading}>
-              <Group>{startTime}</Group>
-            </Skeleton>
-          </Grid.Col>
-          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-            <Skeleton visible={loading}>
-              <Group>{closeTime}</Group>
-            </Skeleton>
-          </Grid.Col>
-          <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-            <Skeleton visible={loading}>
-              <Group>{drawTime}</Group>
-            </Skeleton>
-          </Grid.Col>
-          <Grid.Col span={12} maw={500} mx="auto">
-            <Group>
+        <Paper shadow="xl" p={24} radius={10}>
+          <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
+            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
               <Skeleton visible={loading}>
-                <Title size={"h2"}>Prizes</Title>
+                <Group>{startTime}</Group>
               </Skeleton>
-              <Grid w={"100%"}>{prizes}</Grid>
-            </Group>
-          </Grid.Col>
-        </Grid>
+            </Grid.Col>
+            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+              <Skeleton visible={loading}>
+                <Group>{closeTime}</Group>
+              </Skeleton>
+            </Grid.Col>
+            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+              <Skeleton visible={loading}>
+                <Group>{drawTime}</Group>
+              </Skeleton>
+            </Grid.Col>
+            <Grid.Col span={12} maw={500} mx="auto">
+              <Group>
+                <Skeleton visible={loading}>
+                  <Title size={"h2"}>Available Prizes</Title>
+                </Skeleton>
+                <Grid w={"100%"}>{prizes}</Grid>
+              </Group>
+            </Grid.Col>
+          </Grid>
+        </Paper>
 
-        {
+        <Paper shadow="xl" p={24} radius={10}>
           <YourEntries
             gameId={id!}
             winningSelections={query.data?.results}
             gameSelections={query.data?.selections ?? []}
             gameStatus={query.data?.gameStatus ?? "closed"}
           />
-        }
+        </Paper>
 
         {query.data?.gameStatus == "open" && (
-          <CreateEntry
-            gameId={id!}
-            selectionNumbers={query.data?.selections.map(
-              (s) => s.selectionNumber,
-            )}
-            selectionsRequired={query.data?.selectionsRequiredForEntry!}
-          />
+          <Paper shadow="xl" p={24} radius={10}>
+            <CreateEntry
+              gameId={id!}
+              selectionNumbers={query.data?.selections.map(
+                (s) => s.selectionNumber,
+              )}
+              selectionsRequired={query.data?.selectionsRequiredForEntry!}
+            />
+          </Paper>
         )}
-      </Paper>
+      </Stack>
     </Container>
   );
 }

@@ -131,6 +131,14 @@ function YourEntries({
     </Skeleton>
   ));
 
+  const subheader = (() => {
+    if (entries?.length) return;
+    if (gameStatus === "closed" || gameStatus === "resulted")
+      return "You did not enter this game";
+    if (gameStatus === "future") return "You cannot yet enter this game";
+    return "You have not yet entered this game";
+  })();
+
   const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
 
   const pagination = (
@@ -156,7 +164,7 @@ function YourEntries({
   }
 
   return (
-    <Stack align="center" justify="center" mt={50}>
+    <Stack align="center" justify="center">
       <Group style={{ alignSelf: "start" }} onClick={toggle}>
         <Title size={"h2"}>{`Your entries`}</Title>
         {opened ? <IconChevronUp /> : <IconChevronDown />}
@@ -181,11 +189,7 @@ function YourEntries({
                 entries
               ) : (
                 <Skeleton key={"no-entries"} visible={query.isLoading}>
-                  <Text>
-                    {gameStatus === "closed"
-                      ? "You did not enter this game"
-                      : "You have not yet entered this game"}
-                  </Text>
+                  <Text>{subheader}</Text>
                 </Skeleton>
               )}
               {pagination}
