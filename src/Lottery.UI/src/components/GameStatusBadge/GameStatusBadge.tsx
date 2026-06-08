@@ -48,7 +48,7 @@ function GameStatusBadge({
   position,
 }: GameStatusBadgeProps) {
   return (
-    <Group justify={groupProps?.justify} w={groupProps?.w}>
+    <Group justify={groupProps?.justify} w={groupProps?.w} flex={"0 1 0"}>
       <Skeleton w={100} visible={loading}>
         <HoverCard width={280} shadow="md">
           <HoverCard.Target>

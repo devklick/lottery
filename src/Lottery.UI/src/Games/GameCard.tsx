@@ -2,21 +2,19 @@ import {
   Button,
   Card,
   Group,
-  Menu,
   Modal,
   Skeleton,
   Stack,
   Text,
-  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBriefcase, IconEdit, IconRotate2 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
 import { useUserStore } from "../stores/user.store";
 import GameStatusBadge from "../components/GameStatusBadge";
 import { GameStatus } from "../common/schemas";
-import ResultGame from "./ResultGame/ResultGame";
+import ResultGameModal from "./ResultGame/ResultGame";
+import ManageGameButton from "../components/ManageGameButton/ManageGameButton";
 
 interface GameCardProps {
   id: string;
@@ -51,23 +49,19 @@ function GameCard({
   selectionNumbers,
 }: GameCardProps) {
   const navigate = useNavigate();
-  const theme = useMantineTheme();
   const { isUserType } = useUserStore();
   const [resultGameOpened, { close: closeResultGame, open: openResultGame }] =
     useDisclosure(false);
 
   return (
     <>
-      {resultGameOpened && (
-        <Modal opened={resultGameOpened} onClose={closeResultGame}>
-          <ResultGame
-            numbersRequired={numbersRequired}
-            selectionNumbers={selectionNumbers}
-            gameId={id}
-            onDone={closeResultGame}
-          />
-        </Modal>
-      )}
+      <ResultGameModal
+        numbersRequired={numbersRequired}
+        selectionNumbers={selectionNumbers}
+        gameId={id}
+        onDone={closeResultGame}
+        isOpen={resultGameOpened}
+      />
       <Card
         withBorder
         shadow="xl"
@@ -119,8 +113,8 @@ function GameCard({
                 <Button
                   fullWidth
                   onClick={() => navigate(`/games/${id}`)}
-                  variant={gameStatus === "open" ? "filled" : "filled"}
-                  // bd={gameStatus === "open" ? "2px solid white" : undefined}
+                  variant={gameStatus === "open" ? "gradient" : "filled"}
+                  gradient={{ from: "blue", to: "grape", deg: 20 }}
                   color={gameStatus === "open" ? "green" : "blue"}
                 >
                   {gameStatus == "open" ? "Play" : "View"}
@@ -129,35 +123,12 @@ function GameCard({
             </Skeleton>
             {isUserType("Admin") && (
               <Skeleton visible={loading}>
-                <Group justify="space-between">
-                  <Menu withinPortal shadow="sm">
-                    <Menu.Target>
-                      <Button
-                        fullWidth
-                        color={"gray"}
-                        leftSection={<IconBriefcase size={18} />}
-                      >
-                        Manage
-                      </Button>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        disabled={gameStatus === "resulted"}
-                        leftSection={<IconEdit size={18} />}
-                        onClick={() => navigate(`/games/${id}/edit`)}
-                      >
-                        Edit
-                      </Menu.Item>
-                      <Menu.Item
-                        disabled={gameStatus !== "closed"}
-                        leftSection={<IconRotate2 size={18} />}
-                        onClick={openResultGame}
-                      >
-                        Result
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Group>
+                <ManageGameButton
+                  gameId={id}
+                  gameStatus={gameStatus}
+                  openResultGame={openResultGame}
+                  width="full"
+                />
               </Skeleton>
             )}
           </Stack>

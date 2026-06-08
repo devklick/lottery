@@ -133,7 +133,7 @@ function YourEntries({
 
   const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
 
-  const paginaton = (
+  const pagination = (
     <Flex gap={"lg"} align={"center"}>
       <Pagination
         total={totalPages}
@@ -181,10 +181,14 @@ function YourEntries({
                 entries
               ) : (
                 <Skeleton key={"no-entries"} visible={query.isLoading}>
-                  <Text>You have not yet entered this game</Text>
+                  <Text>
+                    {gameStatus === "closed"
+                      ? "You did not enter this game"
+                      : "You have not yet entered this game"}
+                  </Text>
                 </Skeleton>
               )}
-              {paginaton}
+              {pagination}
             </Stack>
           </Center>
         )}

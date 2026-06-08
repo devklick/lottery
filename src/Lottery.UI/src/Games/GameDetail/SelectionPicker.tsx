@@ -62,7 +62,7 @@ function SelectionPicker({
           ? theme.colors.gray[colorScheme === "light" ? 2 : 8]
           : "gray",
       style: {
-        cursor: allSelected ? "not-allowed" : "default",
+        cursor: allSelected ? "not-allowed" : "pointer",
       },
     };
   }
@@ -74,17 +74,14 @@ function SelectionPicker({
 
   const remaining = requiredCount - selectedNumbers.length;
 
-  const header = (
-    <Text span>
-      {remaining
-        ? `${remaining} out of ${requiredCount} remaining`
-        : "All numbers selected"}
-    </Text>
-  );
+  const submitButtonText = (() => {
+    if (submitStatus === "submitting") return "Submitting";
+    if (remaining) return `Submit (${remaining}/${requiredCount} remaining)`;
+    return "Submit";
+  })();
 
   return (
     <Stack align="center">
-      {header}
       <Flex
         gap={"lg"}
         align={"center"}
@@ -103,6 +100,7 @@ function SelectionPicker({
           ?.sort((a, b) => a - b)
           .map((selection) => (
             <Badge
+              component="button"
               key={selection}
               {...getSelectionStyle(selection)}
               onClick={() => handleSelected(selection)}
@@ -115,11 +113,7 @@ function SelectionPicker({
         onClick={() => onSubmit(selectedNumbers)}
         disabled={selectedNumbers.length !== requiredCount}
       >
-        {submitStatus === "submitting"
-          ? "Submitting"
-          : submitStatus == "success"
-            ? "Success"
-            : "Submit"}
+        {submitButtonText}
       </Button>
     </Stack>
   );

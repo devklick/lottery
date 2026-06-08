@@ -41,7 +41,13 @@ function Trophy({ position, disabled, loading }: TrophyProps) {
 
   const overlay = disabled ? null : (
     <Overlay backgroundOpacity={0} c={"white"}>
-      <span style={{ textShadow: "1px 1px 3px black, -1px -1px 3px grey" }}>
+      <span
+        style={{
+          textShadow: "1px 1px 3px black, -1px -1px 3px grey",
+          cursor: "default",
+          userSelect: "none",
+        }}
+      >
         {loading ? "" : position}
       </span>
     </Overlay>

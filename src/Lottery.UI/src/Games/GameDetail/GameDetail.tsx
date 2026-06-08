@@ -18,6 +18,8 @@ import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
 import Trophy from "../../components/Trophy/Trophy";
 import GameStatusBadge from "../../components/GameStatusBadge";
+import ManageGameButton from "../../components/ManageGameButton/ManageGameButton";
+import { useUserStore } from "../../stores/user.store";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -56,12 +58,16 @@ interface GameDetailProps {}
 
 function GameDetail({}: GameDetailProps) {
   const { id } = useParams<Params>();
+  // This should not happen since it would match on a different route
+  if (!id) throw new Error("No gameId found");
 
   const query = useQuery({
     queryKey: ["game", id],
     queryFn: async () => await gameService.getGame({ route: { id: id! } }),
     refetchInterval: 0,
   });
+
+  const isUserType = useUserStore((s) => s.isUserType);
 
   const startTime = (
     <>
@@ -123,17 +129,27 @@ function GameDetail({}: GameDetailProps) {
 
   return (
     <Container p={0}>
-      <Group justify="center">
-        <Skeleton visible={loading}>
-          <Title>{query.data?.name ?? placeholders.name}</Title>
+      <Group justify="start">
+        <Skeleton visible={loading} flex={"1 1 0"}>
+          <Title style={{ textAlign: "start" }}>
+            {query.data?.name ?? placeholders.name}
+          </Title>
         </Skeleton>
-      </Group>
-
-      <Paper shadow="xl" p={24} radius={10}>
         <GameStatusBadge
           loading={query.isLoading}
           state={query.data?.gameStatus}
         />
+        {isUserType("Admin") && (
+          <ManageGameButton
+            gameId={id}
+            gameStatus={query.data?.gameStatus ?? "closed"}
+            openResultGame={() => null}
+            width="fit-content"
+          />
+        )}
+      </Group>
+
+      <Paper shadow="xl" p={24} radius={10}>
         <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
           <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
             <Skeleton visible={loading}>

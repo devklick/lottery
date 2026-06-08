@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Tabs, Text } from "@mantine/core";
+import { Button, Group, Modal, Paper, Stack, Tabs, Text } from "@mantine/core";
 import { useState } from "react";
 import SelectionPicker from "../GameDetail/SelectionPicker";
 import { useMutation } from "@tanstack/react-query";
@@ -15,13 +15,15 @@ interface ResultGameProps {
   selectionNumbers: Array<number>;
   gameId: string;
   onDone(): void;
+  isOpen: boolean;
 }
 
-function ResultGame({
+function ResultGameModal({
   numbersRequired,
   selectionNumbers,
   gameId,
   onDone,
+  isOpen,
 }: ResultGameProps) {
   const [activeTab, setActiveTab] = useState<TabType>("auto");
   const [selectedNumbers] = useState([]);
@@ -44,37 +46,39 @@ function ResultGame({
   }
 
   return (
-    <Stack>
-      <Group justify="center">
-        <Text>Result Game</Text>
-      </Group>
-      <Tabs value={activeTab} onChange={(v) => setActiveTab(v as TabType)}>
-        <Tabs.List grow>
-          <Tabs.Tab value={TabTypes.Auto}>Auto</Tabs.Tab>
-          <Tabs.Tab value={TabTypes.Manual}>Manual</Tabs.Tab>
-        </Tabs.List>
-      </Tabs>
-      <Paper shadow="xl" p={24} radius={10}>
-        {activeTab == "auto" ? (
-          <AutoResultDetail onSubmit={() => handleSubmit([])} />
-        ) : (
-          <ManualResultDetail
-            numbersRequired={numbersRequired}
-            selectionNumbers={selectionNumbers}
-            selectedNumbers={selectedNumbers}
-            onSubmit={handleSubmit}
-            onDone={onDone}
-            submitStatus={
-              mutation.isPending
-                ? "submitting"
-                : mutation.isSuccess
-                ? "success"
-                : "waiting"
-            }
-          />
-        )}
-      </Paper>
-    </Stack>
+    <Modal opened={isOpen} onClose={onDone}>
+      <Stack>
+        <Group justify="center">
+          <Text>Result Game</Text>
+        </Group>
+        <Tabs value={activeTab} onChange={(v) => setActiveTab(v as TabType)}>
+          <Tabs.List grow>
+            <Tabs.Tab value={TabTypes.Auto}>Auto</Tabs.Tab>
+            <Tabs.Tab value={TabTypes.Manual}>Manual</Tabs.Tab>
+          </Tabs.List>
+        </Tabs>
+        <Paper shadow="xl" p={24} radius={10}>
+          {activeTab == "auto" ? (
+            <AutoResultDetail onSubmit={() => handleSubmit([])} />
+          ) : (
+            <ManualResultDetail
+              numbersRequired={numbersRequired}
+              selectionNumbers={selectionNumbers}
+              selectedNumbers={selectedNumbers}
+              onSubmit={handleSubmit}
+              onDone={onDone}
+              submitStatus={
+                mutation.isPending
+                  ? "submitting"
+                  : mutation.isSuccess
+                    ? "success"
+                    : "waiting"
+              }
+            />
+          )}
+        </Paper>
+      </Stack>
+    </Modal>
   );
 }
 
@@ -125,4 +129,4 @@ function ManualResultDetail({
   );
 }
 
-export default ResultGame;
+export default ResultGameModal;

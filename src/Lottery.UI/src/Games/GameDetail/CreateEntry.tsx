@@ -1,4 +1,4 @@
-import { Collapse, Group, Stack, Title } from "@mantine/core";
+import { Collapse, Group, Stack, Text, Title } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "../gameService";
@@ -60,6 +60,7 @@ function CreateEntry({
       </Group>
       <Collapse expanded={opened}>
         <Stack align="center">
+          <Text>{`Pick ${selectionsRequired} numbers to submit your entry`}</Text>
           <SelectionPicker
             requiredCount={selectionsRequired}
             selectedNumbers={selectedNumbers}
