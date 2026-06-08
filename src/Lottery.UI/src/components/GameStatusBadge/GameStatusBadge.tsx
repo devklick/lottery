@@ -16,6 +16,7 @@ interface GameStatusBadgeProps {
     w?: StyleProp<React.CSSProperties["width"]>;
     justify?: React.CSSProperties["justifyContent"];
   };
+  position?: "absolute";
 }
 
 function getStatusColor(status: GameStatus): MantineColor {
@@ -44,13 +45,21 @@ function GameStatusBadge({
   loading,
   groupProps = { justify: "end" },
   state = "resulted",
+  position,
 }: GameStatusBadgeProps) {
   return (
     <Group justify={groupProps?.justify} w={groupProps?.w}>
       <Skeleton w={100} visible={loading}>
         <HoverCard width={280} shadow="md">
           <HoverCard.Target>
-            <Badge color={getStatusColor(state)}>{state}</Badge>
+            <Badge
+              pos={position}
+              top={0}
+              fullWidth
+              color={getStatusColor(state)}
+            >
+              {state}
+            </Badge>
           </HoverCard.Target>
           <HoverCard.Dropdown>
             <Text size="sm">{statusDescription[state]}</Text>

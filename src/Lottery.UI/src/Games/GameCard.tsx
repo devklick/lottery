@@ -31,11 +31,12 @@ interface GameCardProps {
 }
 
 function formatDate(date: Date) {
-  return date.toLocaleString("en-GB", {
-    year: "numeric",
+  const formattedTime = date.toLocaleString("en-GB", { timeStyle: "short" });
+  const formattedDate = date.toLocaleString("en-GB", {
     month: "short",
     day: "2-digit",
   });
+  return `${formattedTime} - ${formattedDate}`;
 }
 
 function GameCard({
@@ -67,7 +68,13 @@ function GameCard({
           />
         </Modal>
       )}
-      <Card withBorder shadow="xl" radius="lg" h={"100%"}>
+      <Card
+        withBorder
+        shadow="xl"
+        radius="lg"
+        h={"100%"}
+        style={{ position: "relative" }}
+      >
         <Card.Section withBorder inheritPadding py={"xs"}>
           <Group>
             <Skeleton visible={loading}>
@@ -78,6 +85,7 @@ function GameCard({
             loading={loading}
             state={gameStatus}
             groupProps={{ justify: "center", w: "100%" }}
+            position="absolute"
           />
         </Card.Section>
 
@@ -108,7 +116,13 @@ function GameCard({
           <Stack h={"100%"} justify="flex-end">
             <Skeleton visible={loading}>
               <Group>
-                <Button fullWidth onClick={() => navigate(`/games/${id}`)}>
+                <Button
+                  fullWidth
+                  onClick={() => navigate(`/games/${id}`)}
+                  variant={gameStatus === "open" ? "filled" : "filled"}
+                  // bd={gameStatus === "open" ? "2px solid white" : undefined}
+                  color={gameStatus === "open" ? "green" : "blue"}
+                >
                   {gameStatus == "open" ? "Play" : "View"}
                 </Button>
               </Group>
@@ -120,7 +134,7 @@ function GameCard({
                     <Menu.Target>
                       <Button
                         fullWidth
-                        color={theme.colors.grape[9]}
+                        color={"gray"}
                         leftSection={<IconBriefcase size={18} />}
                       >
                         Manage
