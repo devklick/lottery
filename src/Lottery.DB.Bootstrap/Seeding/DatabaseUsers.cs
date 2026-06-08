@@ -43,7 +43,7 @@ public static class DatabaseUsers
     {
         // TODO: This fails to find a role that already exists
         // possibly something to do with t
-        var exists = context.Database.SqlQuery<bool>($"SELECT true FROM pg_catalog.pg_roles WHERE rolname = '{roleName}'");
+        var exists = context.Database.SqlQuery<bool>($"SELECT true FROM pg_catalog.pg_roles WHERE rolname = {roleName}");
 
         // We have to use raw SQL here since the values are parameterized but are identifiers, not SQL values.
         // The privileges and schemas can be trusted, but everything else is provided externally.
@@ -66,7 +66,7 @@ public static class DatabaseUsers
     }
     static async Task IdempotentCreateUser(LotteryDBContext context, string username, string password)
     {
-        var exists = context.Database.SqlQuery<bool>($"SELECT true FROM pg_catalog.pg_user WHERE usename = '{username}'");
+        var exists = context.Database.SqlQuery<bool>($"SELECT true FROM pg_catalog.pg_user WHERE usename = {username}");
         // We have to use raw SQL here since the values are parameterized but are identifiers, not SQL values
 #pragma warning disable EF1002
         if (!exists.Any())
