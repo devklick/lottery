@@ -4,7 +4,20 @@ const theme: MantineThemeOverride = {
   primaryColor: "blue",
   primaryShade: { dark: 8, light: 5 },
   white: "#d8d6dd",
+  black: "#292935",
   colors: {
+    red: [
+      "#ffefef",
+      "#f2ddde",
+      "#e0b9ba",
+      "#d09294",
+      "#c27174",
+      "#ba5c5f",
+      "#b75154",
+      "#a14145",
+      "#943a3e",
+      "#802e33",
+    ],
     gray: [
       "#f4f4f6",
       "#e6e6e6",
