@@ -1,12 +1,10 @@
 import {
   ActionIcon,
   Anchor,
-  Badge,
   Center,
   Collapse,
   Flex,
   Group,
-  MantineColor,
   MantineColorsTuple,
   Pagination,
   Select,
