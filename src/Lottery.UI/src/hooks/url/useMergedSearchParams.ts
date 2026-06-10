@@ -7,7 +7,7 @@ import {
 import QueryParams from "../../utils/QueryParams";
 
 export default function useMergedSearchParams<T extends object>(
-  defaultInit: T
+  defaultInit: T,
 ): [URLSearchParams, SetURLSearchParams] {
   const defaultSearchParams = useRef(new QueryParams(defaultInit));
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,7 +23,7 @@ export default function useMergedSearchParams<T extends object>(
       }
     });
 
-    if (needUpdate) setSearchParams(params);
+    if (needUpdate) setSearchParams(params, { replace: true });
   }, []);
 
   return [searchParams, setSearchParams];

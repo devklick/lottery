@@ -23,6 +23,7 @@ import ManageGameButton from "../../components/ManageGameButton/ManageGameButton
 import { useUserStore } from "../../stores/user.store";
 import { useDisclosure } from "@mantine/hooks";
 import ResultGameModal from "../ResultGame";
+import GamePrizes from "./GamePrizes";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -111,28 +112,6 @@ function GameDetail({}: GameDetailProps) {
 
   const loading = query.isLoading;
 
-  const prizes = (query.data?.prizes ?? placeholders.prizes)
-    .sort((a, b) => a.position - b.position)
-    .map((prize, index) => (
-      <React.Fragment key={`prize-${index}`}>
-        <Grid.Col key={`prize-${index}-position`} span={6}>
-          <Center>
-            <Trophy loading={loading} position={prize.position} />
-          </Center>
-        </Grid.Col>
-        <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
-          <Skeleton visible={loading}>
-            <Text>
-              {`${prize.numberMatchCount}/${
-                query.data?.selectionsRequiredForEntry ??
-                placeholders.selectionsRequiredForEntry
-              }`}
-            </Text>
-          </Skeleton>
-        </Grid.Col>
-      </React.Fragment>
-    ));
-
   return (
     <Container p={0}>
       <ResultGameModal
@@ -187,7 +166,14 @@ function GameDetail({}: GameDetailProps) {
                 <Skeleton visible={loading}>
                   <Title size={"h2"}>Available Prizes</Title>
                 </Skeleton>
-                <Grid w={"100%"}>{prizes}</Grid>
+                <GamePrizes
+                  loading={loading}
+                  prizes={query.data?.prizes ?? placeholders.prizes}
+                  selectionDrawCount={
+                    query.data?.selectionsRequiredForEntry ??
+                    placeholders.selectionsRequiredForEntry
+                  }
+                />
               </Group>
             </Grid.Col>
           </Grid>
