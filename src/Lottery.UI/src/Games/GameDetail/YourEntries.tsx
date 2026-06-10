@@ -141,8 +141,9 @@ function YourEntries({
     if (entries?.length) return;
     if (gameStatus === "closed" || gameStatus === "resulted")
       return "You did not enter this game";
-    if (gameStatus === "future") return "You cannot yet enter this game";
-    return "You have not yet entered this game";
+    if (gameStatus === "future")
+      return "Come back later when the game opens to submit your entry!";
+    return "You have not yet entered this game. Pick your numbers below!";
   })();
 
   const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
@@ -181,7 +182,7 @@ function YourEntries({
             <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
           </Text>
         ) : (
-          <Center w={"100%"} mt={50}>
+          <Center w={"100%"}>
             {editTarget && (
               <EditEntry
                 selectedNumbers={editTarget.selectionNumbers}
