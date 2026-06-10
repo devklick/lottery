@@ -173,7 +173,7 @@ function YourEntries({
   return (
     <Stack align="center" justify="center">
       <Group style={{ alignSelf: "start" }} onClick={toggle}>
-        <Title size={"h2"}>{`Your entries`}</Title>
+        <Title size={"h2"}>{`Your Entries`}</Title>
         {opened ? <IconChevronUp /> : <IconChevronDown />}
       </Group>
       <Collapse expanded={opened}>

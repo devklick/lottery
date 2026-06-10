@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import dateFormat from "dateformat";
 import gameService from "../gameService";
 import {
-  Center,
   Container,
   Grid,
   Group,
@@ -14,10 +13,8 @@ import {
   Title,
 } from "@mantine/core";
 import { GetGameResponse } from "./game.schema";
-import React from "react";
 import CreateEntry from "./CreateEntry";
 import YourEntries from "./YourEntries";
-import Trophy from "../../components/Trophy/Trophy";
 import GameStatusBadge from "../../components/GameStatusBadge";
 import ManageGameButton from "../../components/ManageGameButton/ManageGameButton";
 import { useUserStore } from "../../stores/user.store";
@@ -161,22 +158,18 @@ function GameDetail({}: GameDetailProps) {
                 <Group>{drawTime}</Group>
               </Skeleton>
             </Grid.Col>
-            <Grid.Col span={12} maw={500} mx="auto">
-              <Group>
-                <Skeleton visible={loading}>
-                  <Title size={"h2"}>Available Prizes</Title>
-                </Skeleton>
-                <GamePrizes
-                  loading={loading}
-                  prizes={query.data?.prizes ?? placeholders.prizes}
-                  selectionDrawCount={
-                    query.data?.selectionsRequiredForEntry ??
-                    placeholders.selectionsRequiredForEntry
-                  }
-                />
-              </Group>
-            </Grid.Col>
           </Grid>
+        </Paper>
+
+        <Paper shadow="xl" p={24} radius={10}>
+          <GamePrizes
+            loading={loading}
+            prizes={query.data?.prizes ?? placeholders.prizes}
+            selectionDrawCount={
+              query.data?.selectionsRequiredForEntry ??
+              placeholders.selectionsRequiredForEntry
+            }
+          />
         </Paper>
 
         <Paper shadow="xl" p={24} radius={10}>
