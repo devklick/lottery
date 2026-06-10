@@ -1,15 +1,7 @@
-import {
-  Badge,
-  BadgeProps,
-  Button,
-  Flex,
-  Stack,
-  Text,
-  useComputedColorScheme,
-  useMantineTheme,
-} from "@mantine/core";
+import { Button, Flex, Stack } from "@mantine/core";
 import TimedOverlay from "../../components/TimedOverlay";
 import { useEffect, useState } from "react";
+import NumberBall from "../../components/NumberBall/NumberBall";
 
 interface SelectionPickerProps {
   selectionNumbers: ReadonlyArray<number>;
@@ -28,8 +20,6 @@ function SelectionPicker({
   submitStatus,
   onDone,
 }: SelectionPickerProps) {
-  const theme = useMantineTheme();
-  const colorScheme = useComputedColorScheme();
   const [showOverlay, setShowOverlay] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState([..._selectedNumbers]);
 
@@ -47,24 +37,6 @@ function SelectionPicker({
     } else if (selectedNumbers.length < requiredCount) {
       setSelectedNumbers((cur) => [...cur, selectionNumber]);
     }
-  }
-
-  function getSelectionStyle(selectionNumber: number): BadgeProps {
-    const isSelected = selectedNumbers.includes(selectionNumber);
-    const allSelected = selectedNumbers.length === requiredCount;
-
-    return {
-      circle: true,
-      size: "xl",
-      color: isSelected
-        ? theme.colors.green[colorScheme === "light" ? 6 : 8]
-        : allSelected
-          ? theme.colors.gray[colorScheme === "light" ? 2 : 8]
-          : "gray",
-      style: {
-        cursor: allSelected ? "not-allowed" : "pointer",
-      },
-    };
   }
 
   function handleOverlayFinished() {
@@ -98,16 +70,19 @@ function SelectionPicker({
         />
         {[...selectionNumbers]
           ?.sort((a, b) => a - b)
-          .map((selection) => (
-            <Badge
-              component="button"
-              key={selection}
-              {...getSelectionStyle(selection)}
-              onClick={() => handleSelected(selection)}
-            >
-              {selection}
-            </Badge>
-          ))}
+          .map((selection) => {
+            const isSelected = selectedNumbers.includes(selection);
+            const disabled =
+              selectedNumbers.length === requiredCount && !isSelected;
+            return (
+              <NumberBall
+                selected={isSelected}
+                disabled={disabled}
+                value={selection}
+                onClick={handleSelected}
+              />
+            );
+          })}
       </Flex>
       <Button
         onClick={() => onSubmit(selectedNumbers)}

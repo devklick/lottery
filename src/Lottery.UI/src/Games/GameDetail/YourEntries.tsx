@@ -7,12 +7,14 @@ import {
   Flex,
   Group,
   MantineColor,
+  MantineColorsTuple,
   Pagination,
   Select,
   Skeleton,
   Stack,
   Text,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { useUserStore } from "../../stores/user.store";
 import { useDisclosure } from "@mantine/hooks";
@@ -24,9 +26,13 @@ import Trophy from "../../components/Trophy/Trophy";
 import EditEntry from "./EditEntry";
 import { GameStatus } from "../../common/schemas";
 import { EntryPrize } from "./game.schema";
+import NumberBall from "../../components/NumberBall/NumberBall";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
+  /**
+   * The selections that were drawn when the game was resulted, AKA the results.
+   */
   winningSelections?: ReadonlyArray<{ id: string; selectionNumber: number }>;
   gameId: string;
   gameStatus: GameStatus;
@@ -38,6 +44,7 @@ function YourEntries({
   gameSelections,
   gameStatus,
 }: YourEntriesProps) {
+  const { colors } = useMantineTheme();
   const user = useUserStore();
   const [opened, { toggle }] = useDisclosure(false);
   const [page, setPage] = useState(1);
@@ -54,8 +61,10 @@ function YourEntries({
     enabled: user.authenticated(),
   });
 
+  const resulted = !!winningSelections?.length;
+
   function getTrophy(prize: EntryPrize) {
-    if (!winningSelections?.length) {
+    if (!resulted) {
       return null;
     }
 
@@ -68,14 +77,14 @@ function YourEntries({
     );
   }
 
-  function getSelectionColor(selectionNumber: number): MantineColor {
-    if (!winningSelections?.length) return "blue";
+  function getSelectionColorRange(selectionNumber: number): MantineColorsTuple {
+    if (!resulted) return colors.blue;
 
     return winningSelections.find(
       (ws) => ws.selectionNumber === selectionNumber,
     )
-      ? "green"
-      : "gray";
+      ? colors.green
+      : colors.gray;
   }
 
   function getSelection(
@@ -83,14 +92,13 @@ function YourEntries({
     selection: { id: string; selectionNumber: number },
   ) {
     return (
-      <Badge
+      <NumberBall
         key={`${entryId}-${selection.id}`}
-        circle
-        size={"xl"}
-        color={getSelectionColor(selection.selectionNumber)}
-      >
-        {selection.selectionNumber}
-      </Badge>
+        value={selection.selectionNumber}
+        selected
+        colorRange={getSelectionColorRange(selection.selectionNumber)}
+        cursor="default"
+      />
     );
   }
 
