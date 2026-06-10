@@ -108,6 +108,8 @@ function EditGame({}: EditGameProps) {
     style: { textAlign: "left" },
   };
 
+  const disabled = query.data?.gameStatus != "future";
+
   return (
     <Container p={0}>
       <Skeleton visible={query.isLoading}>
@@ -116,7 +118,7 @@ function EditGame({}: EditGameProps) {
 
       <Paper shadow="xl" p={24} radius={10}>
         <form
-          onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
+          onSubmit={() => !disabled && form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
           <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>
@@ -125,7 +127,7 @@ function EditGame({}: EditGameProps) {
                   label="Name"
                   {...form.getInputProps("name")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -137,7 +139,7 @@ function EditGame({}: EditGameProps) {
                   data={Object.values(allStatesWithLabel)}
                   withAsterisk
                   allowDeselect={false}
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -147,7 +149,7 @@ function EditGame({}: EditGameProps) {
                   label="Start Time"
                   {...form.getInputProps("startTime")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -157,7 +159,7 @@ function EditGame({}: EditGameProps) {
                   label="Close Time"
                   {...form.getInputProps("closeTime")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -167,7 +169,7 @@ function EditGame({}: EditGameProps) {
                   label="Draw Time"
                   {...form.getInputProps("drawTime")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -177,7 +179,7 @@ function EditGame({}: EditGameProps) {
                   label="Selections in game"
                   {...form.getInputProps("maxSelections")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -187,7 +189,7 @@ function EditGame({}: EditGameProps) {
                   label="Selections per entry"
                   {...form.getInputProps("selectionsRequiredForEntry")}
                   withAsterisk
-                  disabled={query.data?.gameStatus != "future"}
+                  disabled={disabled}
                 />
               </Skeleton>
             </Grid.Col>
@@ -227,7 +229,7 @@ function EditGame({}: EditGameProps) {
                       <Skeleton visible={query.isLoading}>
                         <NumberInput
                           {...form.getInputProps(`prizes.${index}.position`)}
-                          disabled={query.data?.gameStatus != "future"}
+                          disabled={disabled}
                           leftSection={
                             <ActionIcon
                               variant="transparent"
@@ -235,8 +237,7 @@ function EditGame({}: EditGameProps) {
                                 form.removeListItem("prizes", index)
                               }
                               disabled={
-                                form.values.prizes.length <= 1 ||
-                                query.data?.gameStatus != "future"
+                                form.values.prizes.length <= 1 || disabled
                               }
                             >
                               <IconTrash />
@@ -255,7 +256,7 @@ function EditGame({}: EditGameProps) {
                           {...form.getInputProps(
                             `prizes.${index}.numberMatchCount`,
                           )}
-                          disabled={query.data?.gameStatus != "future"}
+                          disabled={disabled}
                         />
                       </Skeleton>
                     </Grid.Col>
@@ -264,12 +265,14 @@ function EditGame({}: EditGameProps) {
               </Grid>
               <Group justify="center" mt={"md"}>
                 <Button
-                  onClick={() =>
+                  disabled={disabled}
+                  onClick={() => {
+                    if (disabled) return;
                     form.insertListItem("prizes", {
                       numberMatchCount: 1,
                       position: 1,
-                    } as EditGamePrizeRequest)
-                  }
+                    } as EditGamePrizeRequest);
+                  }}
                 >
                   Add new prize
                 </Button>
@@ -281,7 +284,12 @@ function EditGame({}: EditGameProps) {
               span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
             >
               <Group mt={50}>
-                <Button type="submit" loading={mutation.isPending} fullWidth>
+                <Button
+                  disabled={disabled}
+                  type="submit"
+                  loading={mutation.isPending}
+                  fullWidth
+                >
                   {mutation.isPending ? "Submitting" : "Submit"}
                 </Button>
               </Group>
