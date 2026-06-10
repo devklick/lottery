@@ -25,6 +25,8 @@ import EditEntry from "./EditEntry";
 import { GameStatus } from "../../common/schemas";
 import { EntryPrize } from "./game.schema";
 import NumberBall from "../../components/NumberBall/NumberBall";
+import PageSection from "../../components/PageSection/PageSection";
+import PaginationBar from "../../components/PaginationBar/PaginationBar";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
@@ -104,7 +106,7 @@ function YourEntries({
     queryClient.removeQueries({ queryKey: ["entries", gameId, page, limit] });
   }
 
-  function handleLimitChanged(value: string | null) {
+  function handleLimitChanged(value: number | null) {
     removeCurrentQuery();
     setLimit(Number(value));
   }
@@ -148,63 +150,39 @@ function YourEntries({
 
   const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
 
-  const pagination = (
-    <Flex gap={"lg"} align={"center"}>
-      <Pagination
-        total={totalPages}
-        value={page}
-        onChange={handlePageChanged}
-      />
-      <Select
-        w={80}
-        value={limit.toString()}
-        defaultValue={limit.toString()}
-        data={["5", "10", "20"]}
-        onChange={handleLimitChanged}
-        allowDeselect={false}
-      />
-    </Flex>
-  );
-
   function handleEntryEdited() {
     setEditTarget(null);
   }
 
   return (
-    <Stack align="center" justify="center">
-      <Group style={{ alignSelf: "start" }} onClick={toggle}>
-        <Title size={"h2"}>{`Your Entries`}</Title>
-        {opened ? <IconChevronUp /> : <IconChevronDown />}
-      </Group>
-      <Collapse expanded={opened}>
-        {!user.authenticated() ? (
-          <Text span>
-            <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
-          </Text>
-        ) : (
-          <Center w={"100%"}>
-            {editTarget && (
-              <EditEntry
-                selectedNumbers={editTarget.selectionNumbers}
-                selectionNumbers={gameSelections.map((s) => s.selectionNumber)}
-                onClose={handleEntryEdited}
-                entryId={editTarget.entryId}
-              />
-            )}
-            <Stack align="center">
-              {entries?.length ? (
-                entries
-              ) : (
-                <Skeleton key={"no-entries"} visible={query.isLoading}>
-                  <Text>{subheader}</Text>
-                </Skeleton>
-              )}
-              {pagination}
-            </Stack>
-          </Center>
-        )}
-      </Collapse>
-    </Stack>
+    <PageSection title="Your Entries" subheader={subheader}>
+      {!user.authenticated() ? (
+        <Text span>
+          <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
+        </Text>
+      ) : (
+        <Center w={"100%"}>
+          {editTarget && (
+            <EditEntry
+              selectedNumbers={editTarget.selectionNumbers}
+              selectionNumbers={gameSelections.map((s) => s.selectionNumber)}
+              onClose={handleEntryEdited}
+              entryId={editTarget.entryId}
+            />
+          )}
+          <Stack align="center">
+            {entries}
+            <PaginationBar
+              limit={limit}
+              onLimitChanged={handleLimitChanged}
+              onPageChanged={handlePageChanged}
+              page={page}
+              totalPages={totalPages}
+            />
+          </Stack>
+        </Center>
+      )}
+    </PageSection>
   );
 }
 

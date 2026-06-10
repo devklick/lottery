@@ -161,37 +161,29 @@ function GameDetail({}: GameDetailProps) {
           </Grid>
         </Paper>
 
-        <Paper shadow="xl" p={24} radius={10}>
-          <GamePrizes
-            loading={loading}
-            prizes={query.data?.prizes ?? placeholders.prizes}
-            selectionDrawCount={
-              query.data?.selectionsRequiredForEntry ??
-              placeholders.selectionsRequiredForEntry
-            }
-          />
-        </Paper>
+        <GamePrizes
+          loading={loading}
+          prizes={query.data?.prizes ?? placeholders.prizes}
+          selectionDrawCount={
+            query.data?.selectionsRequiredForEntry ??
+            placeholders.selectionsRequiredForEntry
+          }
+        />
 
-        <Paper shadow="xl" p={24} radius={10}>
-          <YourEntries
-            gameId={id!}
-            winningSelections={query.data?.results}
-            gameSelections={query.data?.selections ?? []}
-            gameStatus={query.data?.gameStatus ?? "closed"}
-          />
-        </Paper>
+        <YourEntries
+          gameId={id!}
+          winningSelections={query.data?.results}
+          gameSelections={query.data?.selections ?? []}
+          gameStatus={query.data?.gameStatus ?? "closed"}
+        />
 
-        {query.data?.gameStatus == "open" && (
-          <Paper shadow="xl" p={24} radius={10}>
-            <CreateEntry
-              gameId={id!}
-              selectionNumbers={query.data?.selections.map(
-                (s) => s.selectionNumber,
-              )}
-              selectionsRequired={query.data?.selectionsRequiredForEntry!}
-            />
-          </Paper>
-        )}
+        <CreateEntry
+          gameId={id!}
+          selectionNumbers={
+            query.data?.selections.map((s) => s.selectionNumber) ?? []
+          }
+          selectionsRequired={query.data?.selectionsRequiredForEntry!}
+        />
       </Stack>
     </Container>
   );

@@ -1,10 +1,8 @@
-import { Collapse, Group, Stack, Text, Title } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "../gameService";
-import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import SelectionPicker from "./SelectionPicker";
+import PageSection from "../../components/PageSection/PageSection";
 
 interface CreateEntryProps {
   gameId: string;
@@ -21,8 +19,6 @@ function CreateEntry({
   const [selectedNumbers, setSelectedNumbers] = useState<ReadonlyArray<number>>(
     [],
   );
-
-  const [opened, { toggle }] = useDisclosure(false);
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -53,31 +49,21 @@ function CreateEntry({
 
   // TODO: Improve this, remove the annoying overlay on success
   return (
-    <Stack justify="center" align="center">
-      <Group style={{ alignSelf: "start" }} onClick={toggle}>
-        <Title size={"h2"}>{`Pick your numbers`}</Title>
-        {opened ? <IconChevronUp /> : <IconChevronDown />}
-      </Group>
-      <Collapse expanded={opened}>
-        <Stack align="center">
-          <Text>{`Pick ${selectionsRequired} numbers to submit your entry`}</Text>
-          <SelectionPicker
-            requiredCount={selectionsRequired}
-            selectedNumbers={selectedNumbers}
-            selectionNumbers={selections}
-            onSubmit={handleSubmitEntry}
-            onDone={handleSelectionPickerDone}
-            submitStatus={
-              mutation.isPending
-                ? "submitting"
-                : success
-                  ? "success"
-                  : "waiting"
-            }
-          />
-        </Stack>
-      </Collapse>
-    </Stack>
+    <PageSection
+      title="Pick Your Numbers"
+      subheader={`Pick ${selectionsRequired} numbers to submit your entry`}
+    >
+      <SelectionPicker
+        requiredCount={selectionsRequired}
+        selectedNumbers={selectedNumbers}
+        selectionNumbers={selections}
+        onSubmit={handleSubmitEntry}
+        onDone={handleSelectionPickerDone}
+        submitStatus={
+          mutation.isPending ? "submitting" : success ? "success" : "waiting"
+        }
+      />
+    </PageSection>
   );
 }
 
