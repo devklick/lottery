@@ -13,22 +13,33 @@ interface TrophyProps {
   disabled?: boolean;
 }
 
-function useTrophyColor(position: number): MantineColor {
-  const { colors } = useMantineTheme();
+function useTrophyColor(position: number) {
+  const { colors, white } = useMantineTheme();
+  let color: MantineColor;
+  let shadowColor: MantineColor;
   switch (position) {
     case 1:
-      return colors.yellow[6];
+      color = colors.yellow[7];
+      shadowColor = colors.orange[6];
+      break;
     case 2:
-      return colors.gray[5];
+      color = colors.gray[5];
+      shadowColor = white;
+      break;
     case 3:
-      return colors.orange[7];
+      color = colors.orange[7];
+      shadowColor = colors.red[9];
+      break;
     default:
-      return colors.gray[7];
+      color = colors.gray[7];
+      shadowColor = colors.gray[3];
+      break;
   }
+  return { color, shadowColor } as const;
 }
 
 function Trophy({ position, disabled, loading }: TrophyProps) {
-  const color = useTrophyColor(position);
+  const { color, shadowColor } = useTrophyColor(position);
 
   const width = 30;
   const iconProps = { size: width };
@@ -36,7 +47,16 @@ function Trophy({ position, disabled, loading }: TrophyProps) {
   const icon = disabled ? (
     <IconTrophyOff {...iconProps} color="gray" />
   ) : (
-    <IconTrophyFilled {...iconProps} color={color} />
+    <IconTrophyFilled
+      {...iconProps}
+      color={color}
+      stroke={"black"}
+      strokeWidth={5}
+      style={{
+        filter: `
+          drop-shadow(1px 0px 0px ${shadowColor}) `,
+      }}
+    />
   );
 
   const overlay = disabled ? null : (
