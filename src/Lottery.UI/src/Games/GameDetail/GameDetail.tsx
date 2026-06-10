@@ -21,6 +21,8 @@ import Trophy from "../../components/Trophy/Trophy";
 import GameStatusBadge from "../../components/GameStatusBadge";
 import ManageGameButton from "../../components/ManageGameButton/ManageGameButton";
 import { useUserStore } from "../../stores/user.store";
+import { useDisclosure } from "@mantine/hooks";
+import ResultGameModal from "../ResultGame";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -61,6 +63,9 @@ function GameDetail({}: GameDetailProps) {
   const { id } = useParams<Params>();
   // This should not happen since it would match on a different route
   if (!id) throw new Error("No gameId found");
+
+  const [resultGameOpened, { close: closeResultGame, open: openResultGame }] =
+    useDisclosure(false);
 
   const query = useQuery({
     queryKey: ["game", id],
@@ -130,6 +135,15 @@ function GameDetail({}: GameDetailProps) {
 
   return (
     <Container p={0}>
+      <ResultGameModal
+        numbersRequired={query.data?.selectionsRequiredForEntry ?? 0}
+        selectionNumbers={
+          query.data?.selections.map((s) => s.selectionNumber) ?? []
+        }
+        gameId={id}
+        onDone={closeResultGame}
+        isOpen={resultGameOpened}
+      />
       <Stack gap={24}>
         <Group justify="start">
           <Skeleton visible={loading} flex={"1 1 0"}>
@@ -145,7 +159,7 @@ function GameDetail({}: GameDetailProps) {
             <ManageGameButton
               gameId={id}
               gameStatus={query.data?.gameStatus ?? "closed"}
-              openResultGame={() => null}
+              openResultGame={openResultGame}
               width="fit-content"
             />
           )}

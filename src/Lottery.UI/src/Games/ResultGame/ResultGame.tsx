@@ -12,6 +12,9 @@ type TabType = (typeof TabTypes)[keyof typeof TabTypes];
 
 interface ResultGameProps {
   numbersRequired: number;
+  /**
+   * The selections in the game.
+   */
   selectionNumbers: Array<number>;
   gameId: string;
   onDone(): void;
