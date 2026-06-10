@@ -118,7 +118,7 @@ function EditGame({}: EditGameProps) {
 
       <Paper shadow="xl" p={24} radius={10}>
         <form
-          onSubmit={() => !disabled && form.onSubmit(async (data) => mutation.mutateAsync(data))}
+          onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
         >
           <Grid justify="center" gap={"xl"}>
             <Grid.Col key={"name-col"} {...colProps}>
