@@ -25,6 +25,7 @@ export default function ManageGameButton({
           w={width === "fit-content" ? "fit-content" : undefined}
           color={"gray"}
           leftSection={<IconBriefcase size={18} />}
+          className="manage-game-button"
         >
           Manage
         </Button>

@@ -155,7 +155,12 @@ function YourEntries({
   }
 
   return (
-    <PageSection title="Your Entries" subheader={subheader}>
+    <PageSection
+      title="Your Entries"
+      collapsable
+      subheader={subheader}
+      className="your-entries-page-section"
+    >
       {!user.authenticated() ? (
         <Text span>
           <Anchor href="/account/signIn">Sign in</Anchor> to view your entries

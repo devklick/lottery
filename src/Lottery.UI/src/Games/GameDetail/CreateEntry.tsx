@@ -51,7 +51,9 @@ function CreateEntry({
   return (
     <PageSection
       title="Pick Your Numbers"
+      collapsable
       subheader={`Pick ${selectionsRequired} numbers to submit your entry`}
+      className="create-entry-page-section"
     >
       <SelectionPicker
         requiredCount={selectionsRequired}

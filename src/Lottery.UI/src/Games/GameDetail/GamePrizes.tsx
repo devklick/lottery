@@ -32,43 +32,31 @@ export default function GamePrizes({
 }: GamePrizesProps) {
   return (
     <PageSection
+      collapsable
       title="Game Prizes"
       subheader="The following prizes are up for grabs"
+      className="game-prizes-page-section"
     >
-      <Grid>
-        {prizes
-          .sort((a, b) => a.position - b.position)
-          .map((prize, index) => (
-            <Fragment key={`prize-${index}`}>
-              <Grid.Col key={`prize-${index}-position`} span={6}>
-                <Center>
-                  <Trophy loading={loading} position={prize.position} />
-                </Center>
-              </Grid.Col>
-              <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
-                <Skeleton visible={loading}>
-                  <Text>{`${prize.numberMatchCount}/${selectionDrawCount}`}</Text>
-                </Skeleton>
-              </Grid.Col>
-            </Fragment>
-          ))}
-      </Grid>
+      <Group w={"100%"} justify="center">
+        <Grid maw={200} w={"100%"}>
+          {prizes
+            .sort((a, b) => a.position - b.position)
+            .map((prize, index) => (
+              <Fragment key={`prize-${index}`}>
+                <Grid.Col key={`prize-${index}-position`} span={6}>
+                  <Center>
+                    <Trophy loading={loading} position={prize.position} />
+                  </Center>
+                </Grid.Col>
+                <Grid.Col key={`prize-${index}-numberMatchCount`} span={6}>
+                  <Skeleton visible={loading}>
+                    <Text>{`${prize.numberMatchCount}/${selectionDrawCount}`}</Text>
+                  </Skeleton>
+                </Grid.Col>
+              </Fragment>
+            ))}
+        </Grid>
+      </Group>
     </PageSection>
   );
-
-  /*
-  const [opened, { toggle }] = useDisclosure(false);
-  return (
-    <Stack justify="center" align="center">
-      <Group w={"100%"} style={{ alignSelf: "start" }} onClick={toggle}>
-        <Title size={"h2"}>Available Prizes</Title>
-        {opened ? <IconChevronUp /> : <IconChevronDown />}
-      </Group>
-      <Collapse expanded={opened}>
-        <Text>The following prizes are up for grabs</Text>
-
-      </Collapse>
-    </Stack>
-  );
-  */
 }

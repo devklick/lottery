@@ -127,18 +127,20 @@ function GameDetail({}: GameDetailProps) {
               {query.data?.name ?? placeholders.name}
             </Title>
           </Skeleton>
-          <GameStatusBadge
-            loading={query.isLoading}
-            state={query.data?.gameStatus}
-          />
-          {isUserType("Admin") && (
-            <ManageGameButton
-              gameId={id}
-              gameStatus={query.data?.gameStatus ?? "closed"}
-              openResultGame={openResultGame}
-              width="fit-content"
+          <Stack gap={"xs"}>
+            <GameStatusBadge
+              loading={query.isLoading}
+              state={query.data?.gameStatus}
             />
-          )}
+            {isUserType("Admin") && (
+              <ManageGameButton
+                gameId={id}
+                gameStatus={query.data?.gameStatus ?? "closed"}
+                openResultGame={openResultGame}
+                width="fit-content"
+              />
+            )}
+          </Stack>
         </Group>
 
         <Paper shadow="xl" p={24} radius={10}>

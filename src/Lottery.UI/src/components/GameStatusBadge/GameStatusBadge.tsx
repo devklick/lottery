@@ -7,6 +7,7 @@ import {
   StyleProp,
   Text,
 } from "@mantine/core";
+import clsx from "clsx";
 import { GameStatus } from "../../common/schemas";
 
 interface GameStatusBadgeProps {
@@ -48,7 +49,14 @@ function GameStatusBadge({
   position,
 }: GameStatusBadgeProps) {
   return (
-    <Group justify={groupProps?.justify} w={groupProps?.w} flex={"0 1 0"}>
+    <Group
+      justify={groupProps?.justify}
+      w={groupProps?.w}
+      flex={"0 1 0"}
+      className={clsx("game-status-badge", {
+        [`game-status-badge--${state}`]: !!state,
+      })}
+    >
       <Skeleton w={100} visible={loading}>
         <HoverCard width={280} shadow="md">
           <HoverCard.Target>

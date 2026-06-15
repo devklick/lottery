@@ -46,6 +46,7 @@ export default function NumberBall({
       }}
       key={value}
       onClick={() => onClick?.(value)}
+      className="number-ball"
     >
       {value}
     </Badge>

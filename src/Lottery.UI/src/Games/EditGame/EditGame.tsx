@@ -22,11 +22,14 @@ import {
   Text,
   TextInput,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { allStatesWithLabel } from "../../common/schemas";
 import { DateTimePicker } from "@mantine/dates";
 import React, { useEffect } from "react";
 import { IconTrash } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
+import EditGameActionButtons from "./EditGameActionButtons";
 
 const placeholders: EditGameRequestBody = {
   name: "placeholder",
@@ -98,6 +101,9 @@ function EditGame({}: EditGameProps) {
     }
   }, [query.isLoading, query.data]);
 
+  const { breakpoints } = useMantineTheme();
+  const isDesktop = useMediaQuery(`(min-width: ${breakpoints.sm})`);
+
   const colProps: GridColProps = {
     span: { xs: 12, sm: 6, md: 6, lg: 6 },
     style: { textAlign: "left" },
@@ -108,7 +114,7 @@ function EditGame({}: EditGameProps) {
     style: { textAlign: "left" },
   };
 
-  const disabled = query.data?.gameStatus != "future";
+  const disabled = query.data?.gameStatus !== "future";
 
   return (
     <Container p={0}>
@@ -279,21 +285,12 @@ function EditGame({}: EditGameProps) {
               </Group>
             </Grid.Col>
 
-            <Grid.Col
-              key={"submit-col"}
-              span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
-            >
-              <Group mt={50}>
-                <Button
-                  disabled={disabled}
-                  type="submit"
-                  loading={mutation.isPending}
-                  fullWidth
-                >
-                  {mutation.isPending ? "Submitting" : "Submit"}
-                </Button>
-              </Group>
-            </Grid.Col>
+            <EditGameActionButtons
+              cancelDisabled={form.submitting}
+              submitDisabled={disabled || !form.isTouched()}
+              fullWidth={!isDesktop}
+              onCancel={() => navigate(`/games/${id}`)}
+            />
           </Grid>
         </form>
       </Paper>

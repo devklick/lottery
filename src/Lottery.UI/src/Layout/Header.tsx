@@ -84,7 +84,14 @@ function Header({
             >
               <Menu.Target>
                 <UnstyledButton onClick={() => navigate("/account")}>
-                  <span onClick={() => navigate("/account")}>Account</span>
+                  <span
+                    onClick={(e) => {
+                      navigate("/account");
+                      e.stopPropagation();
+                    }}
+                  >
+                    Account
+                  </span>
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
