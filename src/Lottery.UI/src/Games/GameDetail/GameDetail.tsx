@@ -117,7 +117,7 @@ function GameDetail({}: GameDetailProps) {
           query.data?.selections.map((s) => s.selectionNumber) ?? []
         }
         gameId={id}
-        onDone={closeResultGame}
+        onSubmit={closeResultGame}
         isOpen={resultGameOpened}
       />
       <Stack gap={24}>

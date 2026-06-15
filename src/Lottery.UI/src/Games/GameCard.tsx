@@ -59,7 +59,7 @@ function GameCard({
         numbersRequired={numbersRequired}
         selectionNumbers={selectionNumbers}
         gameId={id}
-        onDone={closeResultGame}
+        onSubmit={closeResultGame}
         isOpen={resultGameOpened}
       />
       <Card

@@ -1,5 +1,4 @@
 import { Button, Flex, Stack } from "@mantine/core";
-import TimedOverlay from "../../components/TimedOverlay";
 import { useEffect, useState } from "react";
 import NumberBall from "../../components/NumberBall/NumberBall";
 
@@ -9,7 +8,6 @@ interface SelectionPickerProps {
   requiredCount: number;
   onSubmit(selectionNumbers: Array<number>): void;
   submitStatus: "waiting" | "submitting" | "success";
-  onDone(): void;
 }
 
 function SelectionPicker({
@@ -18,18 +16,12 @@ function SelectionPicker({
   requiredCount,
   onSubmit,
   submitStatus,
-  onDone,
 }: SelectionPickerProps) {
-  const [showOverlay, setShowOverlay] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState([..._selectedNumbers]);
 
   useEffect(() => {
     setSelectedNumbers([..._selectedNumbers]);
   }, [_selectedNumbers]);
-
-  useEffect(() => {
-    if (submitStatus === "success") setShowOverlay(true);
-  }, [submitStatus]);
 
   function handleSelected(selectionNumber: number) {
     if (selectedNumbers.includes(selectionNumber)) {
@@ -37,11 +29,6 @@ function SelectionPicker({
     } else if (selectedNumbers.length < requiredCount) {
       setSelectedNumbers((cur) => [...cur, selectionNumber]);
     }
-  }
-
-  function handleOverlayFinished() {
-    setShowOverlay(false);
-    onDone();
   }
 
   const remaining = requiredCount - selectedNumbers.length;
@@ -63,11 +50,6 @@ function SelectionPicker({
         style={{ position: "relative" }}
         p={10}
       >
-        <TimedOverlay
-          duration={3000}
-          onTimeElapsed={handleOverlayFinished}
-          show={showOverlay}
-        />
         {[...selectionNumbers]
           ?.sort((a, b) => a - b)
           .map((selection) => {

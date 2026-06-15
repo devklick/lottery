@@ -1,8 +1,18 @@
-import { Button, Group, Modal, Paper, Stack, Tabs, Text } from "@mantine/core";
+import {
+  Button,
+  CheckIcon,
+  Group,
+  Modal,
+  Paper,
+  Stack,
+  Tabs,
+  Text,
+} from "@mantine/core";
 import { useState } from "react";
 import SelectionPicker from "../GameDetail/SelectionPicker";
 import { useMutation } from "@tanstack/react-query";
 import gameService from "../gameService";
+import { notifications } from "@mantine/notifications";
 
 const TabTypes = {
   Manual: "manual",
@@ -17,7 +27,7 @@ interface ResultGameProps {
    */
   selectionNumbers: Array<number>;
   gameId: string;
-  onDone(): void;
+  onSubmit(): void;
   isOpen: boolean;
 }
 
@@ -25,8 +35,8 @@ function ResultGameModal({
   numbersRequired,
   selectionNumbers,
   gameId,
-  onDone,
   isOpen,
+  onSubmit,
 }: ResultGameProps) {
   const [activeTab, setActiveTab] = useState<TabType>("auto");
   const [selectedNumbers] = useState([]);
@@ -37,6 +47,13 @@ function ResultGameModal({
   });
 
   function handleSubmit(selectedNumbers: Array<number> = []) {
+    const id = notifications.show({
+      loading: true,
+      title: "Resulting game",
+      message: `The results are being processed${selectedNumbers?.length ? ` (${selectedNumbers.join(", ")})` : ""}`,
+      autoClose: false,
+      allowClose: false,
+    });
     mutation.mutateAsync({
       body: {
         winningSelections:
@@ -46,10 +63,20 @@ function ResultGameModal({
       },
       route: { gameId },
     });
+    onSubmit();
+    notifications.update({
+      id,
+      loading: false,
+      title: "Game resulted",
+      message: `The game has successfully been resulted${selectedNumbers?.length ? ` (${selectedNumbers.join(", ")})` : ""}`,
+      icon: <CheckIcon />,
+      autoClose: 3000,
+      allowClose: true,
+    });
   }
 
   return (
-    <Modal opened={isOpen} onClose={onDone}>
+    <Modal opened={isOpen} onClose={onSubmit}>
       <Stack>
         <Group justify="center">
           <Text>Result Game</Text>
@@ -69,7 +96,6 @@ function ResultGameModal({
               selectionNumbers={selectionNumbers}
               selectedNumbers={selectedNumbers}
               onSubmit={handleSubmit}
-              onDone={onDone}
               submitStatus={
                 mutation.isPending
                   ? "submitting"
@@ -104,7 +130,6 @@ interface ManualResultDetailProps {
   selectedNumbers: Array<number>;
   onSubmit(selectedNumbers: Array<number>): void;
   submitStatus: "waiting" | "submitting" | "success";
-  onDone(): void;
 }
 
 function ManualResultDetail({
@@ -113,7 +138,6 @@ function ManualResultDetail({
   selectedNumbers,
   onSubmit,
   submitStatus,
-  onDone,
 }: ManualResultDetailProps) {
   return (
     <Stack>
@@ -122,7 +146,6 @@ function ManualResultDetail({
       </Group>
       <SelectionPicker
         requiredCount={numbersRequired}
-        onDone={onDone}
         selectedNumbers={selectedNumbers}
         selectionNumbers={selectionNumbers}
         onSubmit={onSubmit}

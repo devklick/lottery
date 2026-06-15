@@ -3,6 +3,8 @@ import { useState } from "react";
 import gameService from "../gameService";
 import SelectionPicker from "./SelectionPicker";
 import PageSection from "../../components/PageSection/PageSection";
+import { notifications } from "@mantine/notifications";
+import { CheckIcon } from "@mantine/core";
 
 interface CreateEntryProps {
   gameId: string;
@@ -32,6 +34,13 @@ function CreateEntry({
   }
 
   async function handleSubmitEntry(selectionNumbers: Array<number>) {
+    const id = notifications.show({
+      loading: true,
+      title: "Submitting entry",
+      message: `Your numbers are being saved (${selectionNumbers.join(", ")})`,
+      autoClose: false,
+      allowClose: false,
+    });
     await mutation.mutateAsync({
       body: {
         gameId,
@@ -40,11 +49,17 @@ function CreateEntry({
         })),
       },
     });
-  }
+    notifications.update({
+      id,
+      loading: false,
+      title: "Entry saved",
+      message: `Your numbers have been saved (${selectionNumbers.join(", ")})`,
+      icon: <CheckIcon />,
+      autoClose: 3000,
+      allowClose: true,
+    });
 
-  function handleSelectionPickerDone() {
     setSelectedNumbers([]);
-    setSuccess(false);
   }
 
   // TODO: Improve this, remove the annoying overlay on success
@@ -60,7 +75,6 @@ function CreateEntry({
         selectedNumbers={selectedNumbers}
         selectionNumbers={selections}
         onSubmit={handleSubmitEntry}
-        onDone={handleSelectionPickerDone}
         submitStatus={
           mutation.isPending ? "submitting" : success ? "success" : "waiting"
         }
