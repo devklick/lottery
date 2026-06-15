@@ -1,21 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import gameService from "./gameService";
-import {
-  Center,
-  Container,
-  Flex,
-  Grid,
-  Pagination,
-  Paper,
-  Select,
-  Title,
-} from "@mantine/core";
+import { Grid } from "@mantine/core";
 import GameCard from "./GameCard";
 import GameFilters from "./GameFilters";
 import { SearchGamesRequest, SearchGamesResponseItem } from "./games.schema";
 import useMergedSearchParams from "../hooks/url/useMergedSearchParams";
 import QueryParams from "../utils/QueryParams";
+import Page from "../components/Page/Page";
+import PaginationBar from "../components/PaginationBar/PaginationBar";
+import PageSection from "../components/PageSection/PageSection";
 
 const placeholder: Array<SearchGamesResponseItem> = Array.from<
   SearchGamesResponseItem,
@@ -66,6 +60,8 @@ function Games({}: GamesProps) {
   const [filters, setFilters] = useState<SearchGamesRequest>(
     searchParamsToFilters(searchParams),
   );
+  const updateSearchParams = (updates: Partial<SearchGamesRequest>) =>
+    setSearchParams(new QueryParams({ ...filters, ...updates }));
 
   useEffect(() => {
     if (searchParams.size) {
@@ -96,68 +92,52 @@ function Games({}: GamesProps) {
   });
 
   return (
-    <Container p={0}>
-      <Title>Lottery Games</Title>
-
-      <Paper shadow="xl" p={24} radius={10}>
-        <GameFilters
-          initialValues={filters}
-          onUpdateClicked={(newFilters) =>
-            setSearchParams(new QueryParams({ ...filters, ...newFilters }))
-          }
+    <Page
+      title={{ value: "Lottery Games" }}
+      children={
+        <PageSection>
+          <GameFilters
+            initialValues={filters}
+            onUpdateClicked={(newFilters) =>
+              setSearchParams(new QueryParams({ ...filters, ...newFilters }))
+            }
+          />
+          <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
+            {(query.data?.items ?? placeholder).map((game, i) => (
+              <Grid.Col
+                key={`game-${game.id}`}
+                style={{ alignSelf: "stretch" }}
+                span={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}
+              >
+                <GameCard
+                  key={i}
+                  {...game}
+                  numbersRequired={
+                    game.prizes.find((p) => p.position === 1)
+                      ?.numberMatchCount ?? 5
+                  }
+                  selectionNumbers={game.selections.map(
+                    (s) => s.selectionNumber,
+                  )}
+                  gameStatus={game.gameStatus}
+                  loading={query.isLoading}
+                />
+              </Grid.Col>
+            ))}
+          </Grid>
+        </PageSection>
+      }
+      footer={
+        <PaginationBar
+          limit={filters.limit}
+          onLimitChanged={(limit) => updateSearchParams({ limit })}
+          onPageChanged={(page) => updateSearchParams({ page })}
+          page={filters.page}
+          totalItems={query.data?.total}
+          limits={[12, 24, 48]}
         />
-        <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
-          {(query.data?.items ?? placeholder).map((game, i) => (
-            <Grid.Col
-              key={`game-${game.id}`}
-              style={{ alignSelf: "stretch" }}
-              span={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}
-            >
-              <GameCard
-                key={i}
-                {...game}
-                numbersRequired={
-                  game.prizes.find((p) => p.position === 1)?.numberMatchCount ??
-                  5
-                }
-                selectionNumbers={game.selections.map((s) => s.selectionNumber)}
-                gameStatus={game.gameStatus}
-                loading={query.isLoading}
-              />
-            </Grid.Col>
-          ))}
-        </Grid>
-      </Paper>
-
-      <Center w={"100%"} mt={50}>
-        <Flex gap={"lg"} align={"center"}>
-          <Pagination
-            total={Math.max(
-              Math.ceil((query.data?.total ?? 0) / filters.limit),
-              1,
-            )}
-            value={filters.page}
-            onChange={(value) =>
-              setSearchParams(
-                new QueryParams({ ...filters, page: Number(value) }),
-              )
-            }
-          />
-          <Select
-            w={80}
-            value={filters.limit.toString()}
-            defaultValue={filters.limit.toString()}
-            data={["12", "24", "48"]}
-            onChange={(value) =>
-              setSearchParams(
-                new QueryParams({ ...filters, limit: Number(value) }),
-              )
-            }
-            allowDeselect={false}
-          />
-        </Flex>
-      </Center>
-    </Container>
+      }
+    />
   );
 }
 

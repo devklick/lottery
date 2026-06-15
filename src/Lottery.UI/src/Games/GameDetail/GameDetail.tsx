@@ -144,18 +144,18 @@ function GameDetail({}: GameDetailProps) {
         </Group>
 
         <Paper shadow="xl" p={24} radius={10}>
-          <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
-            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+          <Grid gap={"sm"} justify={"center"}>
+            <Grid.Col span={{ xs: 4, base: 12 }}>
               <Skeleton visible={loading}>
                 <Group>{startTime}</Group>
               </Skeleton>
             </Grid.Col>
-            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+            <Grid.Col span={{ xs: 4, base: 12 }}>
               <Skeleton visible={loading}>
                 <Group>{closeTime}</Group>
               </Skeleton>
             </Grid.Col>
-            <Grid.Col span={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+            <Grid.Col span={{ xs: 4, base: 12 }}>
               <Skeleton visible={loading}>
                 <Group>{drawTime}</Group>
               </Skeleton>

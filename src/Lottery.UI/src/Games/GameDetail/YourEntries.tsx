@@ -2,21 +2,16 @@ import {
   ActionIcon,
   Anchor,
   Center,
-  Collapse,
-  Flex,
   Group,
   MantineColorsTuple,
-  Pagination,
-  Select,
   Skeleton,
   Stack,
   Text,
-  Title,
   useMantineTheme,
 } from "@mantine/core";
 import { useUserStore } from "../../stores/user.store";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconChevronUp, IconEdit } from "@tabler/icons-react";
+import { IconEdit } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import gameService from "../gameService";
@@ -46,7 +41,6 @@ function YourEntries({
 }: YourEntriesProps) {
   const { colors } = useMantineTheme();
   const user = useUserStore();
-  const [opened, { toggle }] = useDisclosure(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [editTarget, setEditTarget] = useState<{
@@ -148,8 +142,6 @@ function YourEntries({
     return "You have not yet entered this game. Pick your numbers below!";
   })();
 
-  const totalPages = Math.max(Math.ceil((query.data?.total ?? 0) / limit), 1);
-
   function handleEntryEdited() {
     setEditTarget(null);
   }
@@ -182,7 +174,7 @@ function YourEntries({
               onLimitChanged={handleLimitChanged}
               onPageChanged={handlePageChanged}
               page={page}
-              totalPages={totalPages}
+              totalItems={query.data?.total}
             />
           </Stack>
         </Center>

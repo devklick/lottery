@@ -13,7 +13,7 @@ import clsx from "clsx";
 import { PropsWithChildren, ReactNode } from "react";
 
 interface PageSectionProps {
-  title: string;
+  title?: string;
   subheader?: ReactNode;
   collapsable?: boolean;
   initialCollapsed?: boolean;
@@ -39,17 +39,18 @@ export default function PageSection({
       className={clsx(className, "page-section")}
     >
       <Stack w={"100%"}>
-        <Group
-          w={"100%"}
-          style={{ alignSelf: "start" }}
-          onClick={toggle}
-          mb={"md"}
-          justify={isDesktop ? undefined : "space-between"}
-        >
-          <Title size={"h2"}>{title}</Title>
-          {collapsable && (opened ? <IconChevronUp /> : <IconChevronDown />)}
-        </Group>
-        <Collapse expanded={opened}>
+        {(title || collapsable) && (
+          <Group
+            w={"100%"}
+            style={{ alignSelf: "start" }}
+            onClick={toggle}
+            justify={isDesktop ? undefined : "space-between"}
+          >
+            <Title size={"h2"}>{title}</Title>
+            {collapsable && (opened ? <IconChevronUp /> : <IconChevronDown />)}
+          </Group>
+        )}
+        <Collapse expanded={!collapsable || opened}>
           <>
             {typeof subheader === "string" ? (
               <Text mb={"md"}>{subheader}</Text>

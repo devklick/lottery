@@ -1,10 +1,12 @@
-import { Flex, Pagination, Select } from "@mantine/core";
+import { Group, Pagination, Select } from "@mantine/core";
 
 interface PaginationBarProps {
-  totalPages: number;
+  totalPages?: number;
+  totalItems?: number;
   page: number;
   onPageChanged(page: number): void;
   limit: number;
+  limits?: number[];
   onLimitChanged(limit: number): void;
 }
 
@@ -13,19 +15,21 @@ export default function PaginationBar({
   onLimitChanged,
   onPageChanged,
   page,
-  totalPages,
+  totalItems,
+  totalPages = Math.max(Math.ceil((totalItems ?? 0) / limit), 1),
+  limits,
 }: PaginationBarProps) {
   return (
-    <Flex gap={"lg"} align={"center"} mt={"xl"}>
+    <Group gap={"lg"} align={"center"} w={"100%"} justify="center">
       <Pagination total={totalPages} value={page} onChange={onPageChanged} />
       <Select
         w={70}
         value={limit}
         defaultValue={limit}
-        data={[5, 10, 20]}
+        data={limits}
         onChange={(value) => onLimitChanged(Number(value))}
         allowDeselect={false}
       />
-    </Flex>
+    </Group>
   );
 }

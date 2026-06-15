@@ -11,13 +11,10 @@ import { useNavigate } from "react-router-dom";
 import { DateTimePicker } from "@mantine/dates";
 import {
   ActionIcon,
-  Button,
-  Container,
   Grid,
   GridColProps,
   Group,
   NumberInput,
-  Paper,
   Select,
   Stack,
   Text,
@@ -27,9 +24,11 @@ import {
 
 import { schemaResolver, useForm } from "@mantine/form";
 import { allStatesWithLabel } from "../../common/schemas";
-import { IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import React from "react";
-import z from "zod";
+import Page from "../../components/Page/Page";
+import PageSection from "../../components/PageSection/PageSection";
+import EditGameActionButtons from "../EditGame/EditGameActionButtons";
 
 interface CreateGameProps {}
 
@@ -85,181 +84,183 @@ function CreateGame({}: CreateGameProps) {
   };
 
   return (
-    <Container p={0}>
-      <Title>Create Game</Title>
-      <Paper shadow="xl" p={24} radius={10}>
-        <form
-          onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
-        >
-          <Grid justify="center" gap={"xl"}>
-            <Grid.Col key={"name-col"} {...colProps}>
-              <TextInput
-                label="Name"
-                {...form.getInputProps("name")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"state-col"} {...colProps}>
-              <Select
-                label="State"
-                {...form.getInputProps("state")}
-                data={Object.values(allStatesWithLabel)}
-                withAsterisk
-                allowDeselect={false}
-              />
-            </Grid.Col>
-            <Grid.Col key={"startTime-col"} {...dateColProps}>
-              <DateTimePicker
-                label="Start Time"
-                {...form.getInputProps("startTime")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"closeTime-col"} {...dateColProps}>
-              <DateTimePicker
-                label="Close Time"
-                {...form.getInputProps("closeTime")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"drawTime-col"} {...dateColProps}>
-              <DateTimePicker
-                label="Draw Time"
-                {...form.getInputProps("drawTime")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"maxSelections-col"} {...colProps}>
-              <NumberInput
-                label="Selections in game"
-                {...form.getInputProps("maxSelections")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"selectionsRequiredForEntry-col"} {...colProps}>
-              <NumberInput
-                label="Selections per entry"
-                {...form.getInputProps("selectionsRequiredForEntry")}
-                withAsterisk
-              />
-            </Grid.Col>
-            <Grid.Col key={"prizes-col"} span={12}>
-              <Title key={"prizes-title"} size={"h2"}>
-                Prizes
-              </Title>
-              <Grid key={"prizes-grid"} maw={500} mx="auto" mt={20}>
-                <Grid.Col
-                  key={"prize-position-header"}
-                  {...colProps}
-                  span={5.5}
-                >
-                  <Text fw={500} size="sm">
-                    Position
-                  </Text>
-                </Grid.Col>
-                <Grid.Col
-                  key={"prize-numberMatchCount-header"}
-                  {...colProps}
-                  span={5.5}
-                >
-                  <Text key={"some key"} fw={500} size="sm">
-                    Matching Numbers
-                  </Text>
-                </Grid.Col>
-                <Grid.Col
-                  key={"prize-deletePrize-header"}
-                  {...colProps}
-                  span={1}
-                ></Grid.Col>
+    <Page
+      title={{ value: "Create Game" }}
+      children={
+        <PageSection>
+          <form
+            id="create-game-form"
+            onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
+          >
+            <Grid justify="center" gap={"xl"}>
+              <Grid.Col key={"name-col"} {...colProps}>
+                <TextInput
+                  label="Name"
+                  {...form.getInputProps("name")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"state-col"} {...colProps}>
+                <Select
+                  label="State"
+                  {...form.getInputProps("state")}
+                  data={Object.values(allStatesWithLabel)}
+                  withAsterisk
+                  allowDeselect={false}
+                />
+              </Grid.Col>
+              <Grid.Col key={"startTime-col"} {...dateColProps}>
+                <DateTimePicker
+                  label="Start Time"
+                  {...form.getInputProps("startTime")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"closeTime-col"} {...dateColProps}>
+                <DateTimePicker
+                  label="Close Time"
+                  {...form.getInputProps("closeTime")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"drawTime-col"} {...dateColProps}>
+                <DateTimePicker
+                  label="Draw Time"
+                  {...form.getInputProps("drawTime")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"maxSelections-col"} {...colProps}>
+                <NumberInput
+                  label="Selections in game"
+                  {...form.getInputProps("maxSelections")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"selectionsRequiredForEntry-col"} {...colProps}>
+                <NumberInput
+                  label="Selections per entry"
+                  {...form.getInputProps("selectionsRequiredForEntry")}
+                  withAsterisk
+                />
+              </Grid.Col>
+              <Grid.Col key={"prizes-col"} span={12}>
+                <Title key={"prizes-title"} size={"h2"}>
+                  Prizes
+                </Title>
+                <Grid key={"prizes-grid"} maw={500} mx="auto" mt={20}>
+                  <Grid.Col
+                    key={"prize-position-header"}
+                    {...colProps}
+                    span={5.5}
+                  >
+                    <Text fw={500} size="sm">
+                      Position
+                    </Text>
+                  </Grid.Col>
+                  <Grid.Col
+                    key={"prize-numberMatchCount-header"}
+                    {...colProps}
+                    span={5.5}
+                  >
+                    <Text key={"some key"} fw={500} size="sm">
+                      Matching Numbers
+                    </Text>
+                  </Grid.Col>
+                  <Grid.Col
+                    key={"prize-deletePrize-header"}
+                    {...colProps}
+                    span={1}
+                  />
 
-                {form.values.prizes.map((_, index) => (
-                  <React.Fragment key={`prize-${index}`}>
-                    <Group align="start">
-                      <Grid.Col
-                        key={`prize-${index}-position`}
-                        span={5.5}
-                        styles={{ col: { alignSelf: "start" } }}
-                        maw={207}
+                  {form.values.prizes.map((_, index) => (
+                    <React.Fragment key={`prize-${index}`}>
+                      <Group align="start">
+                        <Grid.Col
+                          key={`prize-${index}-position`}
+                          span={5.5}
+                          styles={{ col: { alignSelf: "start" } }}
+                          maw={207}
+                        >
+                          <NumberInput
+                            {...form.getInputProps(`prizes.${index}.position`)}
+                          />
+                        </Grid.Col>
+                        <Grid.Col
+                          key={`prize-${index}-numberMatchCount`}
+                          span={5.5}
+                          maw={207}
+                        >
+                          <NumberInput
+                            {...form.getInputProps(
+                              `prizes.${index}.numberMatchCount`,
+                            )}
+                          />
+                        </Grid.Col>
+                        <Grid.Col key={`prize-${index}-deletePrize`} span={1}>
+                          <Stack justify="center" align="center" h={"100%"}>
+                            <ActionIcon
+                              variant="filled"
+                              color="red"
+                              onClick={() =>
+                                form.removeListItem("prizes", index)
+                              }
+                              disabled={form.values.prizes.length <= 1}
+                              mt={4}
+                            >
+                              <IconTrash />
+                            </ActionIcon>
+                          </Stack>
+                        </Grid.Col>
+                      </Group>
+                    </React.Fragment>
+                  ))}
+                  <Group justify="start" w={"100%"}>
+                    <Grid.Col span={1}>
+                      <ActionIcon
+                        disabled={
+                          form.getValues().prizes.length >=
+                          form.getValues().selectionsRequiredForEntry
+                        }
+                        onClick={() =>
+                          form.insertListItem("prizes", {
+                            numberMatchCount: Math.max(
+                              1,
+                              Math.min(
+                                ...form
+                                  .getValues()
+                                  .prizes.map((p) => p.numberMatchCount),
+                              ) - 1,
+                            ),
+                            position:
+                              Math.max(
+                                ...form
+                                  .getValues()
+                                  .prizes.map((p) => p.position),
+                              ) + 1,
+                          } as CreateGamePrizeRequest)
+                        }
                       >
-                        <NumberInput
-                          {...form.getInputProps(`prizes.${index}.position`)}
-                        />
-                      </Grid.Col>
-                      <Grid.Col
-                        key={`prize-${index}-numberMatchCount`}
-                        span={5.5}
-                        maw={207}
-                      >
-                        <NumberInput
-                          {...form.getInputProps(
-                            `prizes.${index}.numberMatchCount`,
-                          )}
-                        />
-                      </Grid.Col>
-                      <Grid.Col key={`prize-${index}-deletePrize`} span={1}>
-                        <Stack justify="center" align="center" h={"100%"}>
-                          <ActionIcon
-                            variant="filled"
-                            color="red"
-                            onClick={() => form.removeListItem("prizes", index)}
-                            disabled={form.values.prizes.length <= 1}
-                            mt={4}
-                          >
-                            <IconTrash />
-                          </ActionIcon>
-                        </Stack>
-                      </Grid.Col>
-                    </Group>
-                  </React.Fragment>
-                ))}
-              </Grid>
-              <Group justify="center" mt={"md"}>
-                <Button
-                  disabled={
-                    form.getValues().prizes.length >=
-                    form.getValues().selectionsRequiredForEntry
-                  }
-                  onClick={() =>
-                    form.insertListItem("prizes", {
-                      numberMatchCount: Math.max(
-                        1,
-                        Math.min(
-                          ...form
-                            .getValues()
-                            .prizes.map((p) => p.numberMatchCount),
-                        ) - 1,
-                      ),
-                      position:
-                        Math.max(
-                          ...form.getValues().prizes.map((p) => p.position),
-                        ) + 1,
-                    } as CreateGamePrizeRequest)
-                  }
-                >
-                  Add new prize
-                </Button>
-              </Group>
-            </Grid.Col>
-
-            <Grid.Col
-              key={"submit-col"}
-              span={{ xs: 3.5, sm: 2.5, md: 2.5, lg: 2.5, xl: 2.5, mt: 10 }}
-            >
-              <Group mt={50}>
-                <Button
-                  type="submit"
-                  loading={mutation.isPending}
-                  fullWidth
-                  disabled={Object.keys(form.errors).length > 0}
-                >
-                  {mutation.isPending ? "Submitting" : "Submit"}
-                </Button>
-              </Group>
-            </Grid.Col>
-          </Grid>
-        </form>
-      </Paper>
-    </Container>
+                        <IconPlus />
+                      </ActionIcon>
+                    </Grid.Col>
+                  </Group>
+                </Grid>
+              </Grid.Col>
+            </Grid>
+          </form>
+        </PageSection>
+      }
+      footer={
+        // TODO: Make this a more generic component so it can be used for both create and edit
+        <EditGameActionButtons
+          cancelDisabled={mutation.isPending}
+          onCancel={() => navigate("/games")}
+          submitDisabled={Object.keys(form.errors).length > 0}
+          formId="create-game-form"
+        />
+      }
+    />
   );
 }
 
