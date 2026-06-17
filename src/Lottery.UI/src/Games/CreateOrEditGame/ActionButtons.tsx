@@ -1,19 +1,19 @@
 import { Button, Grid, Group, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-interface EditGameActionButtonsProps {
+interface CreateOrEditGameActionButtonsProps {
   cancelDisabled: boolean;
   onCancel(): void;
   submitDisabled: boolean;
   formId: string;
 }
 
-export default function EditGameActionButtons({
+export default function CreateOrEditGameActionButtons({
   cancelDisabled,
   onCancel,
   submitDisabled,
   formId,
-}: EditGameActionButtonsProps) {
+}: CreateOrEditGameActionButtonsProps) {
   const { breakpoints } = useMantineTheme();
   const fullWidth = !useMediaQuery(`(min-width: ${breakpoints.sm})`);
   return (
