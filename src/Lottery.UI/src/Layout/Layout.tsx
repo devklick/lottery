@@ -16,8 +16,6 @@ function Layout({}: LayoutProps) {
   const [burgerOpened, { toggle: toggleBurger }] = useDisclosure();
   const navigate = useNavigate();
   const user = useUserStore();
-  const { toggleColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme();
 
   async function handleClickLogInOrOut() {
     if (user.authenticated()) {
@@ -42,8 +40,6 @@ function Layout({}: LayoutProps) {
       <Header
         burgerOpened={burgerOpened}
         toggleBurger={toggleBurger}
-        colorScheme={computedColorScheme}
-        toggleColorScheme={toggleColorScheme}
         handleClickLogInOrOut={handleClickLogInOrOut}
         navigate={navigate}
         userAuthenticated={user.authenticated()}

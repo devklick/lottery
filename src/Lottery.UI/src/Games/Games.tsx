@@ -95,7 +95,7 @@ function Games({}: GamesProps) {
     <Page
       title={{ value: "Lottery Games" }}
       children={
-        <PageSection>
+        <PageSection width={"auto"}>
           <GameFilters
             initialValues={filters}
             onUpdateClicked={(newFilters) =>

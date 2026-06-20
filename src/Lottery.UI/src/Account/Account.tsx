@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/user.store";
 import { useEffect } from "react";
+import { useGetAccount } from "./account.hooks";
+import Page from "../components/Page";
+import AccountDetails from "./AccountDetails/AccountDetails";
+import YourEntries from "./YourEntries";
+import YourWins from "./YourWins";
 
 interface AccountProps {}
 
@@ -11,8 +16,17 @@ function Account({}: AccountProps) {
     if (!user.authenticated()) {
       navigate("/account/signIn");
     }
-  });
-  return "Hello from account";
+  }, []);
+
+  const accountQuery = useGetAccount({ enabled: user.authenticated() });
+
+  return (
+    <Page title="Account">
+      {accountQuery.data && <AccountDetails {...accountQuery.data} />}
+      <YourEntries />
+      <YourWins />
+    </Page>
+  );
 }
 
 export default Account;

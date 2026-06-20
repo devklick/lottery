@@ -18,7 +18,7 @@ import {
 interface UserService {
   inviteUser: (request: UserInviteRequest) => Promise<UserInviteResponse>;
   verifyInvite: (
-    request: VerifyInviteRequestQuery
+    request: VerifyInviteRequestQuery,
   ) => Promise<VerifyInviteResponse>;
   acceptInvite: (request: AcceptInviteRequest) => Promise<AcceptInviteResponse>;
 }
@@ -32,7 +32,7 @@ export function createUserService({
     const result = await api.post<UserInviteRequestBody, UserInviteResponse>(
       "/user/invite",
       request.body,
-      { withCredentials: true }
+      { withCredentials: true },
     );
 
     if (!result.success) {
@@ -51,7 +51,7 @@ export function createUserService({
   const verifyInvite: UserService["verifyInvite"] = async (request) => {
     const result = await api.get<VerifyInviteRequestQuery, UserInviteResponse>(
       "/user/invite/verify",
-      request
+      request,
     );
 
     if (!result.success) {

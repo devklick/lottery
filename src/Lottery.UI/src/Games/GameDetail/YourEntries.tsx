@@ -22,6 +22,7 @@ import { EntryPrize } from "./game.schema";
 import NumberBall from "../../components/NumberBall/NumberBall";
 import PageSection from "../../components/PageSection/PageSection";
 import PaginationBar from "../../components/PaginationBar/PaginationBar";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;
@@ -155,7 +156,8 @@ function YourEntries({
     >
       {!user.authenticated() ? (
         <Text span>
-          <Anchor href="/account/signIn">Sign in</Anchor> to view your entries
+          <AnchorLink to="/account/signIn">Sign in</AnchorLink> to view your
+          entries
         </Text>
       ) : (
         <Center w={"100%"}>

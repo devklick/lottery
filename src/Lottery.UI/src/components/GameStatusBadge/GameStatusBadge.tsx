@@ -5,7 +5,7 @@ import {
   MantineColor,
   Skeleton,
   StyleProp,
-  Text,
+  Tooltip,
 } from "@mantine/core";
 import clsx from "clsx";
 import { GameStatus } from "../../common/schemas";
@@ -58,21 +58,11 @@ function GameStatusBadge({
       })}
     >
       <Skeleton w={100} visible={loading}>
-        <HoverCard width={280} shadow="md">
-          <HoverCard.Target>
-            <Badge
-              pos={position}
-              top={0}
-              fullWidth
-              color={getStatusColor(state)}
-            >
-              {state}
-            </Badge>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            <Text size="sm">{statusDescription[state]}</Text>
-          </HoverCard.Dropdown>
-        </HoverCard>
+        <Tooltip label={statusDescription[state]}>
+          <Badge pos={position} top={0} fullWidth color={getStatusColor(state)}>
+            {state}
+          </Badge>
+        </Tooltip>
       </Skeleton>
     </Group>
   );

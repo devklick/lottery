@@ -22,16 +22,17 @@ export default function Page({
   footer,
   children,
 }: PropsWithChildren<PageProps>) {
+  const titleNode = (() => {
+    if (isPageTitleProps(title))
+      return <Title ta={title.align ?? "left"}>{title.value}</Title>;
+    if (typeof title === "string") return <Title ta={"left"}>{title}</Title>;
+    return title;
+  })();
+
   return (
     <Container>
       <Stack gap={"xl"}>
-        {isPageTitleProps(title) ? (
-          <Title style={{ textAlign: title.align ?? "left" }}>
-            {title.value}
-          </Title>
-        ) : (
-          title
-        )}
+        {titleNode}
         {children}
         {typeof footer === "string" ? <Title>{footer}</Title> : footer}
       </Stack>

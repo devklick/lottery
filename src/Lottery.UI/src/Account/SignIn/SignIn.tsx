@@ -19,9 +19,11 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { useUserStore } from "../../stores/user.store";
+import Page from "../../components/Page";
+import PageSection from "../../components/PageSection";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 
 interface SignInProps {}
 
@@ -51,9 +53,8 @@ function SignIn({}: SignInProps) {
   });
 
   return (
-    <Container p={0} maw={300}>
-      <Title>Sign In</Title>
-      <Paper shadow="xl" p={24} radius={10}>
+    <Page title={{ value: "Sign In", align: "center" }}>
+      <PageSection width={"auto"}>
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
             <TextInput
@@ -79,12 +80,12 @@ function SignIn({}: SignInProps) {
             </Button>
             <Text size="sm">
               Don't have an account?{" "}
-              <Anchor href="/account/signUp">Sign up</Anchor>
+              <AnchorLink to="/account/signUp">Sign up</AnchorLink>
             </Text>
           </Stack>
         </form>
-      </Paper>
-    </Container>
+      </PageSection>
+    </Page>
   );
 }
 

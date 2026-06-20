@@ -6,6 +6,8 @@ import {
   Switch,
   Text,
   UnstyledButton,
+  useComputedColorScheme,
+  useMantineColorScheme,
 } from "@mantine/core";
 import {
   IconLogin,
@@ -23,8 +25,6 @@ interface HeaderProps {
   handleClickLogInOrOut(): void;
   userAuthenticated: boolean;
   userType: UserType;
-  colorScheme: ColorScheme;
-  toggleColorScheme(): void;
 }
 
 function Header({
@@ -34,9 +34,9 @@ function Header({
   handleClickLogInOrOut,
   userAuthenticated,
   userType,
-  colorScheme,
-  toggleColorScheme,
 }: HeaderProps) {
+  const { toggleColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme();
   const logInOrOutIcon = userAuthenticated ? <IconLogout /> : <IconLogin />;
   return (
     <AppShell.Header>
@@ -78,9 +78,9 @@ function Header({
             <Menu
               trigger="hover"
               openDelay={100}
-              loop={false}
+              loop={true}
               withinPortal={false}
-              trapFocus={false}
+              trapFocus={true}
             >
               <Menu.Target>
                 <UnstyledButton onClick={() => navigate("/account")}>
@@ -117,7 +117,7 @@ function Header({
                     <Switch
                       onLabel={<IconSun size={16} />}
                       offLabel={<IconMoon size={16} />}
-                      checked={colorScheme === "light"}
+                      checked={computedColorScheme === "light"}
                       style={{ pointerEvents: "none" }}
                     />
                   }

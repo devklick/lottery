@@ -18,6 +18,9 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
 import { useNavigate } from "react-router-dom";
+import Page from "../../components/Page";
+import PageSection from "../../components/PageSection";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 
 interface SignUpProps {}
 
@@ -35,9 +38,8 @@ function SignUp({}: SignUpProps) {
   });
 
   return (
-    <Container p={0} maw={300}>
-      <Title>Sign Up</Title>
-      <Paper shadow="xl" p={24} radius={10}>
+    <Page title={{ value: "Sign Up", align: "center" }}>
+      <PageSection width={"auto"}>
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
             <TextInput placeholder="Email" {...form.getInputProps("email")} />
@@ -63,12 +65,12 @@ function SignUp({}: SignUpProps) {
 
             <Text size="sm">
               Already have an account?{" "}
-              <Anchor href="/account/signIn">Sign in</Anchor>
+              <AnchorLink to="/account/signIn">Sign in</AnchorLink>
             </Text>
           </Stack>
         </form>
-      </Paper>
-    </Container>
+      </PageSection>
+    </Page>
   );
 }
 

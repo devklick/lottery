@@ -11,6 +11,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import clsx from "clsx";
 import { PropsWithChildren, ReactNode } from "react";
+import { Property } from "csstype";
 
 interface PageSectionProps {
   title?: string;
@@ -18,6 +19,9 @@ interface PageSectionProps {
   collapsable?: boolean;
   initialCollapsed?: boolean;
   className?: string;
+  maxWidth?: string | number;
+  width?: string | number;
+  alignChildren?: Property.AlignItems;
 }
 
 export default function PageSection({
@@ -27,40 +31,52 @@ export default function PageSection({
   subheader,
   children,
   className,
+  maxWidth,
+  width = "100%",
+  alignChildren = "center",
 }: PropsWithChildren<PageSectionProps>) {
   const [opened, { toggle }] = useDisclosure(collapsable && initialCollapsed);
   const { breakpoints } = useMantineTheme();
   const isDesktop = useMediaQuery(`(min-width: ${breakpoints.xs})`);
   return (
-    <Paper
-      shadow="xl"
-      p={24}
-      radius={10}
-      className={clsx(className, "page-section")}
-    >
-      <Stack w={"100%"}>
-        {(title || collapsable) && (
-          <Group
+    <Group w={"100%"} justify="center">
+      <Paper
+        shadow="xl"
+        p={24}
+        radius={10}
+        className={clsx(className, "page-section")}
+        maw={maxWidth}
+        w={width}
+      >
+        <Stack w={"100%"}>
+          {(title || collapsable) && (
+            <Group
+              w={"100%"}
+              style={{ alignSelf: "start" }}
+              onClick={toggle}
+              justify={isDesktop ? undefined : "space-between"}
+            >
+              <Title size={"h2"}>{title}</Title>
+              {collapsable &&
+                (opened ? <IconChevronUp /> : <IconChevronDown />)}
+            </Group>
+          )}
+          <Collapse
+            expanded={!collapsable || opened}
             w={"100%"}
-            style={{ alignSelf: "start" }}
-            onClick={toggle}
-            justify={isDesktop ? undefined : "space-between"}
+            className="collapse"
           >
-            <Title size={"h2"}>{title}</Title>
-            {collapsable && (opened ? <IconChevronUp /> : <IconChevronDown />)}
-          </Group>
-        )}
-        <Collapse expanded={!collapsable || opened}>
-          <>
-            {typeof subheader === "string" ? (
-              <Text mb={"md"}>{subheader}</Text>
-            ) : (
-              subheader
-            )}
-            {children}
-          </>
-        </Collapse>
-      </Stack>
-    </Paper>
+            <Stack align={alignChildren} w={"100%"}>
+              {typeof subheader === "string" ? (
+                <Text mb={"md"}>{subheader}</Text>
+              ) : (
+                subheader
+              )}
+              {children}
+            </Stack>
+          </Collapse>
+        </Stack>
+      </Paper>
+    </Group>
   );
 }

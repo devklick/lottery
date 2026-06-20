@@ -2,6 +2,7 @@ using System.Security.Claims;
 
 using AutoMapper;
 
+using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Common;
@@ -28,7 +29,8 @@ public class UserService(
     SignInManager<AppUser> signInManager,
     Hasher hasher,
     UserRepository userRepository,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IHttpContextAccessor httpContextAccessor)
 {
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
@@ -267,6 +269,43 @@ public class UserService(
         {
             Status = accountResult.Status,
             Errors = accountResult.Errors,
+        };
+    }
+
+    public async Task<Result<GetAccountResponse>> GetAccount()
+    {
+        var username = httpContextAccessor.HttpContext?.User.Identity?.Name;
+        if (username is null)
+        {
+            return new Result<GetAccountResponse>
+            {
+                Status = ResultStatus.NotAuthenticated,
+                Errors = [new Error { Message = "User not logged in" }]
+            };
+        }
+
+        var user = await userManager.FindByNameAsync(username);
+
+        if (user is null)
+        {
+            return new Result<GetAccountResponse>
+            {
+                Status = ResultStatus.NotFound,
+                Errors = [new Error { Message = "User not found" }]
+            };
+        }
+
+        return new Result<GetAccountResponse>
+        {
+            Status = ResultStatus.Ok,
+            Value = new GetAccountResponse
+            {
+                Email = user.Email!,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                Username = user.UserName!
+            }
         };
     }
 }

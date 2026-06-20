@@ -38,30 +38,30 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
   const colProps = { span: { xl: 6, lg: 6, md: 6, sm: 6, xs: 12 } };
 
   return (
-    <Container p={0}>
+    <Container p={0} w="100%">
       <Collapse expanded={opened}>
         <form onSubmit={form.onSubmit((data) => onUpdateClicked(data))}>
           <Grid>
             <Grid.Col key={"name"} {...colProps}>
               <TextInput
                 label="Game Name"
+                ta="left"
                 {...form.getInputProps("name")}
-                style={{ textAlign: "left" }}
               />
             </Grid.Col>
             <Grid.Col key={"status"} {...colProps}>
               <MultiSelect
                 label="Game States"
+                ta="left"
                 {...form.getInputProps("gameStatus")}
-                style={{ textAlign: "left" }}
                 data={Object.values(allGameStatusesWithLabels)}
               />
             </Grid.Col>
             <Grid.Col key="sortby" {...colProps}>
               <Select
                 label="Order By"
+                ta="left"
                 {...form.getInputProps("sortBy")}
-                style={{ textAlign: "left" }}
                 data={Object.values(LabelledSortByValues)}
                 allowDeselect={false}
               />
@@ -69,8 +69,8 @@ function GameFilters({ initialValues, onUpdateClicked }: GameFiltersProps) {
             <Grid.Col key="sortdir" {...colProps}>
               <Select
                 label="Order Direction"
+                ta="left"
                 {...form.getInputProps("sortDirection")}
-                style={{ textAlign: "left" }}
                 data={Object.values(allSortDirectionsWithLabel)}
                 allowDeselect={false}
               />

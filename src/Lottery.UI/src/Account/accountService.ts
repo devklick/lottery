@@ -9,11 +9,16 @@ import {
   signInResponseSchema,
 } from "./SignIn/signIn.schema";
 import { ApiService, ApiServiceDefinition } from "../services/ApiService";
+import {
+  GetAccountResponse,
+  getAccountResponseSchema,
+} from "./SignUp/getAccount.schema";
 
 interface AccountService {
   signIn(request: SignInRequest): Promise<SignInResponse>;
   signUp(request: SignUpRequest): Promise<SignUpResponse>;
   signOut(): Promise<void>;
+  getAccount(): Promise<GetAccountResponse>;
 }
 
 export function createAccountService({
@@ -66,8 +71,25 @@ export function createAccountService({
       withCredentials: true,
     });
   };
+  const getAccount: AccountService["getAccount"] = async () => {
+    const result = await api.get<null, GetAccountResponse>("/account", null, {
+      withCredentials: true,
+    });
 
-  return { signIn, signUp, signOut };
+    if (!result.success) {
+      throw result.error;
+    }
+
+    const valid = getAccountResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  return { signIn, signUp, signOut, getAccount };
 }
 
 export default createAccountService({

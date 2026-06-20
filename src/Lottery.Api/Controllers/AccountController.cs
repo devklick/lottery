@@ -1,8 +1,10 @@
+using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Services;
 using Lottery.DB.Entities.Idt;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +38,15 @@ public class AccountController(
     public async Task<ActionResult<SignUpResponse>> SignUp(SignUpRequest request)
     {
         var result = await _userService.CreateAccount(request);
+
+        return CreateActionResult(result);
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<GetAccountResponse>> GetAccount()
+    {
+        var result = await _userService.GetAccount();
 
         return CreateActionResult(result);
     }
