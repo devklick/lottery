@@ -13,6 +13,9 @@ using Lottery.Resulting;
 using Lottery.Api.Utilities;
 using Lottery.Api.Repositories.User;
 using DotNetEnv.Configuration;
+using Resend;
+using Lottery.Common.Helpers;
+using Lottery.Api.Services.Email;
 
 namespace Lottery.Api;
 
@@ -46,6 +49,19 @@ public class Program
 
         builder.Services.Configure<UserServiceOptions>(
             builder.Configuration.GetSection(UserServiceOptions.Name));
+
+        builder.Services.PostConfigure<UserServiceOptions>(options =>
+        {
+            options.EmailConfirmationDomain =
+                $"http://localhost:{Env.GetRequiredEnvVar("LOTTERY_UI_PORT")}";
+        });
+
+        builder.Services.AddTransient<IResend, ResendClient>();
+
+        builder.Services.AddHttpClient<ResendClient>();
+        builder.Services.Configure<ResendClientOptions>(o =>
+            o.ApiToken = Env.GetRequiredEnvVar("EMAIL_API_KEY"));
+        builder.Services.AddScoped<IEmailSender<AppUser>, EmailSender>();
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
         {

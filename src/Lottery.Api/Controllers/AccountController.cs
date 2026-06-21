@@ -1,6 +1,7 @@
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
+using Lottery.Api.Models.Account.UpdateAccount;
 using Lottery.Api.Services;
 using Lottery.DB.Entities.Idt;
 
@@ -47,6 +48,15 @@ public class AccountController(
     public async Task<ActionResult<GetAccountResponse>> GetAccount()
     {
         var result = await _userService.GetAccount();
+
+        return CreateActionResult(result);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<UpdateAccountResponse>> UpdateAccount(UpdateAccountRequest request)
+    {
+        var result = await _userService.UpdateAccount(request);
 
         return CreateActionResult(result);
     }

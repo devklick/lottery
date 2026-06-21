@@ -22,6 +22,7 @@ interface PageSectionProps {
   maxWidth?: string | number;
   width?: string | number;
   alignChildren?: Property.AlignItems;
+  footer?: ReactNode;
 }
 
 export default function PageSection({
@@ -34,6 +35,7 @@ export default function PageSection({
   maxWidth,
   width = "100%",
   alignChildren = "center",
+  footer,
 }: PropsWithChildren<PageSectionProps>) {
   const [opened, { toggle }] = useDisclosure(collapsable && initialCollapsed);
   const { breakpoints } = useMantineTheme();
@@ -66,13 +68,14 @@ export default function PageSection({
             w={"100%"}
             className="collapse"
           >
-            <Stack align={alignChildren} w={"100%"}>
+            <Stack align={alignChildren} w={"100%"} gap={"xl"}>
               {typeof subheader === "string" ? (
                 <Text mb={"md"}>{subheader}</Text>
               ) : (
                 subheader
               )}
-              {children}
+              <Stack>{children}</Stack>
+              {footer}
             </Stack>
           </Collapse>
         </Stack>

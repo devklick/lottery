@@ -10,10 +10,10 @@ interface CreateGameProps {}
 
 function getDate(now: Date, daysToAdd: number, hoursToAdd = 0) {
   const date = new Date(now);
-  date.setDate(now.getDate() + daysToAdd);
-  date.setHours(now.getHours() + hoursToAdd);
-  date.setMinutes(0);
-  date.setSeconds(0);
+  date.setUTCDate(now.getDate() + daysToAdd);
+  date.setUTCHours(now.getHours() + hoursToAdd);
+  date.setUTCMinutes(0);
+  date.setUTCSeconds(0);
   date.setUTCMilliseconds(0);
   return date;
 }

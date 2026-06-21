@@ -1,24 +1,32 @@
 import {
+  UpdateAccountRequestBody,
+  UpdateAccountResponse,
+  updateAccountResponseSchema,
+} from "./AccountDetails/updateAccountDetails.schema";
+import {
   SignInRequest,
   SignInResponse,
   signInResponseSchema,
 } from "./SignIn/signIn.schema";
+import {
+  GetAccountResponse,
+  getAccountResponseSchema,
+} from "./SignUp/getAccount.schema";
 import {
   SignUpRequest,
   signUpResponseSchema,
   SignUpResponse,
 } from "./SignUp/signUp.schema";
 import { ApiService, ApiServiceDefinition } from "../services/ApiService";
-import {
-  GetAccountResponse,
-  getAccountResponseSchema,
-} from "./SignUp/getAccount.schema";
 
 interface AccountService {
   signIn(request: SignInRequest): Promise<SignInResponse>;
   signUp(request: SignUpRequest): Promise<SignUpResponse>;
   signOut(): Promise<void>;
   getAccount(): Promise<GetAccountResponse>;
+  updateAccount(
+    request: UpdateAccountRequestBody,
+  ): Promise<UpdateAccountResponse>;
 }
 
 export function createAccountService({
@@ -89,7 +97,28 @@ export function createAccountService({
     throw valid.error.message;
   };
 
-  return { signIn, signUp, signOut, getAccount };
+  const updateAccount: AccountService["updateAccount"] = async (request) => {
+    const result = await api.post<
+      UpdateAccountRequestBody,
+      UpdateAccountResponse
+    >("/account", request, {
+      withCredentials: true,
+    });
+
+    if (!result.success) {
+      throw result.error;
+    }
+
+    const valid = updateAccountResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  return { signIn, signUp, signOut, getAccount, updateAccount };
 }
 
 export default createAccountService({

@@ -5,6 +5,7 @@ using AutoMapper;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
+using Lottery.Api.Models.Account.UpdateAccount;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.User.Invite;
 using Lottery.Api.Models.User.Invite.Accept;
@@ -12,6 +13,7 @@ using Lottery.Api.Models.User.Invite.Verify;
 using Lottery.Api.Repositories.User;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Utilities;
+using Lottery.Common.Helpers;
 using Lottery.Common.Models;
 using Lottery.DB.Entities.Idt;
 
@@ -30,7 +32,8 @@ public class UserService(
     Hasher hasher,
     UserRepository userRepository,
     TimeProvider timeProvider,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IEmailSender<AppUser> emailSender)
 {
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
@@ -274,38 +277,91 @@ public class UserService(
 
     public async Task<Result<GetAccountResponse>> GetAccount()
     {
-        var username = httpContextAccessor.HttpContext?.User.Identity?.Name;
+        var userResult = await GetCurrentUser();
+
+        return userResult.ChangeValue<GetAccountResponse>(userResult.IsOk ? new()
+        {
+            Email = userResult.Value.Email!,
+            EmailConfirmed = userResult.Value.EmailConfirmed,
+            PhoneNumber = userResult.Value.PhoneNumber,
+            PhoneNumberConfirmed = userResult.Value.PhoneNumberConfirmed,
+            Username = userResult.Value.UserName!
+        } : null);
+    }
+
+    public async Task<Result<UpdateAccountResponse>> UpdateAccount(UpdateAccountRequest request)
+    {
+        var userResult = await GetCurrentUser();
+        if (!userResult.IsOk) return userResult.ChangeValue<UpdateAccountResponse>();
+        var user = userResult.Value;
+
+        var updateResult = new UpdateAccountResponse
+        {
+            Email = Result<string>.Ok(user.Email!),
+            Username = Result<string>.Ok(user.UserName!),
+            PhoneNumber = Result<string?>.Ok(user.PhoneNumber)
+        };
+
+        if (request.Body.Username is not null && request.Body.Username != user.UserName)
+        {
+            var usernameResult = await UpdateUsername(user, request.Body.Username);
+
+            if (!usernameResult.IsOk)
+                updateResult.Username = usernameResult.ChangeValue(user.UserName);
+            else
+            {
+                user = usernameResult.Value;
+                updateResult.Username = usernameResult.ChangeValue(user.UserName);
+            }
+        }
+
+        if (request.Body.Email is not null && request.Body.Email != user.Email)
+        {
+            var changeEmailToken = await userManager.GenerateChangeEmailTokenAsync(user, request.Body.Email);
+            var confirmationLink =
+                $"{userServiceOptions.Value.EmailConfirmationDomain}" +
+                $"?userId={user.Id}" +
+                $"&newEmail={Uri.EscapeDataString(request.Body.Email)}" +
+                $"&token={changeEmailToken}";
+
+            await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
+
+            updateResult.Email = Result<string>.Ok(request.Body.Email);
+            updateResult.Email.AddErrors("Email change pending confirmation");
+        }
+
+        if (request.Body.PhoneNumber is not null && request.Body.PhoneNumber != user.PhoneNumber)
+        {
+            // TODO: Consider proper flow for changing phone number
+            await userManager.SetPhoneNumberAsync(user, request.Body.PhoneNumber);
+            updateResult.PhoneNumber.ChangeValue(request.Body.PhoneNumber);
+        }
+
+        return Result<UpdateAccountResponse>.Ok(updateResult);
+    }
+
+    private async Task<Result<AppUser>> UpdateUsername(AppUser user, string username)
+    {
+        var result = await userManager.SetUserNameAsync(user, username);
+        return result.Succeeded
+            ? await GetCurrentUser(username)
+            : Result<AppUser>.Error(ResultStatus.BadRequest, result.Errors.Select(s => s.Description));
+    }
+
+    private async Task<Result<AppUser>> GetCurrentUser(string? username = null)
+    {
+        username ??= httpContextAccessor.HttpContext?.User.Identity?.Name;
         if (username is null)
         {
-            return new Result<GetAccountResponse>
-            {
-                Status = ResultStatus.NotAuthenticated,
-                Errors = [new Error { Message = "User not logged in" }]
-            };
+            return Result<AppUser>.Error(ResultStatus.NotAuthenticated, "User not logged in");
         }
 
         var user = await userManager.FindByNameAsync(username);
 
         if (user is null)
         {
-            return new Result<GetAccountResponse>
-            {
-                Status = ResultStatus.NotFound,
-                Errors = [new Error { Message = "User not found" }]
-            };
+            return Result<AppUser>.Error(ResultStatus.NotFound, "User not found");
         }
-
-        return new Result<GetAccountResponse>
-        {
-            Status = ResultStatus.Ok,
-            Value = new GetAccountResponse
-            {
-                Email = user.Email!,
-                EmailConfirmed = user.EmailConfirmed,
-                PhoneNumber = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                Username = user.UserName!
-            }
-        };
+        return Result<AppUser>.Ok(user);
     }
 }
