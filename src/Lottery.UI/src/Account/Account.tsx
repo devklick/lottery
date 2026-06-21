@@ -1,14 +1,17 @@
-import { useNavigate } from "react-router-dom";
-import { useUserStore } from "../stores/user.store";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useGetAccount } from "./account.hooks";
-import Page from "../components/Page";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import YourEntries from "./YourEntries";
 import YourWins from "./YourWins";
+import Page from "../components/Page";
+import { useUserStore } from "../stores/user.store";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface AccountProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function Account({}: AccountProps) {
   const user = useUserStore();
   const navigate = useNavigate();

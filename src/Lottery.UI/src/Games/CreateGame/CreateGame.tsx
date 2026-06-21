@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { CreateGameRequest, CreateGameResponse } from "./createGame.schema";
-import gameService from "../gameService";
 import { useNavigate } from "react-router-dom";
 
+import { CreateGameRequest, CreateGameResponse } from "./createGame.schema";
 import CreateOrEditGame from "../CreateOrEditGame/CreateOrEditGame";
+import gameService from "../gameService";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CreateGameProps {}
 
 function getDate(now: Date, daysToAdd: number, hoursToAdd = 0) {
@@ -17,6 +18,7 @@ function getDate(now: Date, daysToAdd: number, hoursToAdd = 0) {
   return date;
 }
 
+// eslint-disable-next-line no-empty-pattern
 function CreateGame({}: CreateGameProps) {
   const now = new Date();
   const defaultStartTime = getDate(now, 1);

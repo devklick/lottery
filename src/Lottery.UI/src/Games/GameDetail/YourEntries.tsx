@@ -8,19 +8,20 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useUserStore } from "../../stores/user.store";
 import { IconEdit } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import gameService from "../gameService";
-import Trophy from "../../components/Trophy/Trophy";
+
 import EditEntry from "./EditEntry";
-import { GameStatus } from "../../common/schemas";
 import { EntryPrize } from "./game.schema";
+import { GameStatus } from "../../common/schemas";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 import NumberBall from "../../components/NumberBall/NumberBall";
 import PageSection from "../../components/PageSection/PageSection";
 import PaginationBar from "../../components/PaginationBar/PaginationBar";
-import AnchorLink from "../../components/AnchorLink/AnchorLink";
+import Trophy from "../../components/Trophy/Trophy";
+import { useUserStore } from "../../stores/user.store";
+import gameService from "../gameService";
 
 interface YourEntriesProps {
   gameSelections: ReadonlyArray<{ id: string; selectionNumber: number }>;

@@ -1,15 +1,16 @@
+import { Grid } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import gameService from "./gameService";
-import { Grid } from "@mantine/core";
+
 import GameCard from "./GameCard";
 import GameFilters from "./GameFilters";
 import { SearchGamesRequest, SearchGamesResponseItem } from "./games.schema";
+import gameService from "./gameService";
+import Page from "../components/Page/Page";
+import PageSection from "../components/PageSection/PageSection";
+import PaginationBar from "../components/PaginationBar/PaginationBar";
 import useMergedSearchParams from "../hooks/url/useMergedSearchParams";
 import QueryParams from "../utils/QueryParams";
-import Page from "../components/Page/Page";
-import PaginationBar from "../components/PaginationBar/PaginationBar";
-import PageSection from "../components/PageSection/PageSection";
 
 const placeholder: Array<SearchGamesResponseItem> = Array.from<
   SearchGamesResponseItem,
@@ -52,6 +53,7 @@ function searchParamsToFilters(params: URLSearchParams): SearchGamesRequest {
   // TODO: Implement this properly at some point...
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface GamesProps {}
 
 // eslint-disable-next-line no-empty-pattern

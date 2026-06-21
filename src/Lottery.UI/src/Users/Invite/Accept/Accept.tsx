@@ -1,13 +1,3 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import useValidatedQueryParams from "../../../hooks/url/useValidatedSearchParams";
-import {
-  AcceptInviteRequestBody,
-  AcceptInviteResponse,
-  acceptInviteRequestBodySchema,
-  verifyInviteRequestQuerySchema,
-} from "./accept.schema";
-import userService from "../../userService";
-import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -21,13 +11,23 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm, schemaResolver } from "@mantine/form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface AcceptProps {}
+import {
+  AcceptInviteRequestBody,
+  AcceptInviteResponse,
+  acceptInviteRequestBodySchema,
+  verifyInviteRequestQuerySchema,
+} from "./accept.schema";
+import useValidatedQueryParams from "../../../hooks/url/useValidatedSearchParams";
+import userService from "../../userService";
+
+type AcceptProps = object;
 
 // eslint-disable-next-line no-empty-pattern
 function Accept({}: AcceptProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setInviteVerified] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
@@ -79,9 +79,7 @@ function Accept({}: AcceptProps) {
 
   // The result of the query determines whether or not the invite is valid
   useEffect(() => {
-    verifyInviteQuery.isSuccess
-      ? setInviteVerified(true)
-      : setInviteVerified(false);
+    setInviteVerified(verifyInviteQuery.isSuccess);
   }, [verifyInviteQuery]);
 
   // If the mutation was successful, the new user account has successfully been created,

@@ -1,7 +1,8 @@
 import { Button, Menu } from "@mantine/core";
 import { IconBriefcase, IconEdit, IconRotate2 } from "@tabler/icons-react";
-import { GameStatus } from "../../common/schemas";
 import { useNavigate } from "react-router-dom";
+
+import { GameStatus } from "../../common/schemas";
 
 interface ManageGameButtonProps {
   gameId: string;

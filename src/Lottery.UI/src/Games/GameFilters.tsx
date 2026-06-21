@@ -12,6 +12,7 @@ import {
 import { useForm, schemaResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+
 import {
   LabelledSortByValues,
   SearchGamesRequestFilter,

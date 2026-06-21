@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
+
 import gameService from "../gameService";
 import { EditGameRequestBody, EditGameResponse } from "./editGame.schema";
-
 import CreateOrEditGame from "../CreateOrEditGame/CreateOrEditGame";
 
 const placeholders: EditGameRequestBody = {
@@ -20,12 +20,14 @@ const placeholders: EditGameRequestBody = {
   state: "enabled",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface EditGameProps {}
 
 interface Params extends Record<string, string | undefined> {
   id: string;
 }
 
+// eslint-disable-next-line no-empty-pattern
 function EditGame({}: EditGameProps) {
   const { id } = useParams<Params>();
   const navigate = useNavigate();

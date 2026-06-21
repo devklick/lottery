@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import accountService from "./accountService";
 
 interface UseGetAccountProps {

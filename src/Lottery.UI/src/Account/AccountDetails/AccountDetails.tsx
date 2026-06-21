@@ -1,5 +1,6 @@
 import { Grid, Text, Tooltip } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
+
 import PageSection from "../../components/PageSection";
 
 interface AccountDetailsProps {

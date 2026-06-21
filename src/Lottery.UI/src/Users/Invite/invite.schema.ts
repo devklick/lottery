@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { userTypeSchema } from "../../common/schemas";
 
 export const userInviteRequestBodySchema = z.object({

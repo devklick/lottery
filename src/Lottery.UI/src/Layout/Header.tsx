@@ -16,6 +16,7 @@ import {
   IconSun,
   IconUserPlus,
 } from "@tabler/icons-react";
+
 import { UserType } from "../common/schemas";
 
 interface HeaderProps {

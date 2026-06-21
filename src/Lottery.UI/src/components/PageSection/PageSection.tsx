@@ -10,8 +10,8 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import clsx from "clsx";
-import { PropsWithChildren, ReactNode } from "react";
 import { Property } from "csstype";
+import { PropsWithChildren, ReactNode } from "react";
 
 interface PageSectionProps {
   title?: string;

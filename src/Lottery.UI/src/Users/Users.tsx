@@ -1,7 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface UsersProps {}
 
-function Users({}:UsersProps) {
-    return 'hello from users'
+// eslint-disable-next-line no-empty-pattern
+function Users({}: UsersProps) {
+  return "hello from users";
 }
 
 export default Users;

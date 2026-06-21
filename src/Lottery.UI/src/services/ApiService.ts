@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+
 import {
   ApiErrors,
   ApiErrorsResponse,
@@ -90,7 +91,7 @@ export class ApiService implements ApiServiceDefinition {
       withCredentials: options?.withCredentials,
     });
 
-    options?.onStatusCode && options.onStatusCode[response.status]?.();
+    options?.onStatusCode?.[response.status]?.();
 
     if (
       response.status.toString().startsWith("2") &&
@@ -123,7 +124,7 @@ export class ApiService implements ApiServiceDefinition {
       withCredentials: options?.withCredentials,
     });
 
-    options?.onStatusCode && options.onStatusCode[response.status]?.();
+    options?.onStatusCode?.[response.status]?.();
 
     if (
       response.status.toString().startsWith("2") &&
@@ -159,7 +160,7 @@ export class ApiService implements ApiServiceDefinition {
       },
     );
 
-    options?.onStatusCode && options.onStatusCode[response.status]?.();
+    options?.onStatusCode?.[response.status]?.();
 
     if (
       response.status.toString().startsWith("2") &&

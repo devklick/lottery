@@ -1,7 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import dateFormat from "dateformat";
-import gameService from "../gameService";
 import {
   Container,
   Grid,
@@ -12,15 +8,20 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { GetGameResponse } from "./game.schema";
+import { useDisclosure } from "@mantine/hooks";
+import { useQuery } from "@tanstack/react-query";
+import dateFormat from "dateformat";
+import { useParams } from "react-router-dom";
+
+import gameService from "../gameService";
 import CreateEntry from "./CreateEntry";
+import { GetGameResponse } from "./game.schema";
+import GamePrizes from "./GamePrizes";
 import YourEntries from "./YourEntries";
 import GameStatusBadge from "../../components/GameStatusBadge";
 import ManageGameButton from "../../components/ManageGameButton/ManageGameButton";
 import { useUserStore } from "../../stores/user.store";
-import { useDisclosure } from "@mantine/hooks";
 import ResultGameModal from "../ResultGame";
-import GamePrizes from "./GamePrizes";
 
 const placeholders: GetGameResponse = {
   name: "Dummy Text",
@@ -55,8 +56,10 @@ interface Params extends Record<string, string | undefined> {
   id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface GameDetailProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function GameDetail({}: GameDetailProps) {
   const { id } = useParams<Params>();
   // This should not happen since it would match on a different route
@@ -184,7 +187,7 @@ function GameDetail({}: GameDetailProps) {
           selectionNumbers={
             query.data?.selections.map((s) => s.selectionNumber) ?? []
           }
-          selectionsRequired={query.data?.selectionsRequiredForEntry!}
+          selectionsRequired={query.data?.selectionsRequiredForEntry ?? 0}
         />
       </Stack>
     </Container>

@@ -2,9 +2,9 @@ import { Button, Card, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
-import { useUserStore } from "../stores/user.store";
-import GameStatusBadge from "../components/GameStatusBadge";
 import { GameStatus } from "../common/schemas";
+import GameStatusBadge from "../components/GameStatusBadge";
+import { useUserStore } from "../stores/user.store";
 import ResultGameModal from "./ResultGame/ResultGame";
 import ManageGameButton from "../components/ManageGameButton/ManageGameButton";
 

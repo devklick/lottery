@@ -8,11 +8,13 @@ import {
   Tabs,
   Text,
 } from "@mantine/core";
-import { useState } from "react";
-import SelectionPicker from "../GameDetail/SelectionPicker";
-import { useMutation } from "@tanstack/react-query";
-import gameService from "../gameService";
 import { notifications } from "@mantine/notifications";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+
+import SelectionPicker from "../GameDetail/SelectionPicker";
+import gameService from "../gameService";
+
 
 const TabTypes = {
   Manual: "manual",

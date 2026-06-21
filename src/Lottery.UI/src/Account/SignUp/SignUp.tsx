@@ -1,19 +1,22 @@
+import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
 import {
   SignUpRequest,
   SignUpResponse,
   signUpRequestSchema,
 } from "./signUp.schema";
-import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
-import { useMutation } from "@tanstack/react-query";
-import accountService from "../accountService";
-import { useNavigate } from "react-router-dom";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 import Page from "../../components/Page";
 import PageSection from "../../components/PageSection";
-import AnchorLink from "../../components/AnchorLink/AnchorLink";
+import accountService from "../accountService";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SignUpProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function SignUp({}: SignUpProps) {
   const form = useForm<SignUpRequest>({
     validate: schemaResolver(signUpRequestSchema),

@@ -1,18 +1,3 @@
-import { schemaResolver, useForm, UseFormReturnType } from "@mantine/form";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import {
-  CreateGameRequest,
-  createGameRequestSchema,
-  CreateGameResponse,
-} from "../CreateGame/createGame.schema";
-import {
-  EditGameRequestBody,
-  editGameRequestBodySchema,
-  EditGameResponse,
-} from "../EditGame/editGame.schema";
-import Page from "../../components/Page/Page";
-import PageSection from "../../components/PageSection/PageSection";
 import {
   ActionIcon,
   Grid,
@@ -26,11 +11,27 @@ import {
   Title,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
-import { Fragment } from "react/jsx-runtime";
+import { schemaResolver, useForm, UseFormReturnType } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
+import { Fragment } from "react/jsx-runtime";
+import { useNavigate } from "react-router-dom";
+
+import ActionButtons from "./ActionButtons";
 import { allStatesWithLabel } from "../../common/schemas";
 import { toPascalCase } from "../../common/utils/string.utils";
-import ActionButtons from "./ActionButtons";
+import Page from "../../components/Page/Page";
+import PageSection from "../../components/PageSection/PageSection";
+import {
+  CreateGameRequest,
+  createGameRequestSchema,
+  CreateGameResponse,
+} from "../CreateGame/createGame.schema";
+import {
+  EditGameRequestBody,
+  editGameRequestBodySchema,
+  EditGameResponse,
+} from "../EditGame/editGame.schema";
 
 type Shared<T, U> = {
   [K in Extract<keyof T, keyof U>]: T[K] & U[K];

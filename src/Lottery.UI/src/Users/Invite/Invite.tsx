@@ -1,12 +1,3 @@
-import { useForm, schemaResolver } from "@mantine/form";
-import {
-  UserInviteRequest,
-  UserInviteRequestBody,
-  UserInviteResponse,
-  userInviteRequestBodySchema,
-} from "./invite.schema";
-import { useMutation } from "@tanstack/react-query";
-import userService from "../userService";
 import {
   Paper,
   Title,
@@ -17,11 +8,23 @@ import {
   Button,
   Text,
 } from "@mantine/core";
-import { allUserTypesWithLabel } from "../../common/schemas";
+import { useForm, schemaResolver } from "@mantine/form";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
+import {
+  UserInviteRequest,
+  UserInviteRequestBody,
+  UserInviteResponse,
+  userInviteRequestBodySchema,
+} from "./invite.schema";
+import { allUserTypesWithLabel } from "../../common/schemas";
+import userService from "../userService";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface InviteProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function Invite({}: InviteProps) {
   const initialValues: UserInviteRequestBody = {
     email: "",

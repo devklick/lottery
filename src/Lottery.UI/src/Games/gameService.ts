@@ -28,16 +28,16 @@ import {
   getGameResponseSchema,
 } from "./GameDetail/game.schema";
 import {
+  SearchGamesRequest,
+  SearchGamesResponse,
+  searchGamesResponseSchema,
+} from "./games.schema";
+import {
   ResultGameRequest,
   ResultGameRequestBody,
   ResultGameResponse,
   resultGameResponseSchema,
 } from "./ResultGame/resultGame.schema";
-import {
-  SearchGamesRequest,
-  SearchGamesResponse,
-  searchGamesResponseSchema,
-} from "./games.schema";
 
 interface GameService {
   createGame(request: CreateGameRequest): Promise<CreateGameResponse>;

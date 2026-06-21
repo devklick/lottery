@@ -1,7 +1,8 @@
 import { PropsWithChildren, useEffect } from "react";
-import { useUserStore } from "../stores/user.store";
 import { useNavigate } from "react-router-dom";
+
 import { UserType } from "../common/schemas";
+import { useUserStore } from "../stores/user.store";
 
 interface ProtectedRouteProps {
   permittedUserTypes: Array<UserType>;

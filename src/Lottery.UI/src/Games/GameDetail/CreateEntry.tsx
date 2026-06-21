@@ -1,10 +1,11 @@
+import { CheckIcon } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+
 import gameService from "../gameService";
 import SelectionPicker from "./SelectionPicker";
 import PageSection from "../../components/PageSection/PageSection";
-import { notifications } from "@mantine/notifications";
-import { CheckIcon } from "@mantine/core";
 
 interface CreateEntryProps {
   gameId: string;

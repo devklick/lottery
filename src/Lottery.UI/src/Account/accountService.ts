@@ -1,13 +1,13 @@
 import {
-  SignUpRequest,
-  signUpResponseSchema,
-  SignUpResponse,
-} from "./SignUp/signUp.schema";
-import {
   SignInRequest,
   SignInResponse,
   signInResponseSchema,
 } from "./SignIn/signIn.schema";
+import {
+  SignUpRequest,
+  signUpResponseSchema,
+  SignUpResponse,
+} from "./SignUp/signUp.schema";
 import { ApiService, ApiServiceDefinition } from "../services/ApiService";
 import {
   GetAccountResponse,

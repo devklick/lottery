@@ -4,6 +4,7 @@ import {
   createSearchParams,
   useSearchParams,
 } from "react-router-dom";
+
 import QueryParams from "../../utils/QueryParams";
 
 export default function useMergedSearchParams<T extends object>(

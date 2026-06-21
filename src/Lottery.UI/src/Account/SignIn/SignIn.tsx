@@ -1,12 +1,3 @@
-import { schemaResolver, useForm } from "@mantine/form";
-import {
-  SignInRequest,
-  SignInResponse,
-  signInRequestSchema,
-} from "./signIn.schema";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import accountService from "../accountService";
 import {
   Button,
   Checkbox,
@@ -17,13 +8,25 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useUserStore } from "../../stores/user.store";
+import { schemaResolver, useForm } from "@mantine/form";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
+import {
+  SignInRequest,
+  SignInResponse,
+  signInRequestSchema,
+} from "./signIn.schema";
+import AnchorLink from "../../components/AnchorLink/AnchorLink";
 import Page from "../../components/Page";
 import PageSection from "../../components/PageSection";
-import AnchorLink from "../../components/AnchorLink/AnchorLink";
+import { useUserStore } from "../../stores/user.store";
+import accountService from "../accountService";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SignInProps {}
 
+// eslint-disable-next-line no-empty-pattern
 function SignIn({}: SignInProps) {
   const initialValues: SignInRequest = {
     password: "",

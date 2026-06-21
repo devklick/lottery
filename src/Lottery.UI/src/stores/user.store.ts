@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+
 import { UserType } from "../common/schemas";
 
 interface UserStore {

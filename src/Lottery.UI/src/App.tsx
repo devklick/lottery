@@ -3,10 +3,10 @@ import {
   MantineColorScheme,
   MantineProvider,
 } from "@mantine/core";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import routes from "./Routing/routes.tsx";
 import { useCreateTheme } from "./theme.ts";

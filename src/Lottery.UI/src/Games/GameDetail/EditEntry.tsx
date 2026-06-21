@@ -1,10 +1,11 @@
 import { CheckIcon, Modal } from "@mantine/core";
-import { useMutation } from "@tanstack/react-query";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { useMutation } from "@tanstack/react-query";
 
 import SelectionPicker from "./SelectionPicker";
 import gameService from "../gameService";
-import { notifications } from "@mantine/notifications";
+
 
 interface EditEntryProps {
   selectionNumbers: ReadonlyArray<number>;

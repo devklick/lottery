@@ -1,7 +1,8 @@
 import { Center, Grid, Group, Skeleton, Text } from "@mantine/core";
 import { Fragment } from "react/jsx-runtime";
-import Trophy from "../../components/Trophy/Trophy";
+
 import PageSection from "../../components/PageSection/PageSection";
+import Trophy from "../../components/Trophy/Trophy";
 
 interface GamePrizeObject {
   id: string;

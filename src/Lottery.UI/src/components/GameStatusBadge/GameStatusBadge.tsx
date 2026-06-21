@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import clsx from "clsx";
+
 import { GameStatus } from "../../common/schemas";
 
 interface GameStatusBadgeProps {
