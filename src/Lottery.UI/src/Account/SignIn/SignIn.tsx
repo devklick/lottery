@@ -58,21 +58,26 @@ function SignIn({}: SignInProps) {
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
             <TextInput
-              placeholder="Username"
               {...form.getInputProps("username")}
+              placeholder="Username"
+              name="username"
+              type="text"
             />
 
             <PasswordInput
-              placeholder="Password"
               {...form.getInputProps("password")}
+              placeholder="Password"
+              name="password"
+              type="password"
             />
 
-            <Group>
+            <Group justify="space-between">
               <Checkbox
                 {...form.getInputProps("staySignedIn")}
                 defaultChecked={initialValues.staySignedIn}
+                name="stay-signed-in"
               />
-              <InputLabel>Stay signed in</InputLabel>
+              <InputLabel fw={"normal"}>Stay signed in</InputLabel>
             </Group>
 
             <Button variant="filled" type="submit">

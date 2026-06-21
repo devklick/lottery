@@ -42,21 +42,32 @@ function SignUp({}: SignUpProps) {
       <PageSection width={"auto"}>
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
-            <TextInput placeholder="Email" {...form.getInputProps("email")} />
+            <TextInput
+              {...form.getInputProps("email")}
+              placeholder="Email"
+              name="email"
+              type="email"
+            />
 
             <TextInput
-              placeholder="Username"
               {...form.getInputProps("username")}
+              placeholder="Username"
+              name="username"
+              type="text"
             />
 
             <PasswordInput
-              placeholder="Password"
               {...form.getInputProps("password")}
+              placeholder="Password"
+              name="password"
+              type="password"
             />
 
             <PasswordInput
-              placeholder="Confirm Password"
               {...form.getInputProps("confirmPassword")}
+              placeholder="Confirm Password"
+              name="confirm-password"
+              type="password"
             />
 
             <Button variant="filled" type="submit">
