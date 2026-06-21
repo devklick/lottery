@@ -4,17 +4,7 @@ import {
   SignUpResponse,
   signUpRequestSchema,
 } from "./signUp.schema";
-import {
-  Anchor,
-  Button,
-  Container,
-  Paper,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import accountService from "../accountService";
 import { useNavigate } from "react-router-dom";

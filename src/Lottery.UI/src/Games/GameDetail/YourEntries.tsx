@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Anchor,
   Center,
   Group,
   MantineColorsTuple,
@@ -10,7 +9,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useUserStore } from "../../stores/user.store";
-import { useDisclosure } from "@mantine/hooks";
 import { IconEdit } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";

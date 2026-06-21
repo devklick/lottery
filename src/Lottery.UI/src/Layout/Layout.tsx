@@ -1,8 +1,4 @@
-import {
-  AppShell,
-  useComputedColorScheme,
-  useMantineColorScheme,
-} from "@mantine/core";
+import { AppShell } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/user.store";

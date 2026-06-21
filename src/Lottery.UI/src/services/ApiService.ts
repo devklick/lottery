@@ -3,7 +3,6 @@ import {
   ApiErrors,
   ApiErrorsResponse,
   apiErrorsResponseSchema,
-  ApiResponse,
   ApiSuccessResponse,
   apiSuccessResponseSchema,
 } from "../common/schemas";

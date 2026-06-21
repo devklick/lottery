@@ -1,10 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Grid,
-  Group,
-  useMantineTheme,
-} from "@mantine/core";
+import { Button, ButtonGroup, Group, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 interface CreateOrEditGameActionButtonsProps {

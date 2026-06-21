@@ -1,17 +1,6 @@
-import {
-  Center,
-  Collapse,
-  Grid,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Center, Grid, Group, Skeleton, Text } from "@mantine/core";
 import { Fragment } from "react/jsx-runtime";
 import Trophy from "../../components/Trophy/Trophy";
-import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import PageSection from "../../components/PageSection/PageSection";
 
 interface GamePrizeObject {

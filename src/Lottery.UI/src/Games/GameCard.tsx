@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  Group,
-  Modal,
-  Skeleton,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Button, Card, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
