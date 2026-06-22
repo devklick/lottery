@@ -1,5 +1,7 @@
 using Lottery.Api.Filters.Auth;
 using Lottery.Api.Mappings;
+using Lottery.Api.Models.Account.ConfirmEmail;
+using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
@@ -69,6 +71,22 @@ public class AccountController(
     public async Task<ActionResult<ConfirmPasswordResponse>> ConfirmPassword(ConfirmPasswordRequest request)
     {
         var result = await userService.ConfirmPassword(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpGet("confirmEmail")]
+    public async Task<ActionResult<ConfirmEmailResponse>> ConfirmEmail(ConfirmEmailRequest request)
+    {
+        var result = await userService.ConfirmEmail(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpGet("confirmEmailChange")]
+    public async Task<ActionResult<ConfirmEmailChangeResponse>> ConfirmEmailChange(ConfirmEmailChangeRequest request)
+    {
+        var result = await userService.ConfirmEmailChange(request);
 
         return CreateObjectResult(result);
     }

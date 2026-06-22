@@ -54,6 +54,7 @@ export function createAccountService({
     }
 
     const valid = signUpResponseSchema.safeParse(result.data);
+    console.log("sign up response", valid, result);
 
     if (valid.success) {
       return valid.data.value;

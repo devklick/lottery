@@ -48,7 +48,7 @@ public class UserRepository(LotteryDBContext db) : RepositoryBase<LotteryDBConte
 
     public async Task UpdateUser(AppUser user)
     {
-        db.Users.Update(user);
-        await db.SaveChangesAsync();
+        _db.Users.Update(user);
+        await _db.SaveChangesAsync();
     }
 }

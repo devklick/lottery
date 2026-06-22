@@ -2,6 +2,8 @@ using System.Security.Claims;
 
 using AutoMapper;
 
+using Lottery.Api.Models.Account.ConfirmEmail;
+using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
@@ -97,19 +99,17 @@ public class UserService(
     {
         var appUser = mapper.Map<AppUser>(request);
 
-        appUser.EmailConfirmed = userServiceOptions.Value.AutoConfirmNewAccounts;
-        appUser.PasswordHash = hasher.HashPassword(appUser, request.Body.Password);
-
         var userResult = await userManager.CreateAsync(appUser);
 
         if (!userResult.Succeeded)
         {
-            return new Result<SignUpResponse>
-            {
-                Status = ResultStatus.ServerError,
-                Messages = userResult.Errors.Select(s => new Message { Value = s.Description }).ToList()
-            };
+            return Result<SignUpResponse>.Error(
+                ResultStatus.ServerError,
+                userResult.Errors.Select(s => new Message { Value = s.Description }));
         }
+
+        appUser.EmailConfirmed = userServiceOptions.Value.AutoConfirmNewAccounts;
+        appUser.PasswordHash = hasher.HashPassword(appUser, request.Body.Password);
 
         if (roles == null || !roles.Any())
         {
@@ -122,16 +122,30 @@ public class UserService(
 
             if (!roleResult.Succeeded)
             {
-                return new Result<SignUpResponse>
-                {
-                    Status = ResultStatus.ServerError,
-                    Messages = roleResult.Errors.Select(s => new Message { Value = s.Description }).ToList()
-                };
+                return Result<SignUpResponse>.Error(
+                    ResultStatus.ServerError,
+                    roleResult.Errors.Select(s => new Message { Value = s.Description, Code = MessageCode.General }));
             }
         }
 
+        var user = await userManager.FindByEmailAsync(appUser.Email!);
+        if (user is null)
+        {
+            return Result<SignUpResponse>.Error(
+                ResultStatus.ServerError,
+                "Unexpected error when creating user");
+        }
 
-        return new Result<SignUpResponse> { Status = ResultStatus.Ok };
+        var changeEmailToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        var confirmationLink =
+            $"{userServiceOptions.Value.EmailConfirmationDomain}" +
+            $"?userId={user.Id}" +
+            $"&token={changeEmailToken}";
+
+        await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
+
+        return Result<SignUpResponse>.Ok(new());
     }
 
     public async Task<Result<UserInviteResponse>> InviteUser(UserInviteRequest request, ClaimsPrincipal user)
@@ -322,7 +336,7 @@ public class UserService(
             var confirmationLink =
                 $"{userServiceOptions.Value.EmailConfirmationDomain}" +
                 $"?userId={user.Id}" +
-                $"&newEmail={Uri.EscapeDataString(request.Body.Email)}" +
+                $"&email={Uri.EscapeDataString(request.Body.Email)}" +
                 $"&token={changeEmailToken}";
 
             await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
@@ -387,5 +401,39 @@ public class UserService(
             return Result<ConfirmPasswordResponse>.Ok(new());
         }
         return Result<ConfirmPasswordResponse>.Error(ResultStatus.NotAuthenticated, "Incorrect password");
+    }
+
+    public async Task<Result<ConfirmEmailResponse>> ConfirmEmail(ConfirmEmailRequest request)
+    {
+        var user = await userManager.FindByIdAsync(request.Query.UserId.ToString());
+        if (user is null)
+        {
+            return Result<ConfirmEmailResponse>.Error(
+                ResultStatus.NotFound,
+                "Unable to locate user"
+            );
+        }
+        var result = await userManager.ConfirmEmailAsync(user, request.Query.Token);
+
+        return result.Succeeded
+            ? Result<ConfirmEmailResponse>.Ok(new())
+            : Result<ConfirmEmailResponse>.Error(ResultStatus.ServerError, result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<Result<ConfirmEmailChangeResponse>> ConfirmEmailChange(ConfirmEmailChangeRequest request)
+    {
+        var user = await userManager.FindByIdAsync(request.Query.UserId.ToString());
+        if (user is null)
+        {
+            return Result<ConfirmEmailChangeResponse>.Error(
+                ResultStatus.NotFound,
+                "Unable to locate user"
+            );
+        }
+        var result = await userManager.ChangeEmailAsync(user, request.Query.Email, request.Query.Token);
+
+        return result.Succeeded
+            ? Result<ConfirmEmailChangeResponse>.Ok(new())
+            : Result<ConfirmEmailChangeResponse>.Error(ResultStatus.ServerError, result.Errors.Select(e => e.Description));
     }
 }

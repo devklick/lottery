@@ -26,8 +26,11 @@ function SignUp({}: SignUpProps) {
   const navigate = useNavigate();
 
   const mutation = useMutation<SignUpResponse, unknown, SignUpRequest>({
-    mutationFn: async (request) => await accountService.signUp(request),
-    onSuccess: () => navigate("/home"),
+    mutationFn: accountService.signUp,
+    onSuccess: () => {
+      console.log("mutation success");
+      navigate("/home");
+    },
   });
 
   return (
