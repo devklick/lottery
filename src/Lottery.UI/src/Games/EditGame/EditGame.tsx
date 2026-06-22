@@ -57,15 +57,15 @@ function EditGame({}: EditGameProps) {
     state: query.data?.state ?? placeholders.state,
   };
 
+  const formDisabled = query.data?.gameStatus !== "future";
   return (
     <CreateOrEditGame
       mode="edit"
       initialValues={initialValues}
       mutationFn={mutation.mutateAsync}
-      disabled={(form) =>
-        query.data?.gameStatus !== "future" || form.isTouched()
-      }
+      submitDisabled={(form) => formDisabled || form.isTouched()}
       onCancel={() => navigate(`/games/${id}`)}
+      disabled={formDisabled}
     />
   );
 }

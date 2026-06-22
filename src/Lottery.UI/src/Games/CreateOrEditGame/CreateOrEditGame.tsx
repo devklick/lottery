@@ -49,12 +49,9 @@ interface CreateOrEditGameProps<
   initialValues: CreateOrEditFromValues;
   mutationFn(request: CreateOrEditFromValues): Promise<TResponse>;
   onCancel(): void;
-  disabled(
-    form: UseFormReturnType<
-      CreateOrEditFromValues,
-      CreateOrEditFromValues,
-      undefined
-    >,
+  disabled?: boolean;
+  submitDisabled(
+    form: UseFormReturnType<CreateOrEditFromValues, CreateOrEditFromValues>,
   ): boolean;
 }
 
@@ -68,6 +65,7 @@ export default function CreateOrEditGame<
   initialValues,
   mutationFn,
   onCancel,
+  submitDisabled,
   disabled,
 }: CreateOrEditGameProps<Mode, TResponse>) {
   const navigate = useNavigate();
@@ -114,6 +112,7 @@ export default function CreateOrEditGame<
                   label="Name"
                   {...form.getInputProps("name")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"state-col"} {...colProps}>
@@ -123,6 +122,7 @@ export default function CreateOrEditGame<
                   data={Object.values(allStatesWithLabel)}
                   withAsterisk
                   allowDeselect={false}
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"startTime-col"} {...dateColProps}>
@@ -130,6 +130,7 @@ export default function CreateOrEditGame<
                   label="Start Time"
                   {...form.getInputProps("startTime")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"closeTime-col"} {...dateColProps}>
@@ -137,6 +138,7 @@ export default function CreateOrEditGame<
                   label="Close Time"
                   {...form.getInputProps("closeTime")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"drawTime-col"} {...dateColProps}>
@@ -144,6 +146,7 @@ export default function CreateOrEditGame<
                   label="Draw Time"
                   {...form.getInputProps("drawTime")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"maxSelections-col"} {...colProps}>
@@ -151,6 +154,7 @@ export default function CreateOrEditGame<
                   label="Selections in game"
                   {...form.getInputProps("maxSelections")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"selectionsRequiredForEntry-col"} {...colProps}>
@@ -158,6 +162,7 @@ export default function CreateOrEditGame<
                   label="Selections per entry"
                   {...form.getInputProps("selectionsRequiredForEntry")}
                   withAsterisk
+                  disabled={disabled}
                 />
               </Grid.Col>
               <Grid.Col key={"prizes-col"} span={12}>
@@ -200,6 +205,7 @@ export default function CreateOrEditGame<
                         >
                           <NumberInput
                             {...form.getInputProps(`prizes.${index}.position`)}
+                            disabled={disabled}
                           />
                         </Grid.Col>
                         <Grid.Col
@@ -211,6 +217,7 @@ export default function CreateOrEditGame<
                             {...form.getInputProps(
                               `prizes.${index}.numberMatchCount`,
                             )}
+                            disabled={disabled}
                           />
                         </Grid.Col>
                         <Grid.Col key={`prize-${index}-deletePrize`} span={1}>
@@ -221,7 +228,9 @@ export default function CreateOrEditGame<
                               onClick={() =>
                                 form.removeListItem("prizes", index)
                               }
-                              disabled={form.values.prizes.length <= 1}
+                              disabled={
+                                form.values.prizes.length <= 1 || disabled
+                              }
                               mt={4}
                             >
                               <IconTrash />
@@ -236,9 +245,11 @@ export default function CreateOrEditGame<
                       <ActionIcon
                         disabled={
                           form.getValues().prizes.length >=
-                          form.getValues().selectionsRequiredForEntry
+                            form.getValues().selectionsRequiredForEntry ||
+                          disabled
                         }
-                        onClick={() =>
+                        onClick={() => {
+                          if (disabled) return;
                           form.insertListItem("prizes", {
                             numberMatchCount: Math.max(
                               1,
@@ -254,8 +265,8 @@ export default function CreateOrEditGame<
                                   .getValues()
                                   .prizes.map((p) => p.position),
                               ) + 1,
-                          } satisfies CreateOrEditFromValues["prizes"][number])
-                        }
+                          } satisfies CreateOrEditFromValues["prizes"][number]);
+                        }}
                       >
                         <IconPlus />
                       </ActionIcon>
@@ -271,7 +282,7 @@ export default function CreateOrEditGame<
         <ActionButtons
           cancelDisabled={mutation.isPending}
           onCancel={onCancel}
-          submitDisabled={disabled(form)}
+          submitDisabled={disabled || submitDisabled(form)}
           formId={`${mode}-game-form`}
         />
       }

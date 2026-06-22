@@ -188,6 +188,7 @@ function GameDetail({}: GameDetailProps) {
             query.data?.selections.map((s) => s.selectionNumber) ?? []
           }
           selectionsRequired={query.data?.selectionsRequiredForEntry ?? 0}
+          gameStatus={query.data?.gameStatus ?? placeholders.gameStatus}
         />
       </Stack>
     </Container>

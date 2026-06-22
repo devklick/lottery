@@ -48,7 +48,7 @@ function CreateGame({}: CreateGameProps) {
       mode="create"
       initialValues={initialValues}
       mutationFn={mutation.mutateAsync}
-      disabled={(form) => Object.keys(form.errors).length > 0}
+      submitDisabled={(form) => Object.keys(form.errors).length > 0}
       onCancel={() => navigate("/games")}
     />
   );

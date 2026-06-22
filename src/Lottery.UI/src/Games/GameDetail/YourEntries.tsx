@@ -45,7 +45,7 @@ function YourEntries({
   const [limit, setLimit] = useState(5);
   const [editTarget, setEditTarget] = useState<{
     entryId: string;
-    selectionNumbers: ReadonlyArray<number>;
+    selectedNumbers: ReadonlyArray<number>;
   } | null>(null);
 
   const queryClient = useQueryClient();
@@ -123,7 +123,7 @@ function YourEntries({
           onClick={() =>
             setEditTarget({
               entryId: entry.id,
-              selectionNumbers: entry.selections.map((s) => s.selectionNumber),
+              selectedNumbers: entry.selections.map((s) => s.selectionNumber),
             })
           }
         >
@@ -162,7 +162,7 @@ function YourEntries({
         <Center w={"100%"}>
           {editTarget && (
             <EditEntry
-              selectedNumbers={editTarget.selectionNumbers}
+              selectedNumbers={editTarget.selectedNumbers}
               selectionNumbers={gameSelections.map((s) => s.selectionNumber)}
               onClose={handleEntryEdited}
               entryId={editTarget.entryId}

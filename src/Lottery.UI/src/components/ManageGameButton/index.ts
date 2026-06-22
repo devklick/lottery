@@ -1,1 +1,1 @@
-export * from "./ManageGameButton";
+export { default } from "./ManageGameButton";

@@ -23,6 +23,12 @@ export default function NumberBall({
   const colorRange =
     _colorRange ?? (selected ? theme.colors.blue : theme.colors.gray);
 
+  function handleClick(value: number) {
+    if (!disabled) {
+      onClick?.(value);
+    }
+  }
+
   return (
     <Badge
       circle
@@ -45,7 +51,7 @@ export default function NumberBall({
         };
       }}
       key={value}
-      onClick={() => onClick?.(value)}
+      onClick={() => handleClick(value)}
       className="number-ball"
     >
       {value}

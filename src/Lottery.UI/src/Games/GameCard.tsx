@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import { GameStatus } from "../common/schemas";
 import GameStatusBadge from "../components/GameStatusBadge";
+import ManageGameButton from "../components/ManageGameButton";
 import { useUserStore } from "../stores/user.store";
 import ResultGameModal from "./ResultGame/ResultGame";
-import ManageGameButton from "../components/ManageGameButton/ManageGameButton";
 
 interface GameCardProps {
   id: string;

@@ -5,18 +5,21 @@ import { useState } from "react";
 
 import gameService from "../gameService";
 import SelectionPicker from "./SelectionPicker";
+import { GameStatus } from "../../common/schemas";
 import PageSection from "../../components/PageSection/PageSection";
 
 interface CreateEntryProps {
   gameId: string;
   selectionNumbers: Array<number>;
   selectionsRequired: number;
+  gameStatus: GameStatus;
 }
 
 function CreateEntry({
   selectionNumbers: selections,
   gameId,
   selectionsRequired,
+  gameStatus,
 }: CreateEntryProps) {
   const [success, setSuccess] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState<ReadonlyArray<number>>(
@@ -63,12 +66,24 @@ function CreateEntry({
     setSelectedNumbers([]);
   }
 
+  const subheader = (() => {
+    switch (gameStatus) {
+      case "future":
+        return "Come back when the game opens to pick your numbers";
+      case "open":
+        return `pick ${selectionsRequired} numbers to submit your entry`;
+      case "closed":
+      case "resulted":
+        return "Game is now closed";
+    }
+  })();
+
   // TODO: Improve this, remove the annoying overlay on success
   return (
     <PageSection
       title="Pick Your Numbers"
       collapsable
-      subheader={`Pick ${selectionsRequired} numbers to submit your entry`}
+      subheader={subheader}
       className="create-entry-page-section"
     >
       <SelectionPicker
@@ -76,6 +91,7 @@ function CreateEntry({
         selectedNumbers={selectedNumbers}
         selectionNumbers={selections}
         onSubmit={handleSubmitEntry}
+        disabled={gameStatus !== "open"}
         submitStatus={
           mutation.isPending ? "submitting" : success ? "success" : "waiting"
         }

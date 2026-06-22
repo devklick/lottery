@@ -74,7 +74,7 @@ export default function PageSection({
               ) : (
                 subheader
               )}
-              <Stack>{children}</Stack>
+              <Stack w={"100%"}>{children}</Stack>
               {footer}
             </Stack>
           </Collapse>

@@ -9,6 +9,7 @@ interface SelectionPickerProps {
   requiredCount: number;
   onSubmit(selectionNumbers: Array<number>): void;
   submitStatus: "waiting" | "submitting" | "success";
+  disabled: boolean;
 }
 
 function SelectionPicker({
@@ -17,12 +18,13 @@ function SelectionPicker({
   requiredCount,
   onSubmit,
   submitStatus,
+  disabled,
 }: SelectionPickerProps) {
   const [selectedNumbers, setSelectedNumbers] = useState([..._selectedNumbers]);
 
-  useEffect(() => {
-    setSelectedNumbers([..._selectedNumbers]);
-  }, [_selectedNumbers]);
+  // useEffect(() => {
+  //   setSelectedNumbers([..._selectedNumbers]);
+  // }, [_selectedNumbers]);
 
   function handleSelected(selectionNumber: number) {
     if (selectedNumbers.includes(selectionNumber)) {
@@ -35,6 +37,7 @@ function SelectionPicker({
   const remaining = requiredCount - selectedNumbers.length;
 
   const submitButtonText = (() => {
+    if (disabled) return "Come back later";
     if (submitStatus === "submitting") return "Submitting";
     if (remaining) return `Submit (${remaining}/${requiredCount} remaining)`;
     return "Submit";
@@ -55,12 +58,12 @@ function SelectionPicker({
           ?.sort((a, b) => a - b)
           .map((selection) => {
             const isSelected = selectedNumbers.includes(selection);
-            const disabled =
+            const allSelected =
               selectedNumbers.length === requiredCount && !isSelected;
             return (
               <NumberBall
                 selected={isSelected}
-                disabled={disabled}
+                disabled={disabled || allSelected}
                 value={selection}
                 onClick={handleSelected}
               />
@@ -69,7 +72,7 @@ function SelectionPicker({
       </Flex>
       <Button
         onClick={() => onSubmit(selectedNumbers)}
-        disabled={selectedNumbers.length !== requiredCount}
+        disabled={disabled || selectedNumbers.length !== requiredCount}
       >
         {submitButtonText}
       </Button>

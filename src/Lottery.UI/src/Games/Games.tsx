@@ -93,14 +93,18 @@ function Games({}: GamesProps) {
     <Page
       title={{ value: "Lottery Games" }}
       children={
-        <PageSection width={"auto"}>
+        <PageSection width={"100%"}>
           <GameFilters
             initialValues={filters}
             onUpdateClicked={(newFilters) =>
               setSearchParams(new QueryParams({ ...filters, ...newFilters }))
             }
           />
-          <Grid gap={{ base: 24, md: "xl", xl: 50 }} justify={"center"}>
+          <Grid
+            gap={{ base: 24, md: "xl", xl: 50 }}
+            w="100%"
+            justify={"center"}
+          >
             {(query.data?.items ?? placeholder).map((game, i) => (
               <Grid.Col
                 key={`game-${game.id}`}
