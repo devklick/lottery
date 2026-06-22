@@ -6,4 +6,5 @@ public class UserServiceOptions
     public bool AutoConfirmNewAccounts { get; set; }
     public TimeSpan UserInviteValidFor { get; set; } = TimeSpan.FromHours(24);
     public required string EmailConfirmationDomain { get; set; }
+    public TimeSpan ElevatedSessionDuration { get; set; } = TimeSpan.FromMinutes(5);
 }

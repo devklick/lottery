@@ -1,3 +1,6 @@
+using Lottery.Api.Filters.Auth;
+using Lottery.Api.Mappings;
+using Lottery.Api.Models.Account.ConfirmPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
@@ -15,49 +18,58 @@ namespace Lottery.Api.Controllers;
 [Route("[controller]")]
 public class AccountController(
     SignInManager<AppUser> signInManager,
-    UserService userService) : ApiControllerBase
+    UserService userService,
+    ResultMapper resultMapper)
+    : ApiControllerBase(resultMapper)
 {
-    private readonly SignInManager<AppUser> _signInManager = signInManager;
-    private readonly UserService _userService = userService;
 
     [HttpPost("signIn")]
     public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)
     {
-        var result = await _userService.SignIn(request);
+        var result = await userService.SignIn(request);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [HttpPost("signOut")]
     public new async Task<ActionResult> SignOut()
     {
-        await _signInManager.SignOutAsync();
+        await signInManager.SignOutAsync();
         return base.SignOut();
     }
 
     [HttpPost("signUp")]
     public async Task<ActionResult<SignUpResponse>> SignUp(SignUpRequest request)
     {
-        var result = await _userService.CreateAccount(request);
+        var result = await userService.CreateAccount(request);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<GetAccountResponse>> GetAccount()
     {
-        var result = await _userService.GetAccount();
+        var result = await userService.GetAccount();
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
-    [Authorize]
+    [Authorize, RequireRecentAuth]
     [HttpPost]
     public async Task<ActionResult<UpdateAccountResponse>> UpdateAccount(UpdateAccountRequest request)
     {
-        var result = await _userService.UpdateAccount(request);
+        var result = await userService.UpdateAccount(request);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
+    }
+
+    [Authorize]
+    [HttpPost("confirmPassword")]
+    public async Task<ActionResult<ConfirmPasswordResponse>> ConfirmPassword(ConfirmPasswordRequest request)
+    {
+        var result = await userService.ConfirmPassword(request);
+
+        return CreateObjectResult(result);
     }
 }

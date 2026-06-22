@@ -36,7 +36,7 @@ export function createUserService({
     );
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = userInviteResponseSchema.safeParse(result.data);
@@ -55,7 +55,7 @@ export function createUserService({
     );
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = verifyInviteResponseSchema.safeParse(result.data);
@@ -74,7 +74,7 @@ export function createUserService({
     >("/user/invite/accept", request.body);
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = acceptInviteResponseSchema.safeParse(result.data || {});

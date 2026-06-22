@@ -140,7 +140,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
 
         Assert.NotNull(body);
         Assert.NotNull(body.Value);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
         Assert.Equal(ResultStatus.Ok, body.Status);
         return body.Value;
     }
@@ -176,7 +176,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         Assert.NotNull(body);
         Assert.NotNull(body.Value);
         Assert.Equal(ResultStatus.Ok, body.Status);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
         Assert.Equal(request.Limit, body.Value.Limit);
         Assert.Equal(request.Page, body.Value.Page);
         Assert.Equal(expectedTotalGames, body.Value.Total);
@@ -192,7 +192,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
 
         Assert.NotNull(response);
         Assert.Equal(ResultStatus.Ok, response.Status);
-        Assert.Null(response.Errors);
+        Assert.Null(response.Messages);
         Assert.NotNull(response.Value);
         return response.Value;
     }
@@ -219,7 +219,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         var body = await response.Content.ReadFromJsonAsync<Result<CreateEntryResponse>>();
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.Ok, body.Status);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
         Assert.NotNull(body.Value);
         return body.Value;
     }
@@ -243,7 +243,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         var body = await response.Content.ReadFromJsonAsync<Result<CreateEntryResponse>>();
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.Ok, body.Status);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
         Assert.NotNull(body.Value);
     }
 
@@ -284,7 +284,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
 
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.Ok, body.Status);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
         Assert.NotNull(body.Value);
     }
 
@@ -303,7 +303,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
 
         Assert.NotNull(response);
         Assert.Equal(ResultStatus.Ok, response.Status);
-        Assert.Null(response.Errors);
+        Assert.Null(response.Messages);
         Assert.NotNull(response.Value);
         return response.Value.Items;
     }
@@ -350,9 +350,9 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
         var body = await response.Content.ReadFromJsonAsync<Result<CreateEntryResponse>>();
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.BadRequest, body.Status);
-        Assert.NotNull(body.Errors);
-        var error = Assert.Single(body.Errors);
-        Assert.Equal($"Game {gameId} is closed", error.Message);
+        Assert.NotNull(body.Messages);
+        var error = Assert.Single(body.Messages);
+        Assert.Equal($"Game {gameId} is closed", error.Value);
         Assert.Null(body.Value);
     }
 

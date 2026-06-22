@@ -61,9 +61,9 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.NotFound, body.Status);
         Assert.Null(body.Value);
-        Assert.NotNull(body.Errors);
-        var error = Assert.Single(body.Errors);
-        Assert.Equal("Username not registered", error.Message);
+        Assert.NotNull(body.Messages);
+        var error = Assert.Single(body.Messages);
+        Assert.Equal("Username not registered", error.Value);
     }
 
     [Fact]
@@ -84,9 +84,9 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.NotAuthenticated, body.Status);
         Assert.Null(body.Value);
-        Assert.NotNull(body.Errors);
-        var error = Assert.Single(body.Errors);
-        Assert.Equal("Invalid sign in credentials", error.Message);
+        Assert.NotNull(body.Messages);
+        var error = Assert.Single(body.Messages);
+        Assert.Equal("Invalid sign in credentials", error.Value);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
         Assert.NotNull(body.Value);
         Assert.Equal(context.TimeProvider.UtcNow.Add(cookieExpiryTimespan), body.Value.SessionExpiry);
         Assert.Equal(UserType.Basic, body.Value.UserType);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
     }
 }
 #pragma warning restore xUnit1041

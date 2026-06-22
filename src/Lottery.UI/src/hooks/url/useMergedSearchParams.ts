@@ -25,7 +25,7 @@ export default function useMergedSearchParams<T extends object>(
     });
 
     if (needUpdate) setSearchParams(params, { replace: true });
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   return [searchParams, setSearchParams];
 }

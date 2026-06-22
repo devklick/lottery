@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 import {
-  ApiErrors,
+  ApiMessages,
   ApiErrorsResponse,
   apiErrorsResponseSchema,
   ApiSuccessResponse,
@@ -16,21 +16,23 @@ export function isApiSuccess(value: unknown): value is ApiSuccessResponse {
   return apiSuccessResponseSchema.safeParse(value).success;
 }
 
-type SuccessResult<T> = {
+export type SuccessResult<T> = {
   success: true;
   data: T;
 };
 
-type ErrorResult<T> = {
+export type ErrorResult<T> = {
   success: false;
-  error: T;
+  errors: T;
 };
 
-type Result<SuccessData> = SuccessResult<SuccessData> | ErrorResult<ApiErrors>;
+type Result<SuccessData> =
+  | SuccessResult<SuccessData>
+  | ErrorResult<ApiMessages>;
 
 type AsyncResult<SuccessData> = Promise<Result<SuccessData>>;
 
-type StatusCodeHandler = () => void;
+type StatusCodeHandler = (response: AxiosResponse) => void;
 
 type PostOptions = Partial<{
   withCredentials: boolean;
@@ -74,7 +76,10 @@ interface ApiServiceParams {
 export class ApiService implements ApiServiceDefinition {
   private readonly api: AxiosInstance;
   constructor(params: ApiServiceParams) {
-    this.api = axios.create({ baseURL: params.baseUrl });
+    this.api = axios.create({
+      baseURL: params.baseUrl,
+      validateStatus: null,
+    });
   }
 
   async post<Request = unknown, Response = unknown>(
@@ -91,7 +96,7 @@ export class ApiService implements ApiServiceDefinition {
       withCredentials: options?.withCredentials,
     });
 
-    options?.onStatusCode?.[response.status]?.();
+    options?.onStatusCode?.[response.status]?.(response);
 
     if (
       response.status.toString().startsWith("2") &&
@@ -105,9 +110,9 @@ export class ApiService implements ApiServiceDefinition {
 
     return {
       success: false,
-      error: isApiError(response.data)
-        ? response.data.errors
-        : [{ message: "Unknown error info received" }],
+      errors: isApiError(response.data)
+        ? response.data.messages
+        : [{ value: "Unknown error info received", code: "General" }],
     };
   }
 
@@ -124,7 +129,7 @@ export class ApiService implements ApiServiceDefinition {
       withCredentials: options?.withCredentials,
     });
 
-    options?.onStatusCode?.[response.status]?.();
+    options?.onStatusCode?.[response.status]?.(response);
 
     if (
       response.status.toString().startsWith("2") &&
@@ -138,9 +143,9 @@ export class ApiService implements ApiServiceDefinition {
 
     return {
       success: false,
-      error: isApiError(response.data)
-        ? response.data.errors
-        : [{ message: "Unknown error info received" }],
+      errors: isApiError(response.data)
+        ? response.data.messages
+        : [{ value: "Unknown error info received", code: "General" }],
     };
   }
 
@@ -160,7 +165,7 @@ export class ApiService implements ApiServiceDefinition {
       },
     );
 
-    options?.onStatusCode?.[response.status]?.();
+    options?.onStatusCode?.[response.status]?.(response);
 
     if (
       response.status.toString().startsWith("2") &&
@@ -174,9 +179,9 @@ export class ApiService implements ApiServiceDefinition {
 
     return {
       success: false,
-      error: isApiError(response.data)
-        ? response.data.errors
-        : [{ message: "Unknown error info received" }],
+      errors: isApiError(response.data)
+        ? response.data.messages
+        : [{ value: "Unknown error info received", code: "General" }],
     };
   }
 }

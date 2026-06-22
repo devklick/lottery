@@ -4,6 +4,11 @@ import {
   updateAccountResponseSchema,
 } from "./AccountDetails/updateAccountDetails.schema";
 import {
+  ConfirmPasswordRequestBody,
+  ConfirmPasswordResponse,
+  confirmPasswordResponseSchema,
+} from "./ConfirmPasswordModal/confirmPassword.schema";
+import {
   SignInRequest,
   SignInResponse,
   signInResponseSchema,
@@ -27,6 +32,9 @@ interface AccountService {
   updateAccount(
     request: UpdateAccountRequestBody,
   ): Promise<UpdateAccountResponse>;
+  confirmPassword(
+    request: ConfirmPasswordRequestBody,
+  ): Promise<ConfirmPasswordResponse>;
 }
 
 export function createAccountService({
@@ -42,7 +50,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = signUpResponseSchema.safeParse(result.data);
@@ -62,7 +70,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = signInResponseSchema.safeParse(result.data);
@@ -85,7 +93,7 @@ export function createAccountService({
     });
 
     if (!result.success) {
-      throw result.error;
+      throw result.errors;
     }
 
     const valid = getAccountResponseSchema.safeParse(result.data);
@@ -106,7 +114,7 @@ export function createAccountService({
     });
 
     if (!result.success) {
-      throw result.error;
+      throw result;
     }
 
     const valid = updateAccountResponseSchema.safeParse(result.data);
@@ -118,7 +126,37 @@ export function createAccountService({
     throw valid.error.message;
   };
 
-  return { signIn, signUp, signOut, getAccount, updateAccount };
+  const confirmPassword: AccountService["confirmPassword"] = async (
+    request,
+  ) => {
+    const result = await api.post<
+      ConfirmPasswordRequestBody,
+      ConfirmPasswordResponse
+    >("/account/confirmPassword", request, {
+      withCredentials: true,
+    });
+
+    if (!result.success) {
+      throw result.errors;
+    }
+
+    const valid = confirmPasswordResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  return {
+    signIn,
+    signUp,
+    signOut,
+    getAccount,
+    updateAccount,
+    confirmPassword,
+  };
 }
 
 export default createAccountService({

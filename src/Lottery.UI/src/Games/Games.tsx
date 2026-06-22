@@ -1,6 +1,6 @@
 import { Grid } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 import GameCard from "./GameCard";
 import GameFilters from "./GameFilters";
@@ -59,17 +59,13 @@ interface GamesProps {}
 // eslint-disable-next-line no-empty-pattern
 function Games({}: GamesProps) {
   const [searchParams, setSearchParams] = useMergedSearchParams(defaultFilters);
-  const [filters, setFilters] = useState<SearchGamesRequest>(
-    searchParamsToFilters(searchParams),
+  const filters = useMemo(
+    () => searchParamsToFilters(searchParams),
+    [searchParams],
   );
+
   const updateSearchParams = (updates: Partial<SearchGamesRequest>) =>
     setSearchParams(new QueryParams({ ...filters, ...updates }));
-
-  useEffect(() => {
-    if (searchParams.size) {
-      setFilters(searchParamsToFilters(searchParams));
-    }
-  }, [searchParams]);
 
   const query = useQuery({
     queryKey: [

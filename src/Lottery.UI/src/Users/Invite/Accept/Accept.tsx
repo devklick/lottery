@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm, schemaResolver } from "@mantine/form";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -28,7 +28,6 @@ type AcceptProps = object;
 
 // eslint-disable-next-line no-empty-pattern
 function Accept({}: AcceptProps) {
-  const [_, setInviteVerified] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
   const queryValidation = useValidatedQueryParams(
@@ -75,12 +74,7 @@ function Accept({}: AcceptProps) {
     } else {
       // otherwise we'll need to do something else
     }
-  }, [queryValidation]);
-
-  // The result of the query determines whether or not the invite is valid
-  useEffect(() => {
-    setInviteVerified(verifyInviteQuery.isSuccess);
-  }, [verifyInviteQuery]);
+  }, [queryValidation, verifyInviteQuery]);
 
   // If the mutation was successful, the new user account has successfully been created,
   // so we can redirect the user to the login screen
@@ -88,7 +82,7 @@ function Accept({}: AcceptProps) {
     if (acceptInviteMutation.isSuccess) {
       navigate("/account/signIn");
     }
-  }, [acceptInviteMutation]);
+  }, [acceptInviteMutation, navigate]);
 
   useEffect(() => {
     console.log(acceptInviteMutation.error);

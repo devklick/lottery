@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useGetAccount } from "./account.hooks";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import YourEntries from "./YourEntries";
 import YourWins from "./YourWins";
@@ -21,11 +20,9 @@ function Account({}: AccountProps) {
     }
   }, []);
 
-  const accountQuery = useGetAccount({ enabled: user.authenticated() });
-
   return (
     <Page title="Account">
-      {accountQuery.data && <AccountDetails {...accountQuery.data} />}
+      <AccountDetails authenticated={user.authenticated()} />
       <YourEntries />
       <YourWins />
     </Page>

@@ -16,4 +16,9 @@ public class AppUser : IdentityUser<Guid>
 
     [Required, SqlColumnDefaultConstraint(AccountType.User)]
     public AccountType AccountType { get; set; } = AccountType.User;
+
+    /// <summary>
+    /// The date and time at which the user last verified their password.
+    /// </summary>
+    public DateTime? LastReauthenticatedAt { get; set; }
 }

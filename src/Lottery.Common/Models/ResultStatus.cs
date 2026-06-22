@@ -6,5 +6,6 @@ public enum ResultStatus
     BadRequest,
     NotFound,
     NotAuthenticated,
+    NotAuthorized,
     Ok
 }

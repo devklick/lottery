@@ -2,6 +2,7 @@ using System.Security.Claims;
 
 using AutoMapper;
 
+using Lottery.Api.Models.Account.ConfirmPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
@@ -13,7 +14,6 @@ using Lottery.Api.Models.User.Invite.Verify;
 using Lottery.Api.Repositories.User;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Utilities;
-using Lottery.Common.Helpers;
 using Lottery.Common.Models;
 using Lottery.DB.Entities.Idt;
 
@@ -45,7 +45,7 @@ public class UserService(
             return new Result<Guid>
             {
                 Status = ResultStatus.NotAuthenticated,
-                Errors = [new() { Message = "Unable to locate user" }]
+                Messages = [new() { Value = "Unable to locate user" }]
             };
         }
 
@@ -65,7 +65,7 @@ public class UserService(
             return new Result<SignInResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = "Username not registered" }]
+                Messages = [new() { Value = "Username not registered" }]
             };
         }
 
@@ -76,7 +76,7 @@ public class UserService(
             return new Result<SignInResponse>
             {
                 Status = ResultStatus.NotAuthenticated,
-                Errors = [new() { Message = "Invalid sign in credentials" }]
+                Messages = [new() { Value = "Invalid sign in credentials" }]
             };
         }
 
@@ -107,7 +107,7 @@ public class UserService(
             return new Result<SignUpResponse>
             {
                 Status = ResultStatus.ServerError,
-                Errors = userResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
+                Messages = userResult.Errors.Select(s => new Message { Value = s.Description }).ToList()
             };
         }
 
@@ -125,7 +125,7 @@ public class UserService(
                 return new Result<SignUpResponse>
                 {
                     Status = ResultStatus.ServerError,
-                    Errors = roleResult.Errors.Select(s => new Error { Message = s.Description }).ToList()
+                    Messages = roleResult.Errors.Select(s => new Message { Value = s.Description }).ToList()
                 };
             }
         }
@@ -143,7 +143,7 @@ public class UserService(
             return new Result<UserInviteResponse>
             {
                 Status = userIdResult.Status,
-                Errors = userIdResult.Errors
+                Messages = userIdResult.Messages
             };
         }
 
@@ -154,7 +154,7 @@ public class UserService(
             return new Result<UserInviteResponse>
             {
                 Status = ResultStatus.ServerError,
-                Errors = [new() { Message = $"Unable to find role for user type {request.Body.UserType}" }]
+                Messages = [new() { Value = $"Unable to find role for user type {request.Body.UserType}" }]
             };
         }
 
@@ -208,7 +208,7 @@ public class UserService(
             return new Result<VerifyUserInviteResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = "Invite Expired" }]
+                Messages = [new() { Value = "Invite Expired" }]
             };
         }
 
@@ -217,7 +217,7 @@ public class UserService(
             return new Result<VerifyUserInviteResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = "Invite already accepted" }]
+                Messages = [new() { Value = "Invite already accepted" }]
             };
         }
 
@@ -243,7 +243,7 @@ public class UserService(
             return new Result<AcceptUserInviteResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = "Invite Expired" }]
+                Messages = [new() { Value = "Invite Expired" }]
             };
         }
 
@@ -252,7 +252,7 @@ public class UserService(
             return new Result<AcceptUserInviteResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = "Invite already accepted" }]
+                Messages = [new() { Value = "Invite already accepted" }]
             };
         }
 
@@ -271,7 +271,7 @@ public class UserService(
         return new Result<AcceptUserInviteResponse>
         {
             Status = accountResult.Status,
-            Errors = accountResult.Errors,
+            Messages = accountResult.Messages,
         };
     }
 
@@ -279,7 +279,7 @@ public class UserService(
     {
         var userResult = await GetCurrentUser();
 
-        return userResult.ChangeValue<GetAccountResponse>(userResult.IsOk ? new()
+        return userResult.ChangeValue<GetAccountResponse>(userResult.Success ? new()
         {
             Email = userResult.Value.Email!,
             EmailConfirmed = userResult.Value.EmailConfirmed,
@@ -292,7 +292,8 @@ public class UserService(
     public async Task<Result<UpdateAccountResponse>> UpdateAccount(UpdateAccountRequest request)
     {
         var userResult = await GetCurrentUser();
-        if (!userResult.IsOk) return userResult.ChangeValue<UpdateAccountResponse>();
+        if (!userResult.Success) return userResult.ChangeValue<UpdateAccountResponse>();
+
         var user = userResult.Value;
 
         var updateResult = new UpdateAccountResponse
@@ -306,7 +307,7 @@ public class UserService(
         {
             var usernameResult = await UpdateUsername(user, request.Body.Username);
 
-            if (!usernameResult.IsOk)
+            if (!usernameResult.Success)
                 updateResult.Username = usernameResult.ChangeValue(user.UserName);
             else
             {
@@ -327,7 +328,7 @@ public class UserService(
             await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
 
             updateResult.Email = Result<string>.Ok(request.Body.Email);
-            updateResult.Email.AddErrors("Email change pending confirmation");
+            updateResult.Email.AddMessages(MessageCode.EmailVerificationRequired, "Email change pending confirmation");
         }
 
         if (request.Body.PhoneNumber is not null && request.Body.PhoneNumber != user.PhoneNumber)
@@ -340,15 +341,7 @@ public class UserService(
         return Result<UpdateAccountResponse>.Ok(updateResult);
     }
 
-    private async Task<Result<AppUser>> UpdateUsername(AppUser user, string username)
-    {
-        var result = await userManager.SetUserNameAsync(user, username);
-        return result.Succeeded
-            ? await GetCurrentUser(username)
-            : Result<AppUser>.Error(ResultStatus.BadRequest, result.Errors.Select(s => s.Description));
-    }
-
-    private async Task<Result<AppUser>> GetCurrentUser(string? username = null)
+    public async Task<Result<AppUser>> GetCurrentUser(string? username = null)
     {
         username ??= httpContextAccessor.HttpContext?.User.Identity?.Name;
         if (username is null)
@@ -363,5 +356,36 @@ public class UserService(
             return Result<AppUser>.Error(ResultStatus.NotFound, "User not found");
         }
         return Result<AppUser>.Ok(user);
+    }
+
+    public async Task<bool> HasRecentAuth(AppUser user)
+    {
+        return user.LastReauthenticatedAt.HasValue
+            && user.LastReauthenticatedAt > timeProvider
+            .GetUtcNow()
+            .Add(-userServiceOptions.Value.ElevatedSessionDuration);
+    }
+
+    private async Task<Result<AppUser>> UpdateUsername(AppUser user, string username)
+    {
+        var result = await userManager.SetUserNameAsync(user, username);
+        return result.Succeeded
+            ? await GetCurrentUser(username)
+            : Result<AppUser>.Error(ResultStatus.BadRequest, result.Errors.Select(s => s.Description));
+    }
+
+    public async Task<Result<ConfirmPasswordResponse>> ConfirmPassword(ConfirmPasswordRequest request)
+    {
+        var userResult = await GetCurrentUser();
+        if (!userResult.Success) return userResult.ChangeValue<ConfirmPasswordResponse>();
+        var user = userResult.Value;
+        var valid = await userManager.CheckPasswordAsync(user, request.Body.Password);
+        if (valid)
+        {
+            user.LastReauthenticatedAt = timeProvider.GetUtcNow().UtcDateTime;
+            await userRepository.UpdateUser(user);
+            return Result<ConfirmPasswordResponse>.Ok(new());
+        }
+        return Result<ConfirmPasswordResponse>.Error(ResultStatus.NotAuthenticated, "Incorrect password");
     }
 }

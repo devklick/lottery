@@ -40,25 +40,34 @@ export function camelCaseEnum<T extends EnumLike>(e: T) {
   );
 }
 
-export const apiErrorSchema = z.object({
-  message: z.string(),
+export const apiMessageCodeSchema = z.enum([
+  "General",
+  "RecentAuthRequired",
+  "EmailVerificationRequired",
+]);
+
+export const apiMessageSchema = z.object({
+  value: z.string(),
+  code: apiMessageCodeSchema,
 });
-export const apiErrorsSchema = z.array(apiErrorSchema);
+
+export const apiMessagesSchema = z.array(apiMessageSchema);
 
 export const apiErrorsResponseSchema = z.object({
-  errors: apiErrorsSchema.element.required().array(),
+  messages: apiMessagesSchema.element.required().array(),
   status: z.number(),
 });
 export const apiSuccessResponseSchema = z.object({
   value: z.any(),
   status: z.number(),
+  messages: apiMessagesSchema.element.array().optional().nullable(),
 });
 
 export const apiResponseSchema = apiSuccessResponseSchema.or(
   apiErrorsResponseSchema,
 );
 
-export type ApiErrors = z.infer<typeof apiErrorsSchema>;
+export type ApiMessages = z.infer<typeof apiMessagesSchema>;
 export type ApiErrorsResponse = z.infer<typeof apiErrorsResponseSchema>;
 export type ApiResponse = z.infer<typeof apiResponseSchema>;
 export type ApiSuccessResponse = z.infer<typeof apiSuccessResponseSchema>;

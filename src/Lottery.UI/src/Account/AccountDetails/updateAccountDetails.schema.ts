@@ -1,5 +1,7 @@
 import z from "zod";
 
+import { apiSuccessResponseSchema } from "../../common/schemas";
+
 export const updateAccountRequestBodySchema = z
   .object({
     username: z.string().optional(),
@@ -22,21 +24,9 @@ export type UpdateAccountRequestBody = z.infer<
 >;
 
 export const updateAccountResponseSchema = z.object({
-  username: z.object({
-    value: z.string(),
-    errors: z.array(z.string()).optional(),
-    status: z.number(),
-  }),
-  email: z.object({
-    value: z.string(),
-    errors: z.array(z.string()).optional(),
-    status: z.number(),
-  }),
-  phoneNumber: z.object({
-    value: z.string(),
-    errors: z.array(z.string()).optional(),
-    status: z.number(),
-  }),
+  username: apiSuccessResponseSchema.extend({ value: z.string() }),
+  email: apiSuccessResponseSchema.extend({ value: z.string() }),
+  phoneNumber: apiSuccessResponseSchema.extend({ value: z.string() }),
 });
 
 export type UpdateAccountResponse = z.infer<typeof updateAccountResponseSchema>;

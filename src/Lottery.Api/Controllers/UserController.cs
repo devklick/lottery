@@ -1,3 +1,4 @@
+using Lottery.Api.Mappings;
 using Lottery.Api.Models.User.Invite;
 using Lottery.Api.Models.User.Invite.Accept;
 using Lottery.Api.Models.User.Invite.Verify;
@@ -12,34 +13,35 @@ namespace Lottery.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Roles = "GameAdmin,SystemAdmin")]
-public class UserController(UserService userService) : ApiControllerBase
+public class UserController(
+    UserService userService,
+    ResultMapper resultMapper)
+    : ApiControllerBase(resultMapper)
 {
-    private readonly UserService _userService = userService;
-
 
     [HttpPost("invite")]
     public async Task<ActionResult<UserInviteResponse>> Invite(UserInviteRequest request)
     {
-        var result = await _userService.InviteUser(request, User);
+        var result = await userService.InviteUser(request, User);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [HttpGet("invite/verify")]
     [AllowAnonymous]
     public async Task<ActionResult<VerifyUserInviteResponse>> VerifyInvite(VerifyUserInviteRequest request)
     {
-        var result = await _userService.FindUserInvite(request);
+        var result = await userService.FindUserInvite(request);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [HttpPost("invite/accept")]
     [AllowAnonymous]
     public async Task<ActionResult<AcceptUserInviteResponse>> AcceptInvite(AcceptUserInviteRequest request)
     {
-        var result = await _userService.AcceptUserInvite(request);
+        var result = await userService.AcceptUserInvite(request);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 }

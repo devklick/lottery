@@ -28,7 +28,7 @@ public class ResultWorker(IServiceScopeFactory scopeFactory) : BackgroundService
 
                 if (result.Status != ResultStatus.Ok || result.Value is null)
                 {
-                    var errors = result.Errors ?? [new() { Message = "Unknown error" }];
+                    var errors = result.Messages ?? [new() { Value = "Unknown error" }];
                     throw new Exception($"Resulting failed for game {game.Id}. Errors: {string.Join(". ", errors)}");
                 }
             }

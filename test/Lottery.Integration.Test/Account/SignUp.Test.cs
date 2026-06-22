@@ -59,6 +59,6 @@ public class SignUpTest(ITestContextAccessor testContextAccessor, IntegrationTes
         var body = await response.Content.ReadFromJsonAsync<Result<SignUpResponse>>(CancellationToken);
         Assert.NotNull(body);
         Assert.Equal(ResultStatus.Ok, body.Status);
-        Assert.Null(body.Errors);
+        Assert.Null(body.Messages);
     }
 }

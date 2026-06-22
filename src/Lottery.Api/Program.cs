@@ -16,6 +16,7 @@ using DotNetEnv.Configuration;
 using Resend;
 using Lottery.Common.Helpers;
 using Lottery.Api.Services.Email;
+using Lottery.Api.Mappings;
 
 namespace Lottery.Api;
 
@@ -62,6 +63,8 @@ public class Program
         builder.Services.Configure<ResendClientOptions>(o =>
             o.ApiToken = Env.GetRequiredEnvVar("EMAIL_API_KEY"));
         builder.Services.AddScoped<IEmailSender<AppUser>, EmailSender>();
+
+        builder.Services.AddScoped<ResultMapper>();
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
         {

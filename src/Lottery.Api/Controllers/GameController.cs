@@ -1,3 +1,4 @@
+using Lottery.Api.Mappings;
 using Lottery.Api.Models.Game.Create;
 using Lottery.Api.Models.Game.Edit;
 using Lottery.Api.Models.Game.Get;
@@ -13,50 +14,52 @@ namespace Lottery.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GameController(GameService gameService) : ApiControllerBase
+public class GameController(
+    GameService gameService,
+    ResultMapper resultMapper)
+    : ApiControllerBase(resultMapper)
 {
-    private readonly GameService _gameService = gameService;
 
     [HttpGet("{id}")]
     public async Task<ActionResult<GetGameResponse>> GetGame(GetGameRequest request)
     {
-        var response = await _gameService.GetGame(request);
+        var response = await gameService.GetGame(request);
 
-        return CreateActionResult(response);
+        return CreateObjectResult(response);
     }
 
     [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost]
     public async Task<ActionResult<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
-        var response = await _gameService.CreateGame(request, User);
+        var response = await gameService.CreateGame(request, User);
 
-        return CreateActionResult(response);
+        return CreateObjectResult(response);
     }
 
     [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost("{id}/edit")]
     public async Task<ActionResult<EditGameResponse>> EditGame(EditGameRequest request)
     {
-        var response = await _gameService.EditGame(request, User);
+        var response = await gameService.EditGame(request, User);
 
-        return CreateActionResult(response);
+        return CreateObjectResult(response);
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<SearchGamesResponse>> SearchGames(SearchGamesRequest request)
     {
-        var response = await _gameService.SearchGames(request);
+        var response = await gameService.SearchGames(request);
 
-        return CreateActionResult(response);
+        return CreateObjectResult(response);
     }
 
     [Authorize(Roles = "GameAdmin,SystemAdmin")]
     [HttpPost("{gameId}/result")]
     public async Task<ActionResult<ResultGameResponse>> ResultGame(ResultGameRequest request)
     {
-        var response = await _gameService.ResultGame(request);
+        var response = await gameService.ResultGame(request);
 
-        return CreateActionResult(response);
+        return CreateObjectResult(response);
     }
 }

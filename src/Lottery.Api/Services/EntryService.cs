@@ -27,7 +27,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<CreateEntryResponse>
             {
                 Status = userIdResult.Status,
-                Errors = userIdResult.Errors
+                Messages = userIdResult.Messages
             };
         }
 
@@ -53,7 +53,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<CreateEntryResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = $"Unable to locate game with gameId {request.Body.GameId}" }]
+                Messages = [new() { Value = $"Unable to locate game with gameId {request.Body.GameId}" }]
             };
         }
 
@@ -62,7 +62,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<CreateEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Game {request.Body.GameId} is closed" }]
+                Messages = [new() { Value = $"Game {request.Body.GameId} is closed" }]
             };
         }
 
@@ -72,7 +72,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<CreateEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Expected {game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
+                Messages = [new() { Value = $"Expected {game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
             };
         }
 
@@ -89,7 +89,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
                 return new Result<CreateEntryResponse>
                 {
                     Status = ResultStatus.BadRequest,
-                    Errors = [new() { Message = $"Unable to find game selection with selection number {es.SelectionNumber}" }]
+                    Messages = [new() { Value = $"Unable to find game selection with selection number {es.SelectionNumber}" }]
                 };
             }
             entry.Selections.Add(new EntrySelection
@@ -126,7 +126,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
         {
             return new Result<SearchEntriesResponse>
             {
-                Errors = userIdResult.Errors,
+                Messages = userIdResult.Messages,
                 Status = userIdResult.Status
             };
         }
@@ -175,7 +175,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<EditEntryResponse>
             {
                 Status = userIdResult.Status,
-                Errors = userIdResult.Errors
+                Messages = userIdResult.Messages
             };
         }
 
@@ -201,7 +201,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<EditEntryResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = "Unable to find the players entry" }]
+                Messages = [new() { Value = "Unable to find the players entry" }]
             };
         }
 
@@ -211,7 +211,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             return new Result<EditEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Expected {entry.Game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
+                Messages = [new() { Value = $"Expected {entry.Game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
             };
         }
 
@@ -245,7 +245,7 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
             else return new Result<EditEntryResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"No selection selection exists for selection number {selection.SelectionNumber}" }]
+                Messages = [new() { Value = $"No selection selection exists for selection number {selection.SelectionNumber}" }]
             };
         }
 

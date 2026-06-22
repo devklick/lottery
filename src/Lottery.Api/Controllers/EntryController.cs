@@ -1,3 +1,4 @@
+using Lottery.Api.Mappings;
 using Lottery.Api.Models.Entry.Create;
 using Lottery.Api.Models.Entry.Edit;
 using Lottery.Api.Models.Entry.Search;
@@ -11,32 +12,33 @@ namespace Lottery.Api.Controllers;
 [Authorize(Roles = "BasicUser,GameAdmin,SystemAdmin")]
 [ApiController]
 [Route("[controller]")]
-public class EntryController(EntryService entryService) : ApiControllerBase
+public class EntryController(
+    EntryService entryService,
+    ResultMapper resultMapper)
+    : ApiControllerBase(resultMapper)
 {
-    private readonly EntryService _entryService = entryService;
-
     [HttpPost]
     public async Task<ActionResult<CreateEntryResponse>> CreateEntry(CreateEntryRequest request)
     {
         // TODO: Look into an issue where entries are allowed after the closing time.
-        var result = await _entryService.CreateEntry(request, User);
+        var result = await entryService.CreateEntry(request, User);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [HttpGet]
     public async Task<ActionResult<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request)
     {
-        var result = await _entryService.SearchEntries(request, User);
+        var result = await entryService.SearchEntries(request, User);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 
     [HttpPost("{entryId}/edit")]
     public async Task<ActionResult<EditEntryResponse>> EditEntry(EditEntryRequest request)
     {
-        var result = await _entryService.EditEntry(request, User);
+        var result = await entryService.EditEntry(request, User);
 
-        return CreateActionResult(result);
+        return CreateObjectResult(result);
     }
 }

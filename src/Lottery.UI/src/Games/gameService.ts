@@ -61,7 +61,7 @@ export function createGameService({
       request,
       { withCredentials: true },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = createGameResponseSchema.safeParse(result.data);
 
@@ -77,7 +77,7 @@ export function createGameService({
       "/game/search",
       request,
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = searchGamesResponseSchema.safeParse(result.data);
 
@@ -90,7 +90,7 @@ export function createGameService({
 
   const getGame: GameService["getGame"] = async (request) => {
     const result = await api.get(`/game/${request.route.id}`);
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = getGameResponseSchema.safeParse(result.data);
 
@@ -109,7 +109,7 @@ export function createGameService({
         withCredentials: true,
       },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = createEntryResponseSchema.safeParse(result.data);
 
@@ -126,7 +126,7 @@ export function createGameService({
       request.query,
       { withCredentials: true },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = getEntriesResponseSchema.safeParse(result.data);
 
@@ -143,7 +143,7 @@ export function createGameService({
       request.body,
       { withCredentials: true },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = editGameResponseSchema.safeParse(result.data);
 
@@ -160,7 +160,7 @@ export function createGameService({
       request.body,
       { withCredentials: true },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = editEntryResponseSchema.safeParse(result.data);
 
@@ -177,7 +177,7 @@ export function createGameService({
       request.body,
       { withCredentials: true },
     );
-    if (!result.success) throw result.error;
+    if (!result.success) throw result.errors;
 
     const valid = resultGameResponseSchema.safeParse(result.data);
 

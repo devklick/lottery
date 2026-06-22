@@ -28,7 +28,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
             return new Result<Game>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Unable to result game {game.Id} while its in a {game.GameStatus} state" }]
+                Messages = [new() { Value = $"Unable to result game {game.Id} while its in a {game.GameStatus} state" }]
             };
         }
 
@@ -42,7 +42,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
             return new Result<Game>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Expected 0 or {numbersToDraw} winning numbers, found {winningNumbers.Count()}" }]
+                Messages = [new() { Value = $"Expected 0 or {numbersToDraw} winning numbers, found {winningNumbers.Count()}" }]
             };
         }
         else if (!winningNumbers.Any() && game.Selections.Count < numbersToDraw)
@@ -50,7 +50,7 @@ public class ResultService(ResultRepository repository, ILogger<ResultService> l
             return new Result<Game>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"Invalid configuration for game {game.Id}. Only {game.Selections.Count} selections but {numbersToDraw} numbers to be drawn" }]
+                Messages = [new() { Value = $"Invalid configuration for game {game.Id}. Only {game.Selections.Count} selections but {numbersToDraw} numbers to be drawn" }]
             };
         }
 

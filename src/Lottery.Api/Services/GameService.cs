@@ -32,7 +32,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         {
             return new Result<CreateGameResponse>
             {
-                Errors = userIdResult.Errors,
+                Messages = userIdResult.Messages,
                 Status = userIdResult.Status
             };
         }
@@ -133,7 +133,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             ? new Result<GetGameResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = "Game not found" }]
+                Messages = [new() { Value = "Game not found" }]
             }
             : new Result<GetGameResponse>
             {
@@ -150,7 +150,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         {
             return new Result<EditGameResponse>
             {
-                Errors = userIdResult.Errors,
+                Messages = userIdResult.Messages,
                 Status = userIdResult.Status
             };
         }
@@ -173,7 +173,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         if (current == null) return new Result<EditGameResponse>
         {
             Status = ResultStatus.NotFound,
-            Errors = [new() { Message = "Game not found" }]
+            Messages = [new() { Value = "Game not found" }]
         };
 
         // The following changes can only be applied when the game is in a future state
@@ -189,7 +189,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             return new Result<EditGameResponse>
             {
                 Status = ResultStatus.BadRequest,
-                Errors = [new() { Message = $"The specified changes cannot be applied while the game is in the {current.GameStatus} state" }]
+                Messages = [new() { Value = $"The specified changes cannot be applied while the game is in the {current.GameStatus} state" }]
             };
         }
 
@@ -291,7 +291,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             return new Result<ResultGameResponse>
             {
                 Status = ResultStatus.NotFound,
-                Errors = [new() { Message = "Game not found" }]
+                Messages = [new() { Value = "Game not found" }]
             };
         }
 
@@ -301,7 +301,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         {
             return new Result<ResultGameResponse>
             {
-                Errors = result.Errors,
+                Messages = result.Messages,
                 Status = result.Status,
             };
         }
