@@ -84,10 +84,6 @@ function Accept({}: AcceptProps) {
     }
   }, [acceptInviteMutation, navigate]);
 
-  useEffect(() => {
-    console.log(acceptInviteMutation.error);
-  }, [acceptInviteMutation.error]);
-
   return (
     <Container p={0} maw={300}>
       <Box pos="relative">

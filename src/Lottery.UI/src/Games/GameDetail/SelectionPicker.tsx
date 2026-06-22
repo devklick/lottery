@@ -1,5 +1,5 @@
 import { Button, Flex, Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import NumberBall from "../../components/NumberBall/NumberBall";
 
@@ -21,11 +21,6 @@ function SelectionPicker({
   disabled,
 }: SelectionPickerProps) {
   const [selectedNumbers, setSelectedNumbers] = useState([..._selectedNumbers]);
-
-  // useEffect(() => {
-  //   setSelectedNumbers([..._selectedNumbers]);
-  // }, [_selectedNumbers]);
-
   function handleSelected(selectionNumber: number) {
     if (selectedNumbers.includes(selectionNumber)) {
       setSelectedNumbers((cur) => cur.filter((c) => c !== selectionNumber));
@@ -62,6 +57,7 @@ function SelectionPicker({
               selectedNumbers.length === requiredCount && !isSelected;
             return (
               <NumberBall
+                key={selection}
                 selected={isSelected}
                 disabled={disabled || allSelected}
                 value={selection}

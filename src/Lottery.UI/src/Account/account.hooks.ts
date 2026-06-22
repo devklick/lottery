@@ -30,9 +30,7 @@ export function useUpdateAccount({
     mutationFn: accountService.updateAccount,
     onSuccess,
     onError: (e: ErrorResult<unknown>) => {
-      console.log("useUpdateAccount error", e);
       const validation = apiMessagesSchema.safeParse(e.errors);
-      console.log("useUpdateAccount error", e, validation);
       if (
         validation.success &&
         validation.data[0].code === "RecentAuthRequired"

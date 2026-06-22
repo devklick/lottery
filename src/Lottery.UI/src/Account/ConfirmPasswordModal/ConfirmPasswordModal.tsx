@@ -1,7 +1,5 @@
 import { Button, Modal, PasswordInput, Stack } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
 
 import {
   ConfirmPasswordRequestBody,
@@ -13,25 +11,18 @@ interface ConfirmPasswordModalProps {
   onSuccess(): void;
   onFailure(): void;
   onCancel(): void;
+  opened: boolean;
 }
 
 export default function ConfirmPasswordModal({
   onCancel,
   onFailure,
   onSuccess,
+  opened,
 }: ConfirmPasswordModalProps) {
-  const [opened, { open, close }] = useDisclosure(false);
-
-  useEffect(() => open(), []);
-
   const form = useForm<ConfirmPasswordRequestBody>({
     validate: schemaResolver(confirmPasswordRequestBodySchema),
   });
-
-  function handleCancel() {
-    close();
-    onCancel();
-  }
 
   const confirmPassword = useConfirmPassword({ onFailure, onSuccess });
 
@@ -39,8 +30,8 @@ export default function ConfirmPasswordModal({
     <Modal
       title="Confirm Password"
       opened={opened}
-      withCloseButton
-      onClose={handleCancel}
+      // withCloseButton
+      onClose={onCancel}
     >
       <form
         id="confirm-password"

@@ -20,13 +20,14 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-import PageSection from "../../components/PageSection";
-import { useGetAccount, useUpdateAccount } from "../account.hooks";
 import {
   UpdateAccountRequestBody,
   updateAccountRequestBodySchema,
   UpdateAccountResponse,
 } from "./updateAccountDetails.schema";
+import { withDefaults } from "../../common/utils/object.utils";
+import PageSection from "../../components/PageSection";
+import { useGetAccount, useUpdateAccount } from "../account.hooks";
 import ConfirmPasswordModal from "../ConfirmPasswordModal";
 
 interface AccountDetailsProps {
@@ -40,7 +41,14 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
 
   const form = useForm<UpdateAccountRequestBody>({
     validate: schemaResolver(updateAccountRequestBodySchema),
-    initialValues: accountQuery.data,
+    initialValues: withDefaults<UpdateAccountRequestBody>(
+      accountQuery.data ?? {},
+      {
+        email: "",
+        phoneNumber: "",
+        username: "",
+      },
+    ),
     validateInputOnChange: true,
   });
 
@@ -78,8 +86,6 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
       color: colors.green[5],
       autoClose: 5000,
     });
-
-    console.log(data);
     if (data.email.messages?.[0].code === "EmailVerificationRequired") {
       notifications.show({
         title: "Verification email send",
@@ -121,13 +127,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
       collapsable
       children={
         <>
-          {confirmPasswordModalOpened && (
-            <ConfirmPasswordModal
-              onSuccess={confirmPasswordSuccess}
-              onCancel={closeConfirmPasswordModal}
-              onFailure={confirmPasswordFailed}
-            />
-          )}
+          <ConfirmPasswordModal
+            onSuccess={confirmPasswordSuccess}
+            onCancel={closeConfirmPasswordModal}
+            onFailure={confirmPasswordFailed}
+            opened={confirmPasswordModalOpened}
+          />
 
           <form
             id="update-account"
@@ -144,7 +149,6 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                   {...form.getInputProps("username")}
                   disabled={!editing}
                   ta={"left"}
-                  defaultValue={accountQuery.data?.username ?? ""}
                 />
               </Grid.Col>
               <Grid.Col span={1} />
@@ -157,7 +161,6 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                   {...form.getInputProps("email")}
                   disabled={!editing}
                   ta={"left"}
-                  defaultValue={accountQuery.data?.email ?? ""}
                 />
               </Grid.Col>
               <Grid.Col span={1}>
@@ -178,7 +181,6 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                   {...form.getInputProps("phoneNumber")}
                   disabled={!editing}
                   ta={"left"}
-                  defaultValue={accountQuery.data?.phoneNumber ?? ""}
                 />
               </Grid.Col>
               <Grid.Col span={1}>
