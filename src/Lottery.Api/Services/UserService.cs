@@ -141,7 +141,7 @@ public class UserService(
         var confirmationLink =
             $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmail" +
             $"?userId={user.Id}" +
-            $"&token={changeEmailToken}";
+            $"&token={Uri.EscapeDataString(changeEmailToken)}";
 
         await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
 
@@ -317,6 +317,9 @@ public class UserService(
             PhoneNumber = Result<string?>.Ok(user.PhoneNumber)
         };
 
+        // TODO: Consider storing the email that the user has requested to change to. 
+        // Useful to show in UI to indicate that the account is going through a change-email process. 
+        // Without this, nothing in the UI indicates that there's a change email pending.
         if (request.Body.Username is not null && request.Body.Username != user.UserName)
         {
             var usernameResult = await UpdateUsername(user, request.Body.Username);
@@ -337,7 +340,7 @@ public class UserService(
                 $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmailChange" +
                 $"?userId={user.Id}" +
                 $"&email={Uri.EscapeDataString(request.Body.Email)}" +
-                $"&token={changeEmailToken}";
+                $"&token={Uri.EscapeDataString(changeEmailToken)}";
 
             await emailSender.SendConfirmationLinkAsync(user, request.Body.Email, confirmationLink);
 
@@ -430,7 +433,8 @@ public class UserService(
                 "Unable to locate user"
             );
         }
-        var result = await userManager.ChangeEmailAsync(user, request.Query.Email, request.Query.Token);
+
+        var result = await userManager.ChangeEmailAsync(user, Uri.UnescapeDataString(request.Query.Email), Uri.UnescapeDataString(request.Query.Token));
 
         return result.Succeeded
             ? Result<ConfirmEmailChangeResponse>.Ok(new())

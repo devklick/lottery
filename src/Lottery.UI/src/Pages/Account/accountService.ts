@@ -4,6 +4,16 @@ import {
   updateAccountResponseSchema,
 } from "./AccountDetails/updateAccountDetails.schema";
 import {
+  ConfirmEmailRequestQuery,
+  ConfirmEmailResponse,
+  confirmEmailResponseSchema,
+} from "./ConfirmEmail/schema";
+import {
+  ConfirmEmailChangeRequestQuery,
+  ConfirmEmailChangeResponse,
+  confirmEmailChangeResponseSchema,
+} from "./ConfirmEmailChange/schema";
+import {
   ConfirmPasswordRequestBody,
   ConfirmPasswordResponse,
   confirmPasswordResponseSchema,
@@ -35,6 +45,12 @@ interface AccountService {
   confirmPassword(
     request: ConfirmPasswordRequestBody,
   ): Promise<ConfirmPasswordResponse>;
+  confirmEmail(
+    request: ConfirmEmailRequestQuery,
+  ): Promise<ConfirmEmailResponse>;
+  confirmEmailChange(
+    request: ConfirmEmailChangeRequestQuery,
+  ): Promise<ConfirmEmailChangeResponse>;
 }
 
 export function createAccountService({
@@ -150,6 +166,46 @@ export function createAccountService({
     throw valid.error.message;
   };
 
+  const confirmEmail: AccountService["confirmEmail"] = async (request) => {
+    const result = await api.get<
+      ConfirmEmailRequestQuery,
+      ConfirmEmailResponse
+    >("/account/confirmEmail", request);
+
+    if (!result.success) {
+      throw result.errors;
+    }
+
+    const valid = confirmEmailResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const confirmEmailChange: AccountService["confirmEmailChange"] = async (
+    request,
+  ) => {
+    const result = await api.get<
+      ConfirmEmailRequestQuery,
+      ConfirmEmailResponse
+    >("/account/confirmEmailChange", request);
+
+    if (!result.success) {
+      throw result.errors;
+    }
+
+    const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
   return {
     signIn,
     signUp,
@@ -157,6 +213,8 @@ export function createAccountService({
     getAccount,
     updateAccount,
     confirmPassword,
+    confirmEmail,
+    confirmEmailChange,
   };
 }
 

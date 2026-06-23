@@ -22,6 +22,14 @@ const routes: Array<RouteObject> = [
         element: <pages.Account.Page />,
       },
       {
+        path: "/account/confirmEmail",
+        element: <pages.Account.ConfirmEmail.Page />,
+      },
+      {
+        path: "/account/confirmEmailChange",
+        element: <pages.Account.ConfirmEmailChange.Page />,
+      },
+      {
         path: "/account/signIn",
         element: <pages.Account.SignIn.Page />,
       },

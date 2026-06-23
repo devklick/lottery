@@ -1,4 +1,6 @@
 import Account from "./Account";
+import ConfirmEmail from "./ConfirmEmail";
+import ConfirmEmailChange from "./ConfirmEmailChange";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import Unauthorized from "./Unauthorized";
@@ -11,4 +13,6 @@ export default {
   SignIn,
   SignUp,
   Unauthorized,
+  ConfirmEmail,
+  ConfirmEmailChange,
 };

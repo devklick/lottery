@@ -6,6 +6,6 @@ namespace Lottery.Api.Models.Account.ConfirmEmail;
 
 public class ConfirmEmailRequest
 {
-    [Required, BindProperty(Name = "")]
+    [Required, FromQuery, BindProperty(Name = "")]
     public required ConfirmEmailRequestQuery Query { get; set; }
 }
