@@ -139,7 +139,7 @@ public class UserService(
         var changeEmailToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
         var confirmationLink =
-            $"{userServiceOptions.Value.EmailConfirmationDomain}" +
+            $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmail" +
             $"?userId={user.Id}" +
             $"&token={changeEmailToken}";
 
@@ -334,7 +334,7 @@ public class UserService(
         {
             var changeEmailToken = await userManager.GenerateChangeEmailTokenAsync(user, request.Body.Email);
             var confirmationLink =
-                $"{userServiceOptions.Value.EmailConfirmationDomain}" +
+                $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmailChange" +
                 $"?userId={user.Id}" +
                 $"&email={Uri.EscapeDataString(request.Body.Email)}" +
                 $"&token={changeEmailToken}";

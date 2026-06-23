@@ -1,8 +1,7 @@
 import { RouteObject } from "react-router-dom";
 
-import pages from "../pages.ts";
+import pages from "../Pages";
 import ProtectedRoute from "./ProtectedRoute.tsx";
-import Unauthorized from "../Account/Unauthorized/Unauthorized.tsx";
 import Layout from "../Layout/Layout.tsx";
 
 const routes: Array<RouteObject> = [
@@ -88,7 +87,7 @@ const routes: Array<RouteObject> = [
       },
       {
         path: "account/unauthorized",
-        element: <Unauthorized />,
+        element: <pages.Account.Unauthorized />,
       },
     ],
   },

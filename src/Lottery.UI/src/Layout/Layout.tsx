@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import Header from "./Header";
 import MobileMenu from "./MobileMenu";
-import accountService from "../Account/accountService";
+import accountService from "../Pages/Account/accountService";
 import { useUserStore } from "../stores/user.store";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
