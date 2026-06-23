@@ -149,7 +149,7 @@ export function createAccountService({
     const result = await api.post<
       ConfirmPasswordRequestBody,
       ConfirmPasswordResponse
-    >("/account/confirmPassword", request, {
+    >("/account/password/confirm", request, {
       withCredentials: true,
     });
 
@@ -170,7 +170,7 @@ export function createAccountService({
     const result = await api.get<
       ConfirmEmailRequestQuery,
       ConfirmEmailResponse
-    >("/account/confirmEmail", request);
+    >("/account/email/confirm", request);
 
     if (!result.success) {
       throw result.errors;
@@ -191,7 +191,7 @@ export function createAccountService({
     const result = await api.get<
       ConfirmEmailRequestQuery,
       ConfirmEmailResponse
-    >("/account/confirmEmailChange", request);
+    >("/account/email/confirmChange", request);
 
     if (!result.success) {
       throw result.errors;

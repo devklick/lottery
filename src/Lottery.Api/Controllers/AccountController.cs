@@ -7,6 +7,7 @@ using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Account.UpdateAccount;
+using Lottery.Api.Models.Account.UpdatePassword;
 using Lottery.Api.Services;
 using Lottery.DB.Entities.Idt;
 
@@ -67,7 +68,7 @@ public class AccountController(
     }
 
     [Authorize]
-    [HttpPost("confirmPassword")]
+    [HttpPost("password/confirm")]
     public async Task<ActionResult<ConfirmPasswordResponse>> ConfirmPassword(ConfirmPasswordRequest request)
     {
         var result = await userService.ConfirmPassword(request);
@@ -75,7 +76,16 @@ public class AccountController(
         return CreateObjectResult(result);
     }
 
-    [HttpGet("confirmEmail")]
+    [Authorize]
+    [HttpPost("password/update")]
+    public async Task<ActionResult<UpdatePasswordResponse>> UpdatePassword(UpdatePasswordRequest request)
+    {
+        var result = await userService.UpdatePassword(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpGet("email/confirm")]
     public async Task<ActionResult<ConfirmEmailResponse>> ConfirmEmail(ConfirmEmailRequest request)
     {
         var result = await userService.ConfirmEmail(request);
@@ -83,7 +93,7 @@ public class AccountController(
         return CreateObjectResult(result);
     }
 
-    [HttpGet("confirmEmailChange")]
+    [HttpGet("email/confirmChange")]
     public async Task<ActionResult<ConfirmEmailChangeResponse>> ConfirmEmailChange(ConfirmEmailChangeRequest request)
     {
         var result = await userService.ConfirmEmailChange(request);

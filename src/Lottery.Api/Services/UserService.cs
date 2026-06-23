@@ -9,6 +9,7 @@ using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Account.UpdateAccount;
+using Lottery.Api.Models.Account.UpdatePassword;
 using Lottery.Api.Models.Common;
 using Lottery.Api.Models.User.Invite;
 using Lottery.Api.Models.User.Invite.Accept;
@@ -439,5 +440,24 @@ public class UserService(
         return result.Succeeded
             ? Result<ConfirmEmailChangeResponse>.Ok(new())
             : Result<ConfirmEmailChangeResponse>.Error(ResultStatus.ServerError, result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<Result<UpdatePasswordResponse>> UpdatePassword(UpdatePasswordRequest request)
+    {
+        var userResult = await GetCurrentUser();
+
+        if (!userResult.Success)
+        {
+            return userResult.ChangeValue<UpdatePasswordResponse>();
+        }
+
+        var result = await userManager.ChangePasswordAsync(
+            userResult.Value,
+            request.Body.CurrentPassword,
+            request.Body.NewPassword);
+
+        return result.Succeeded
+            ? Result<UpdatePasswordResponse>.Ok(new())
+            : Result<UpdatePasswordResponse>.Error(ResultStatus.NotAuthorized, result.Errors.Select(e => e.Description));
     }
 }
