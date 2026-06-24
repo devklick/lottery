@@ -25,7 +25,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     {
         var request = new SignInRequestBody
         {
-            Username = username!,
+            UsernameOrEmail = username!,
             Password = password!,
         };
 
@@ -48,7 +48,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     {
         var request = new SignInRequestBody
         {
-            Username = "value",
+            UsernameOrEmail = "value",
             Password = "value",
         };
         var response = await TestContext.Default.Client.PostAsync(
@@ -71,7 +71,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
     {
         var request = new SignInRequestBody
         {
-            Username = TestUsers.AppUser1.UserName!,
+            UsernameOrEmail = TestUsers.AppUser1.UserName!,
             Password = "wrong",
         };
         var response = await TestContext.Default.Client.PostAsync(
@@ -105,7 +105,7 @@ public class SignInTest(ITestContextAccessor testContextAccessor, IntegrationTes
 
         var request = new SignInRequestBody
         {
-            Username = TestUsers.AppUser1.UserName!,
+            UsernameOrEmail = TestUsers.AppUser1.UserName!,
             Password = TestUsers.AppUser1Password,
         };
 

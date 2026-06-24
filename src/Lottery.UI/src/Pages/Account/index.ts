@@ -1,9 +1,11 @@
 import Account from "./Account";
-import ConfirmEmail from "./ConfirmEmail";
 import ConfirmEmailChange from "./ConfirmEmailChange";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import Unauthorized from "./Unauthorized";
+import VerifyEmail from "./VerifyEmail";
 
 export default {
   // Main page for this path
@@ -13,6 +15,8 @@ export default {
   SignIn,
   SignUp,
   Unauthorized,
-  ConfirmEmail,
+  VerifyEmail,
   ConfirmEmailChange,
+  ForgotPassword,
+  ResetPassword,
 };

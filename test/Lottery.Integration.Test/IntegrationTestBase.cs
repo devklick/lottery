@@ -72,7 +72,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
     {
         var requestBody = new SignInRequestBody
         {
-            Username = username,
+            UsernameOrEmail = username,
             Password = password
         };
 

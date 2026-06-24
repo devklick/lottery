@@ -22,12 +22,20 @@ const routes: Array<RouteObject> = [
         element: <pages.Account.Page />,
       },
       {
-        path: "/account/confirmEmail",
-        element: <pages.Account.ConfirmEmail.Page />,
+        path: "/account/verify",
+        element: <pages.Account.VerifyEmail.Page />,
       },
       {
-        path: "/account/confirmEmailChange",
+        path: "/account/email/update",
         element: <pages.Account.ConfirmEmailChange.Page />,
+      },
+      {
+        path: "/account/password/forgot",
+        element: <pages.Account.ForgotPassword.Page />,
+      },
+      {
+        path: "/account/password/reset",
+        element: <pages.Account.ResetPassword.Page />,
       },
       {
         path: "/account/signIn",

@@ -4,11 +4,6 @@ import {
   updateAccountResponseSchema,
 } from "./AccountDetails/updateAccountDetails.schema";
 import {
-  ConfirmEmailRequestQuery,
-  ConfirmEmailResponse,
-  confirmEmailResponseSchema,
-} from "./ConfirmEmail/schema";
-import {
   ConfirmEmailChangeRequestQuery,
   ConfirmEmailChangeResponse,
   confirmEmailChangeResponseSchema,
@@ -18,6 +13,14 @@ import {
   ConfirmPasswordResponse,
   confirmPasswordResponseSchema,
 } from "./ConfirmPasswordModal/confirmPassword.schema";
+import {
+  ForgotPasswordRequestBody,
+  ForgotPasswordResponse,
+} from "./ForgotPassword/schema";
+import {
+  ResetPasswordRequestBody,
+  ResetPasswordResponse,
+} from "./ResetPassword/schema";
 import {
   SignInRequest,
   SignInResponse,
@@ -32,6 +35,11 @@ import {
   signUpResponseSchema,
   SignUpResponse,
 } from "./SignUp/signUp.schema";
+import {
+  VerifyEmailRequestQuery,
+  VerifyEmailResponse,
+  verifyEmailResponseSchema,
+} from "./VerifyEmail/schema";
 import { ApiService, ApiServiceDefinition } from "../../services/ApiService";
 
 interface AccountService {
@@ -45,12 +53,16 @@ interface AccountService {
   confirmPassword(
     request: ConfirmPasswordRequestBody,
   ): Promise<ConfirmPasswordResponse>;
-  confirmEmail(
-    request: ConfirmEmailRequestQuery,
-  ): Promise<ConfirmEmailResponse>;
+  verifyEmail(request: VerifyEmailRequestQuery): Promise<VerifyEmailResponse>;
   confirmEmailChange(
     request: ConfirmEmailChangeRequestQuery,
   ): Promise<ConfirmEmailChangeResponse>;
+  forgotPassword(
+    request: ForgotPasswordRequestBody,
+  ): Promise<ForgotPasswordResponse>;
+  resetPassword(
+    request: ResetPasswordRequestBody,
+  ): Promise<ResetPasswordResponse>;
 }
 
 export function createAccountService({
@@ -166,17 +178,17 @@ export function createAccountService({
     throw valid.error.message;
   };
 
-  const confirmEmail: AccountService["confirmEmail"] = async (request) => {
-    const result = await api.get<
-      ConfirmEmailRequestQuery,
-      ConfirmEmailResponse
-    >("/account/email/confirm", request);
+  const confirmEmail: AccountService["verifyEmail"] = async (request) => {
+    const result = await api.get<VerifyEmailRequestQuery, VerifyEmailResponse>(
+      "/account/email/confirm",
+      request,
+    );
 
     if (!result.success) {
       throw result.errors;
     }
 
-    const valid = confirmEmailResponseSchema.safeParse(result.data);
+    const valid = verifyEmailResponseSchema.safeParse(result.data);
 
     if (valid.success) {
       return valid.data;
@@ -188,10 +200,48 @@ export function createAccountService({
   const confirmEmailChange: AccountService["confirmEmailChange"] = async (
     request,
   ) => {
-    const result = await api.get<
-      ConfirmEmailRequestQuery,
-      ConfirmEmailResponse
-    >("/account/email/confirmChange", request);
+    const result = await api.get<VerifyEmailRequestQuery, VerifyEmailResponse>(
+      "/account/email/confirmChange",
+      request,
+    );
+
+    if (!result.success) {
+      throw result.errors;
+    }
+
+    const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const forgotPassword: AccountService["forgotPassword"] = async (request) => {
+    const result = await api.post<
+      ForgotPasswordRequestBody,
+      ForgotPasswordResponse
+    >("/account/password/forgot", request);
+
+    if (!result.success) {
+      throw result.errors;
+    }
+
+    const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const resetPassword: AccountService["resetPassword"] = async (request) => {
+    const result = await api.post<
+      ResetPasswordRequestBody,
+      ResetPasswordResponse
+    >("/account/password/reset", request);
 
     if (!result.success) {
       throw result.errors;
@@ -213,8 +263,10 @@ export function createAccountService({
     getAccount,
     updateAccount,
     confirmPassword,
-    confirmEmail,
+    verifyEmail: confirmEmail,
     confirmEmailChange,
+    forgotPassword,
+    resetPassword,
   };
 }
 

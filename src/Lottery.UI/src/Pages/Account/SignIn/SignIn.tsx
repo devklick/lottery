@@ -30,7 +30,7 @@ interface SignInProps {}
 function SignIn({}: SignInProps) {
   const initialValues: SignInRequest = {
     password: "",
-    username: "",
+    usernameOrEmail: "",
     staySignedIn: true,
   };
   const form = useForm<SignInRequest>({
@@ -58,9 +58,9 @@ function SignIn({}: SignInProps) {
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
             <TextInput
-              {...form.getInputProps("username")}
-              placeholder="Username"
-              name="username"
+              {...form.getInputProps("usernameOrEmail")}
+              placeholder="Username or Email"
+              name="username-or-email"
               type="text"
             />
 
@@ -86,6 +86,11 @@ function SignIn({}: SignInProps) {
             <Text size="sm">
               Don't have an account?{" "}
               <AnchorLink to="/account/signUp">Sign up</AnchorLink>
+            </Text>
+            <Text size="sm">
+              <AnchorLink to="/account/password/forgot">
+                Forgot your password?
+              </AnchorLink>
             </Text>
           </Stack>
         </form>

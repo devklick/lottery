@@ -4,16 +4,12 @@ import { IconCircleCheck, IconXboxX } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useConfirmEmail } from "./hooks";
-import { confirmEmailPageQuerySchema } from "./schema";
+import { useVerifyEmail } from "./hooks";
+import { verifyEmailPageQuerySchema } from "./schema";
 import useValidatedQueryParams from "../../../hooks/url/useValidatedSearchParams";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ConfirmEmailProps {}
-
-// eslint-disable-next-line no-empty-pattern
-export default function ConfirmEmail({}: ConfirmEmailProps) {
-  const paramValidation = useValidatedQueryParams(confirmEmailPageQuerySchema);
+export default function VerifyEmail() {
+  const paramValidation = useValidatedQueryParams(verifyEmailPageQuerySchema);
   const navigate = useNavigate();
   const { colors } = useMantineTheme();
 
@@ -23,7 +19,7 @@ export default function ConfirmEmail({}: ConfirmEmailProps) {
     }
   }, [navigate, paramValidation.success]);
 
-  const query = useConfirmEmail(paramValidation.data);
+  const query = useVerifyEmail(paramValidation.data);
 
   useEffect(() => {
     if (query.status === "pending") return;

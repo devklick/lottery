@@ -5,7 +5,9 @@ using AutoMapper;
 using Lottery.Api.Models.Account.ConfirmEmail;
 using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
+using Lottery.Api.Models.Account.ForgotPassword;
 using Lottery.Api.Models.Account.GetAccount;
+using Lottery.Api.Models.Account.ResetPassword;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Account.UpdateAccount;
@@ -61,7 +63,8 @@ public class UserService(
 
     public async Task<Result<SignInResponse>> SignIn(SignInRequest request)
     {
-        var user = await userManager.FindByNameAsync(request.Body.Username);
+        var user = await userManager.FindByEmailAsync(request.Body.UsernameOrEmail)
+            ?? await userManager.FindByNameAsync(request.Body.UsernameOrEmail);
 
         if (user == null)
         {
@@ -72,7 +75,7 @@ public class UserService(
             };
         }
 
-        var result = await signInManager.PasswordSignInAsync(request.Body.Username, request.Body.Password, request.Body.StaySignedIn, true);
+        var result = await signInManager.PasswordSignInAsync(request.Body.UsernameOrEmail, request.Body.Password, request.Body.StaySignedIn, true);
 
         if (!result.Succeeded)
         {
@@ -140,7 +143,7 @@ public class UserService(
         var changeEmailToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
         var confirmationLink =
-            $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmail" +
+            $"{userServiceOptions.Value.EmailConfirmationDomain}/account/verify" +
             $"?userId={user.Id}" +
             $"&token={Uri.EscapeDataString(changeEmailToken)}";
 
@@ -338,7 +341,7 @@ public class UserService(
         {
             var changeEmailToken = await userManager.GenerateChangeEmailTokenAsync(user, request.Body.Email);
             var confirmationLink =
-                $"{userServiceOptions.Value.EmailConfirmationDomain}/account/confirmEmailChange" +
+                $"{userServiceOptions.Value.EmailConfirmationDomain}/account/email/update" +
                 $"?userId={user.Id}" +
                 $"&email={Uri.EscapeDataString(request.Body.Email)}" +
                 $"&token={Uri.EscapeDataString(changeEmailToken)}";
@@ -459,5 +462,48 @@ public class UserService(
         return result.Succeeded
             ? Result<UpdatePasswordResponse>.Ok(new())
             : Result<UpdatePasswordResponse>.Error(ResultStatus.NotAuthorized, result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<Result<ForgotPasswordResponse>> ForgotPassword(ForgotPasswordRequest request)
+    {
+        var email = request.Body.Email;
+
+        var user = await userManager.FindByEmailAsync(email);
+
+        var response = Result<ForgotPasswordResponse>.Ok(new());
+
+        if (user is null) return response;
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+        var resetLink =
+            $"{userServiceOptions.Value.EmailConfirmationDomain}/account/password/reset" +
+            $"?token={Uri.EscapeDataString(token)}";
+
+        await emailSender.SendPasswordResetLinkAsync(user, email, resetLink);
+
+        return response;
+    }
+
+    public async Task<Result<ResetPasswordResponse>> ResetPassword(ResetPasswordRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Body.Email.ToString());
+
+        if (user is null)
+        {
+            return Result<ResetPasswordResponse>.Error(
+                ResultStatus.BadRequest,
+                "Invalid reset request"
+            );
+        }
+
+        var result = await userManager.ResetPasswordAsync(user, Uri.UnescapeDataString(request.Body.Token), request.Body.Password);
+
+        return result.Succeeded
+            ? Result<ResetPasswordResponse>.Ok(new())
+            : Result<ResetPasswordResponse>.Error(
+                ResultStatus.BadRequest,
+                "Invalid reset request"
+            );
     }
 }

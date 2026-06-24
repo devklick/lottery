@@ -3,7 +3,9 @@ using Lottery.Api.Mappings;
 using Lottery.Api.Models.Account.ConfirmEmail;
 using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
+using Lottery.Api.Models.Account.ForgotPassword;
 using Lottery.Api.Models.Account.GetAccount;
+using Lottery.Api.Models.Account.ResetPassword;
 using Lottery.Api.Models.Account.SignIn;
 using Lottery.Api.Models.Account.SignUp;
 using Lottery.Api.Models.Account.UpdateAccount;
@@ -81,6 +83,22 @@ public class AccountController(
     public async Task<ActionResult<UpdatePasswordResponse>> UpdatePassword(UpdatePasswordRequest request)
     {
         var result = await userService.UpdatePassword(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpPost("password/forgot")]
+    public async Task<ActionResult<ForgotPasswordResponse>> ForgotPassword(ForgotPasswordRequest request)
+    {
+        var result = await userService.ForgotPassword(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpPost("password/reset")]
+    public async Task<ActionResult<ResetPasswordResponse>> ResetPassword(ResetPasswordRequest request)
+    {
+        var result = await userService.ResetPassword(request);
 
         return CreateObjectResult(result);
     }

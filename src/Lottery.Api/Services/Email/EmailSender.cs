@@ -21,7 +21,7 @@ public class EmailSender(IResend resend) : IEmailSender<AppUser>
     public async Task SendPasswordResetLinkAsync(AppUser user, string email, string resetLink)
         => await resend.EmailSendAsync(new()
         {
-            From = "noreply.devklick.net",
+            From = "noreply@devklick.net",
             To = email,
             Subject = "Reset your password",
             TextBody = resetLink

@@ -15,7 +15,7 @@ public class SignOutTest(ITestContextAccessor testContextAccessor, IntegrationTe
 
         var request = new SignInRequestBody
         {
-            Username = TestUsers.AppUser1.UserName!,
+            UsernameOrEmail = TestUsers.AppUser1.UserName!,
             Password = TestUsers.AppUser1Password,
         };
 
