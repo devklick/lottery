@@ -5,6 +5,7 @@ using AutoMapper;
 using Lottery.Api.Models.Account.ConfirmEmail;
 using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
+using Lottery.Api.Models.Account.DeleteAccount;
 using Lottery.Api.Models.Account.ForgotPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.ResetPassword;
@@ -17,6 +18,7 @@ using Lottery.Api.Models.User.Invite;
 using Lottery.Api.Models.User.Invite.Accept;
 using Lottery.Api.Models.User.Invite.Verify;
 using Lottery.Api.Repositories.User;
+using Lottery.Api.Services.Email;
 using Lottery.Api.Services.Options;
 using Lottery.Api.Utilities;
 using Lottery.Common.Models;
@@ -38,7 +40,7 @@ public class UserService(
     UserRepository userRepository,
     TimeProvider timeProvider,
     IHttpContextAccessor httpContextAccessor,
-    IEmailSender<AppUser> emailSender)
+    IEmailService emailSender)
 {
 
     public Result<Guid> GetUserId(ClaimsPrincipal user)
@@ -75,7 +77,7 @@ public class UserService(
             };
         }
 
-        var result = await signInManager.PasswordSignInAsync(request.Body.UsernameOrEmail, request.Body.Password, request.Body.StaySignedIn, true);
+        var result = await signInManager.PasswordSignInAsync(user.UserName!, request.Body.Password, request.Body.StaySignedIn, true);
 
         if (!result.Succeeded)
         {
@@ -505,5 +507,54 @@ public class UserService(
                 ResultStatus.BadRequest,
                 "Invalid reset request"
             );
+    }
+
+    public async Task<Result<DeleteAccountResponse>> DeleteAccount()
+    {
+        var userResult = await GetCurrentUser();
+
+        if (!userResult.Success)
+        {
+            return userResult.ChangeValue(new DeleteAccountResponse());
+        }
+
+        var user = userResult.Value;
+        var email = user.Email!;
+
+        ObfuscateUser(user);
+
+        var update = await userManager.UpdateAsync(user);
+
+        if (update.Succeeded)
+        {
+            return Result<DeleteAccountResponse>.Error(
+                ResultStatus.ServerError,
+                "There was a problem deleting your account. Please try again later"
+            );
+        }
+
+        await emailSender.SendAccountDeletionConfirmation(email);
+
+        return Result<DeleteAccountResponse>.Ok(new());
+    }
+
+    private void ObfuscateUser(AppUser user)
+    {
+        var now = timeProvider.GetUtcNow().UtcDateTime.ToString("o");
+
+        var placeholder = $"deleted-{user.Id}-{now}";
+        user.UserName = placeholder;
+
+        user.Email = $"{placeholder}@deleted.local";
+        user.EmailConfirmed = false;
+
+        user.PhoneNumber = null;
+        user.PhoneNumberConfirmed = false;
+
+        user.AccessFailedCount = 0;
+        user.TwoFactorEnabled = false;
+
+        var dummyPassword = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        user.PasswordHash = hasher.HashPassword(user, dummyPassword);
     }
 }

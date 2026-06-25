@@ -3,6 +3,7 @@ using Lottery.Api.Mappings;
 using Lottery.Api.Models.Account.ConfirmEmail;
 using Lottery.Api.Models.Account.ConfirmEmailChange;
 using Lottery.Api.Models.Account.ConfirmPassword;
+using Lottery.Api.Models.Account.DeleteAccount;
 using Lottery.Api.Models.Account.ForgotPassword;
 using Lottery.Api.Models.Account.GetAccount;
 using Lottery.Api.Models.Account.ResetPassword;
@@ -115,6 +116,15 @@ public class AccountController(
     public async Task<ActionResult<ConfirmEmailChangeResponse>> ConfirmEmailChange(ConfirmEmailChangeRequest request)
     {
         var result = await userService.ConfirmEmailChange(request);
+
+        return CreateObjectResult(result);
+    }
+
+    [HttpDelete]
+    [Authorize, RequireRecentAuth]
+    public async Task<ActionResult<DeleteAccountResponse>> Delete()
+    {
+        var result = await userService.DeleteAccount();
 
         return CreateObjectResult(result);
     }

@@ -76,6 +76,7 @@ services:
 
     environment:
       LOTTERY_API_PORT: 8080
+      EMAIL_API_KEY: ${EMAIL_API_KEY}
       ConnectionStrings__Default: Host=db;Database=${LOTTERY_POSTGRES_DB};Username=${LOTTERY_API_DB_USER};Password=${LOTTERY_API_DB_PASSWORD}
 
   resulting:

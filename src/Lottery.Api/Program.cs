@@ -62,7 +62,7 @@ public class Program
         builder.Services.AddHttpClient<ResendClient>();
         builder.Services.Configure<ResendClientOptions>(o =>
             o.ApiToken = Env.GetRequiredEnvVar("EMAIL_API_KEY"));
-        builder.Services.AddScoped<IEmailSender<AppUser>, EmailSender>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<ResultMapper>();
 

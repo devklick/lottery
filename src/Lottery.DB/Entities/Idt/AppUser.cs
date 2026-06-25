@@ -21,4 +21,6 @@ public class AppUser : IdentityUser<Guid>
     /// The date and time at which the user last verified their password.
     /// </summary>
     public DateTime? LastReauthenticatedAt { get; set; }
+
+    public ItemState State { get; set; }
 }

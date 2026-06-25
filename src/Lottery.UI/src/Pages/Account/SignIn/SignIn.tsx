@@ -7,8 +7,11 @@ import {
   Stack,
   Text,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconXboxX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -41,15 +44,27 @@ function SignIn({}: SignInProps) {
 
   const navigate = useNavigate();
   const userStore = useUserStore();
+  const { colors } = useMantineTheme();
 
   function onSignInSuccess(response: SignInResponse) {
     userStore.login(response.userType, response.sessionExpiry);
     navigate("/home");
   }
 
+  function onSignInFailed() {
+    notifications.show({
+      title: "Login failed",
+      message: "Please check your credentials and try again",
+      icon: <IconXboxX />,
+      color: colors.red[5],
+      autoClose: 5000,
+    });
+  }
+
   const mutation = useMutation<SignInResponse, unknown, SignInRequest>({
     mutationFn: async (request) => await accountService.signIn(request),
     onSuccess: onSignInSuccess,
+    onError: onSignInFailed, // todo: properly handle all failed login scenarios
   });
 
   return (
@@ -84,13 +99,13 @@ function SignIn({}: SignInProps) {
               Submit
             </Button>
             <Text size="sm">
-              Don't have an account?{" "}
-              <AnchorLink to="/account/signUp">Sign up</AnchorLink>
-            </Text>
-            <Text size="sm">
               <AnchorLink to="/account/password/forgot">
                 Forgot your password?
               </AnchorLink>
+            </Text>
+            <Text size="sm">
+              Don't have an account?{" "}
+              <AnchorLink to="/account/signUp">Sign up</AnchorLink>
             </Text>
           </Stack>
         </form>

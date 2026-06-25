@@ -55,6 +55,6 @@ export const useUserStore = create<UserStore>()(
           sessionExpiry: new Date(us.sessionExpiry),
         };
       },
-    }
-  )
+    },
+  ),
 );

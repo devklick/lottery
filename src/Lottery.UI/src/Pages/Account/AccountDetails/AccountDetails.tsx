@@ -1,15 +1,6 @@
-import {
-  Button,
-  ButtonGroup,
-  Grid,
-  Group,
-  Text,
-  TextInput,
-  Tooltip,
-  useMantineTheme,
-} from "@mantine/core";
+import { Grid, Text, TextInput, Tooltip, useMantineTheme } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconCheck,
@@ -20,6 +11,7 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
+import Footer from "./Footer";
 import {
   UpdateAccountRequestBody,
   updateAccountRequestBodySchema,
@@ -64,9 +56,7 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountQuery.data, accountQuery.status]);
 
-  const { breakpoints, colors } = useMantineTheme();
-  const sm = useMediaQuery(`(max-width: ${breakpoints.sm})`);
-  const xs = useMediaQuery(`(max-width: ${breakpoints.xs})`);
+  const { colors } = useMantineTheme();
 
   const [
     confirmPasswordModalOpened,
@@ -128,6 +118,7 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
       children={
         <>
           <ConfirmPasswordModal
+            reason="Please confirm your password to edit your account details"
             onSuccess={confirmPasswordSuccess}
             onCancel={closeConfirmPasswordModal}
             onFailure={confirmPasswordFailed}
@@ -198,39 +189,16 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
         </>
       }
       footer={
-        <Group justify="flex-end" w="100%">
-          {!editing && <Button onClick={() => setEditing(true)}>Edit</Button>}
-          {editing && (
-            <ButtonGroup
-              orientation={xs ? "vertical" : "horizontal"}
-              w={sm ? "100%" : "auto"}
-            >
-              <Button
-                disabled={updateAccount.isPending}
-                type="reset"
-                onClick={() => {
-                  form.reset();
-                  setEditing(false);
-                }}
-                fullWidth={sm}
-                variant="outline"
-                color="red"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={!form.isDirty()}
-                type="submit"
-                variant="gradient"
-                gradient={{ from: "blue", to: "grape", deg: 20 }}
-                fullWidth={sm}
-                form={"update-account"}
-              >
-                Submit
-              </Button>
-            </ButtonGroup>
-          )}
-        </Group>
+        <Footer
+          editing={editing}
+          cancelEditDisabled={updateAccount.isPending}
+          onCancelEditClicked={() => {
+            form.reset();
+            setEditing(false);
+          }}
+          onEditClicked={() => setEditing(true)}
+          submitEditDisabled={!form.isDirty()}
+        />
       }
     />
   );

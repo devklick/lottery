@@ -6,6 +6,7 @@ import {
   apiErrorsResponseSchema,
   ApiSuccessResponse,
   apiSuccessResponseSchema,
+  apiMessagesSchema,
 } from "../common/schemas";
 
 export function isApiError(value: unknown): value is ApiErrorsResponse {
@@ -25,6 +26,11 @@ export type ErrorResult<T> = {
   success: false;
   errors: T;
 };
+
+export function isReAuthError<T>(result: ErrorResult<T>): boolean {
+  const validation = apiMessagesSchema.safeParse(result);
+  return validation.success && validation.data[0].code === "RecentAuthRequired";
+}
 
 type Result<SuccessData> =
   | SuccessResult<SuccessData>
@@ -56,6 +62,12 @@ export interface ApiServiceDefinition {
     options?: PostOptions,
   ): AsyncResult<Response>;
 
+  delete<Request = unknown, Response = unknown>(
+    url: string,
+    request?: Request,
+    options?: PostOptions,
+  ): AsyncResult<Response>;
+
   get<Query, Response>(
     url: string,
     query?: Query,
@@ -80,6 +92,42 @@ export class ApiService implements ApiServiceDefinition {
       baseURL: params.baseUrl,
       validateStatus: null,
     });
+  }
+  async delete<Request = unknown, Response = unknown>(
+    url: string,
+    request?: Request,
+    options?: PostOptions,
+  ): AsyncResult<Response> {
+    console.info("Calling API", { url, request, options });
+    const response = await this.api.delete<
+      Response,
+      AxiosResponse<Response>,
+      Request
+    >(url, {
+      withCredentials: options?.withCredentials,
+    });
+
+    console.log("response", response);
+
+    options?.onStatusCode?.[response.status]?.(response);
+
+    if (
+      response.status.toString().startsWith("2") &&
+      isApiSuccess(response.data)
+    ) {
+      return {
+        success: true,
+        data: response.data.value,
+      };
+    }
+
+    console.log("api response data", response.data);
+    return {
+      success: false,
+      errors: isApiError(response.data)
+        ? response.data.messages
+        : [{ value: "Unknown error info received", code: "General" }],
+    };
   }
 
   async post<Request = unknown, Response = unknown>(

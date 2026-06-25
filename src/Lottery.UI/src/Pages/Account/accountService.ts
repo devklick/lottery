@@ -41,6 +41,7 @@ import {
   verifyEmailResponseSchema,
 } from "./VerifyEmail/schema";
 import { ApiService, ApiServiceDefinition } from "../../services/ApiService";
+import { DeleteAccountResponse } from "./AccountDetails/DangerSection/schema";
 
 interface AccountService {
   signIn(request: SignInRequest): Promise<SignInResponse>;
@@ -63,6 +64,7 @@ interface AccountService {
   resetPassword(
     request: ResetPasswordRequestBody,
   ): Promise<ResetPasswordResponse>;
+  deleteAccount(): Promise<DeleteAccountResponse>;
 }
 
 export function createAccountService({
@@ -78,7 +80,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = signUpResponseSchema.safeParse(result.data);
@@ -99,7 +101,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = signInResponseSchema.safeParse(result.data);
@@ -166,7 +168,7 @@ export function createAccountService({
     });
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = confirmPasswordResponseSchema.safeParse(result.data);
@@ -185,7 +187,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = verifyEmailResponseSchema.safeParse(result.data);
@@ -206,7 +208,7 @@ export function createAccountService({
     );
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
@@ -225,7 +227,7 @@ export function createAccountService({
     >("/account/password/forgot", request);
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
     }
 
     const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
@@ -244,7 +246,24 @@ export function createAccountService({
     >("/account/password/reset", request);
 
     if (!result.success) {
-      throw result.errors;
+      throw result;
+    }
+
+    const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const deleteAccount: AccountService["deleteAccount"] = async () => {
+    const result = await api.delete<unknown, DeleteAccountResponse>("/account");
+
+    console.log("result", result);
+    if (!result.success) {
+      throw result;
     }
 
     const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
@@ -267,6 +286,7 @@ export function createAccountService({
     confirmEmailChange,
     forgotPassword,
     resetPassword,
+    deleteAccount,
   };
 }
 

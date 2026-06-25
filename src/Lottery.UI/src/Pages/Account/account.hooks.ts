@@ -2,8 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { UpdateAccountResponse } from "./AccountDetails/updateAccountDetails.schema";
 import accountService from "./accountService";
-import { apiMessagesSchema } from "../../common/schemas";
-import { ErrorResult } from "../../services/ApiService";
+import { ErrorResult, isReAuthError } from "../../services/ApiService";
 
 interface UseGetAccountProps {
   enabled: boolean;
@@ -30,13 +29,7 @@ export function useUpdateAccount({
     mutationFn: accountService.updateAccount,
     onSuccess,
     onError: (e: ErrorResult<unknown>) => {
-      const validation = apiMessagesSchema.safeParse(e.errors);
-      if (
-        validation.success &&
-        validation.data[0].code === "RecentAuthRequired"
-      ) {
-        onReAuthRequired();
-      }
+      if (isReAuthError(e)) onReAuthRequired();
     },
   });
 }

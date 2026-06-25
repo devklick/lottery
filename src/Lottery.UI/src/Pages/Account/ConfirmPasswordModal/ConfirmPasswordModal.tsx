@@ -1,17 +1,13 @@
-import { Button, Modal, PasswordInput, Stack } from "@mantine/core";
-import { schemaResolver, useForm } from "@mantine/form";
+import { Modal } from "@mantine/core";
 
-import {
-  ConfirmPasswordRequestBody,
-  confirmPasswordRequestBodySchema,
-} from "./confirmPassword.schema";
-import { useConfirmPassword } from "../account.hooks";
+import ConfirmPassword from "./ConfirmPassword";
 
 interface ConfirmPasswordModalProps {
   onSuccess(): void;
   onFailure(): void;
   onCancel(): void;
   opened: boolean;
+  reason: string;
 }
 
 export default function ConfirmPasswordModal({
@@ -19,37 +15,11 @@ export default function ConfirmPasswordModal({
   onFailure,
   onSuccess,
   opened,
+  reason
 }: ConfirmPasswordModalProps) {
-  const form = useForm<ConfirmPasswordRequestBody>({
-    validate: schemaResolver(confirmPasswordRequestBodySchema),
-  });
-
-  const confirmPassword = useConfirmPassword({ onFailure, onSuccess });
-
   return (
-    <Modal
-      title="Confirm Password"
-      opened={opened}
-      // withCloseButton
-      onClose={onCancel}
-    >
-      <form
-        id="confirm-password"
-        onSubmit={form.onSubmit(
-          async (data) => await confirmPassword.mutateAsync(data),
-        )}
-      >
-        <Stack>
-          <PasswordInput
-            {...form.getInputProps("password")}
-            name="password"
-            type="password"
-          />
-          <Button type="submit" id="confirm-password">
-            Submit
-          </Button>
-        </Stack>
-      </form>
+    <Modal title="Confirm Password" opened={opened} onClose={onCancel}>
+      <ConfirmPassword reason={reason} onFailure={onFailure} onSuccess={onSuccess} />
     </Modal>
   );
 }
