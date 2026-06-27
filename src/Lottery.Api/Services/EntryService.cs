@@ -12,72 +12,71 @@ using Lottery.Api.Repositories.Entry;
 using Lottery.Api.Repositories.Entry.Filters;
 using Lottery.DB.Entities.Ref;
 using Lottery.Common.Models;
+using Lottery.DB.Entities.Idt;
 
 namespace Lottery.Api.Services;
 
-public class EntryService(EntryRepository entryRepository, GameRepository gameRepository, UserService userService, IMapper mapper, TimeProvider timeProvider)
+public class EntryService(
+    EntryRepository entryRepository,
+    GameRepository gameRepository,
+    UserService userService,
+    IMapper mapper,
+    TimeProvider timeProvider)
 {
-    public async Task<Result<CreateEntryResponse>> CreateEntry(CreateEntryRequest request, ClaimsPrincipal user)
+    public async Task<Result<CreateEntryResponse>> CreateEntry(CreateEntryRequest request)
     {
         // Grab the user Id that's creating the entry
-        var userIdResult = userService.GetUserId(user);
+        var userResult = await userService.GetCurrentUser();
 
-        if (userIdResult.Status != ResultStatus.Ok)
+        if (!userResult.Success)
         {
-            return new Result<CreateEntryResponse>
-            {
-                Status = userIdResult.Status,
-                Messages = userIdResult.Messages
-            };
+            return userResult.ChangeValue<CreateEntryResponse>();
         }
 
-        request.Unbound.CreatedById = userIdResult.Value;
+        var user = userResult.Value;
 
         // Grab the game to be sure it exists
         var game = await gameRepository.GetGame(request.Body.GameId,
-            selectionsFilter: new()
-            {
-                Include = true
-            },
-            prizesFilter: new()
-            {
-                Include = true
-            },
-            resultsFilter: new()
-            {
-                Include = true
-            });
+            selectionsFilter: new() { Include = true },
+            prizesFilter: new() { Include = true },
+            resultsFilter: new() { Include = true });
 
         if (game == null)
         {
-            return new Result<CreateEntryResponse>
-            {
-                Status = ResultStatus.NotFound,
-                Messages = [new() { Value = $"Unable to locate game with gameId {request.Body.GameId}" }]
-            };
+            return Result<CreateEntryResponse>.Error(
+                ResultStatus.NotFound,
+                $"Unable to locate game with gameId {request.Body.GameId}");
         }
 
         if (game.CloseTime <= timeProvider.GetUtcNow())
         {
-            return new Result<CreateEntryResponse>
-            {
-                Status = ResultStatus.BadRequest,
-                Messages = [new() { Value = $"Game {request.Body.GameId} is closed" }]
-            };
+            return Result<CreateEntryResponse>.Error(
+                ResultStatus.BadRequest,
+                $"Game {request.Body.GameId} is closed");
         }
 
         // Make sure the correct number of selections are present on the entry
         if (request.Body.Selections.Count != game.SelectionsRequiredForEntry)
         {
-            return new Result<CreateEntryResponse>
-            {
-                Status = ResultStatus.BadRequest,
-                Messages = [new() { Value = $"Expected {game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}" }]
-            };
+            return Result<CreateEntryResponse>.Error(
+                ResultStatus.BadRequest,
+                $"Expected {game.SelectionsRequiredForEntry} selections, found {request.Body.Selections.Count}");
+        }
+
+        var entries = await entryRepository.SearchEntries(1, 1,
+            entryFilter: new() { UserId = user.Id }
+        );
+
+        if (entries.Total >= game.MaxEntriesPerPlayer)
+        {
+            return Result<CreateEntryResponse>
+                .Error(ResultStatus.BadRequest)
+                .AddMessages(MessageCode.MaxEntriesReached, $"Player already has {entries.Total} entries in this game");
         }
 
         // convert the entry request to an entry entity
         var entry = mapper.Map<Entry>(request);
+        entry.CreatedById = user.Id;
         entry.Selections = [];
 
         // We need to look up the game selections using the entry selection numbers
@@ -109,14 +108,10 @@ public class EntryService(EntryRepository entryRepository, GameRepository gameRe
 
         var result = await entryRepository.CreateEntry(entry);
 
-        return new Result<CreateEntryResponse>
+        return Result<CreateEntryResponse>.Ok(new()
         {
-            Status = ResultStatus.Ok,
-            Value = new CreateEntryResponse
-            {
-                Id = result.Id
-            }
-        };
+            Id = result.Id
+        });
     }
 
     public async Task<Result<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request, ClaimsPrincipal user)

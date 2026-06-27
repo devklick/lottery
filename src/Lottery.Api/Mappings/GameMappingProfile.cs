@@ -20,14 +20,12 @@ public class GameMappingProfile : AutoMapper.Profile
     private void MapModelsForCreate()
     {
         CreateMap<CreateGameRequest, DB.Entities.Dbo.Game>()
-            .IncludeMembers(src => src.Body, src => src.Unbound);
+            .IncludeMembers(src => src.Body);
 
         CreateMap<CreateGameRequestBody, DB.Entities.Dbo.Game>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
 
         CreateMap<CreateGameRequestBody.Prize, DB.Entities.Dbo.GamePrize>();
-
-        CreateMap<CreateGameRequestUnbound, DB.Entities.Dbo.Game>();
 
         CreateMap<DB.Entities.Dbo.Game, CreateGameResponse>();
         CreateMap<DB.Entities.Dbo.GamePrize, CreateGameResponse.Prize>();

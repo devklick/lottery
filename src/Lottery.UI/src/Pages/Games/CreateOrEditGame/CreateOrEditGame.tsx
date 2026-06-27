@@ -6,7 +6,6 @@ import {
   NumberInput,
   Select,
   Stack,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -14,12 +13,15 @@ import { DateTimePicker } from "@mantine/dates";
 import { schemaResolver, useForm, UseFormReturnType } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { useNavigate } from "react-router-dom";
 
 import ActionButtons from "./ActionButtons";
 import { allStatesWithLabel } from "../../../common/schemas";
 import { toPascalCase } from "../../../common/utils/string.utils";
+import FieldLabel from "../../../components/FieldLabel";
+import FieldWrapper from "../../../components/FieldWrapper";
 import Page from "../../../components/Page/Page";
 import PageSection from "../../../components/PageSection/PageSection";
 import {
@@ -32,6 +34,7 @@ import {
   editGameRequestBodySchema,
   EditGameResponse,
 } from "../EditGame/editGame.schema";
+import { gameObjectSchema } from "../GameDetail/game.schema";
 
 type Shared<T, U> = {
   [K in Extract<keyof T, keyof U>]: T[K] & U[K];
@@ -46,6 +49,7 @@ interface CreateOrEditGameProps<
     : CreateGameResponse,
 > {
   mode: Mode;
+  loading?: boolean;
   initialValues: CreateOrEditFromValues;
   mutationFn(request: CreateOrEditFromValues): Promise<TResponse>;
   onCancel(): void;
@@ -67,6 +71,7 @@ export default function CreateOrEditGame<
   onCancel,
   submitDisabled,
   disabled,
+  loading,
 }: CreateOrEditGameProps<Mode, TResponse>) {
   const navigate = useNavigate();
   const mutation = useMutation({
@@ -85,14 +90,18 @@ export default function CreateOrEditGame<
     initialValues,
   });
 
-  form.getInputProps("");
+  useEffect(() => {
+    if (!form.isTouched()) {
+      form.setValues(initialValues);
+    }
+  }, [initialValues]);
 
-  const colProps: GridColProps = {
+  const twoCols: GridColProps = {
     span: { xs: 12, sm: 6, md: 6, lg: 6 },
     style: { textAlign: "left" },
   };
 
-  const dateColProps: GridColProps = {
+  const threeCols: GridColProps = {
     span: { xs: 12, sm: 4, md: 4, lg: 4 },
     style: { textAlign: "left" },
   };
@@ -107,63 +116,116 @@ export default function CreateOrEditGame<
             onSubmit={form.onSubmit(async (data) => mutation.mutateAsync(data))}
           >
             <Grid justify="center" gap={"xl"}>
-              <Grid.Col key={"name-col"} {...colProps}>
-                <TextInput
-                  label="Name"
-                  {...form.getInputProps("name")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"name-col"} {...twoCols}>
+                <FieldWrapper
+                  name="Name"
+                  required
+                  description={gameObjectSchema.shape.name.description}
+                  loading={loading}
+                >
+                  <TextInput
+                    {...form.getInputProps("name")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"state-col"} {...colProps}>
-                <Select
-                  label="State"
-                  {...form.getInputProps("state")}
-                  data={Object.values(allStatesWithLabel)}
-                  withAsterisk
-                  allowDeselect={false}
-                  disabled={disabled}
-                />
+              <Grid.Col key={"state-col"} {...twoCols}>
+                <FieldWrapper
+                  name="State"
+                  required
+                  description={gameObjectSchema.shape.state.description}
+                  loading={loading}
+                >
+                  <Select
+                    {...form.getInputProps("state")}
+                    data={Object.values(allStatesWithLabel)}
+                    allowDeselect={false}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"startTime-col"} {...dateColProps}>
-                <DateTimePicker
-                  label="Start Time"
-                  {...form.getInputProps("startTime")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"startTime-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Start time"
+                  loading={loading}
+                  required
+                  description={gameObjectSchema.shape.startTime.description}
+                >
+                  <DateTimePicker
+                    {...form.getInputProps("startTime")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"closeTime-col"} {...dateColProps}>
-                <DateTimePicker
-                  label="Close Time"
-                  {...form.getInputProps("closeTime")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"closeTime-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Close Time"
+                  required
+                  description={gameObjectSchema.shape.closeTime.description}
+                  loading={loading}
+                >
+                  <DateTimePicker
+                    {...form.getInputProps("closeTime")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"drawTime-col"} {...dateColProps}>
-                <DateTimePicker
-                  label="Draw Time"
-                  {...form.getInputProps("drawTime")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"drawTime-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Draw Time"
+                  required
+                  description={gameObjectSchema.shape.drawTime.description}
+                  loading={loading}
+                >
+                  <DateTimePicker
+                    {...form.getInputProps("drawTime")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"maxSelections-col"} {...colProps}>
-                <NumberInput
-                  label="Selections in game"
-                  {...form.getInputProps("maxSelections")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"maxSelections-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Selections in game"
+                  required
+                  description="The count of available numbers for players to select from"
+                  loading={loading}
+                >
+                  <NumberInput
+                    {...form.getInputProps("maxSelections")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
-              <Grid.Col key={"selectionsRequiredForEntry-col"} {...colProps}>
-                <NumberInput
-                  label="Selections per entry"
-                  {...form.getInputProps("selectionsRequiredForEntry")}
-                  withAsterisk
-                  disabled={disabled}
-                />
+              <Grid.Col key={"selectionsRequiredForEntry-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Selections per entry"
+                  required
+                  description={
+                    gameObjectSchema.shape.selectionsRequiredForEntry
+                      .description
+                  }
+                  loading={loading}
+                >
+                  <NumberInput
+                    {...form.getInputProps("selectionsRequiredForEntry")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
+              </Grid.Col>
+              <Grid.Col key={"maxEntriesPerPlayer-col"} {...threeCols}>
+                <FieldWrapper
+                  name="Max entries per player"
+                  required
+                  description={
+                    gameObjectSchema.shape.maxEntriesPerPlayer.description
+                  }
+                  loading={loading}
+                >
+                  <NumberInput
+                    {...form.getInputProps("maxEntriesPerPlayer")}
+                    disabled={disabled}
+                  />
+                </FieldWrapper>
               </Grid.Col>
               <Grid.Col key={"prizes-col"} span={12}>
                 <Title key={"prizes-title"} size={"h2"}>
@@ -172,56 +234,70 @@ export default function CreateOrEditGame<
                 <Grid key={"prizes-grid"} maw={500} mx="auto" mt={20}>
                   <Grid.Col
                     key={"prize-position-header"}
-                    {...colProps}
+                    {...twoCols}
                     span={5.5}
                   >
-                    <Text fw={500} size="sm">
-                      Position
-                    </Text>
+                    <FieldLabel
+                      name="Position"
+                      required
+                      description={
+                        gameObjectSchema.shape.prizes.element.shape.position
+                          .description
+                      }
+                      loading={loading}
+                    />
                   </Grid.Col>
                   <Grid.Col
                     key={"prize-numberMatchCount-header"}
-                    {...colProps}
+                    {...twoCols}
                     span={5.5}
                   >
-                    <Text key={"some key"} fw={500} size="sm">
-                      Matching Numbers
-                    </Text>
+                    <FieldLabel
+                      name="Matching Numbers"
+                      required
+                      description={
+                        gameObjectSchema.shape.prizes.element.shape
+                          .numberMatchCount.description
+                      }
+                      loading={loading}
+                    />
                   </Grid.Col>
                   <Grid.Col
                     key={"prize-deletePrize-header"}
-                    {...colProps}
+                    {...twoCols}
                     span={1}
                   />
 
                   {form.values.prizes.map((_, index) => (
                     <Fragment key={`prize-${index}`}>
-                      <Group align="start">
-                        <Grid.Col
-                          key={`prize-${index}-position`}
-                          span={5.5}
-                          styles={{ col: { alignSelf: "start" } }}
-                          maw={207}
-                        >
+                      <Grid.Col
+                        key={`prize-${index}-position`}
+                        span={5.5}
+                        styles={{ col: { alignSelf: "start" } }}
+                      >
+                        <FieldWrapper loading={loading}>
                           <NumberInput
                             {...form.getInputProps(`prizes.${index}.position`)}
                             disabled={disabled}
                           />
-                        </Grid.Col>
-                        <Grid.Col
-                          key={`prize-${index}-numberMatchCount`}
-                          span={5.5}
-                          maw={207}
-                        >
+                        </FieldWrapper>
+                      </Grid.Col>
+                      <Grid.Col
+                        key={`prize-${index}-numberMatchCount`}
+                        span={5.5}
+                      >
+                        <FieldWrapper loading={loading}>
                           <NumberInput
                             {...form.getInputProps(
                               `prizes.${index}.numberMatchCount`,
                             )}
                             disabled={disabled}
                           />
-                        </Grid.Col>
-                        <Grid.Col key={`prize-${index}-deletePrize`} span={1}>
-                          <Stack justify="center" align="center" h={"100%"}>
+                        </FieldWrapper>
+                      </Grid.Col>
+                      <Grid.Col key={`prize-${index}-deletePrize`} span={1}>
+                        <Stack justify="center" align="center" h={"100%"}>
+                          <FieldWrapper loading={loading}>
                             <ActionIcon
                               variant="filled"
                               color="red"
@@ -235,41 +311,43 @@ export default function CreateOrEditGame<
                             >
                               <IconTrash />
                             </ActionIcon>
-                          </Stack>
-                        </Grid.Col>
-                      </Group>
+                          </FieldWrapper>
+                        </Stack>
+                      </Grid.Col>
                     </Fragment>
                   ))}
                   <Group justify="start" w={"100%"}>
                     <Grid.Col span={1}>
-                      <ActionIcon
-                        disabled={
-                          form.getValues().prizes.length >=
-                            form.getValues().selectionsRequiredForEntry ||
-                          disabled
-                        }
-                        onClick={() => {
-                          if (disabled) return;
-                          form.insertListItem("prizes", {
-                            numberMatchCount: Math.max(
-                              1,
-                              Math.min(
-                                ...form
-                                  .getValues()
-                                  .prizes.map((p) => p.numberMatchCount),
-                              ) - 1,
-                            ),
-                            position:
-                              Math.max(
-                                ...form
-                                  .getValues()
-                                  .prizes.map((p) => p.position),
-                              ) + 1,
-                          } satisfies CreateOrEditFromValues["prizes"][number]);
-                        }}
-                      >
-                        <IconPlus />
-                      </ActionIcon>
+                      <FieldWrapper loading={loading}>
+                        <ActionIcon
+                          disabled={
+                            form.getValues().prizes.length >=
+                              form.getValues().selectionsRequiredForEntry ||
+                            disabled
+                          }
+                          onClick={() => {
+                            if (disabled) return;
+                            form.insertListItem("prizes", {
+                              numberMatchCount: Math.max(
+                                1,
+                                Math.min(
+                                  ...form
+                                    .getValues()
+                                    .prizes.map((p) => p.numberMatchCount),
+                                ) - 1,
+                              ),
+                              position:
+                                Math.max(
+                                  ...form
+                                    .getValues()
+                                    .prizes.map((p) => p.position),
+                                ) + 1,
+                            } satisfies CreateOrEditFromValues["prizes"][number]);
+                          }}
+                        >
+                          <IconPlus />
+                        </ActionIcon>
+                      </FieldWrapper>
                     </Grid.Col>
                   </Group>
                 </Grid>
@@ -288,6 +366,4 @@ export default function CreateOrEditGame<
       }
     />
   );
-
-  return null;
 }

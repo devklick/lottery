@@ -24,6 +24,7 @@ export const editGameRequestBodySchema = z
     state: stateSchema.default("enabled"),
     maxSelections: z.number().positive().min(3).max(100),
     selectionsRequiredForEntry: z.number().positive().min(3).max(100),
+    maxEntriesPerPlayer: z.number().min(1).max(100),
     prizes: editGamePrizesRequestSchema,
     name: z.string().min(3).max(64),
   })

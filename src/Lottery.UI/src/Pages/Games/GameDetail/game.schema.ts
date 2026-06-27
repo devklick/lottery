@@ -16,36 +16,74 @@ export const getGameRequestSchema = z.object({
   route: getGameRequestRouteSchema,
 });
 
-export const getGameResponseSchema = z.object({
-  id: z.uuid(),
-  startTime: z.string().pipe(z.coerce.date()),
-  closeTime: z.string().pipe(z.coerce.date()),
-  drawTime: z.string().pipe(z.coerce.date()),
-  resultedAt: z.string().nullable().pipe(z.coerce.date()),
-  name: z.string(),
-  selectionsRequiredForEntry: z.number(),
-  gameStatus: gameStatusSchema,
-  state: camelCaseEnum(States),
+export const gameObjectSchema = z.object({
+  id: z.uuid().describe("The unique identifier for the game"),
+  startTime: z
+    .string()
+    .pipe(z.coerce.date())
+    .describe(
+      "The date and time at which the game will allow players to submit entries",
+    ),
+  closeTime: z
+    .string()
+    .pipe(z.coerce.date())
+    .describe(
+      "The date and time at which players will no longer be able to submit entries",
+    ),
+  drawTime: z
+    .string()
+    .pipe(z.coerce.date())
+    .describe("The date and time at which the results process will begin"),
+  resultedAt: z
+    .string()
+    .nullable()
+    .pipe(z.coerce.date())
+    .describe("The date and time at which the results where drawn"),
+  name: z.string().describe("A user-friendly name for the game"),
+  selectionsRequiredForEntry: z
+    .number()
+    .describe(
+      "The count of numbers that a player must pick to submit their entry",
+    ),
+  maxEntriesPerPlayer: z
+    .number()
+    .describe(
+      "The maximum number of entries a single player can have in the game",
+    ),
+  gameStatus: gameStatusSchema.describe("The current status"),
+  state: camelCaseEnum(States).describe("Whether or not the game is enabled"),
   selections: z.array(
     z.object({
-      id: z.uuid(),
-      selectionNumber: z.number(),
+      id: z.uuid().describe("The unique identifier for this selection"),
+      selectionNumber: z
+        .number()
+        .describe("A number that is available in the game for players to pick"),
     }),
   ),
   results: z.array(
     z.object({
-      id: z.uuid(),
-      selectionNumber: z.number(),
+      id: z.uuid().describe("The unique identifier for this result"),
+      selectionNumber: z.number().describe("The number that was drawn"),
     }),
   ),
   prizes: z.array(
     z.object({
-      id: z.uuid(),
-      position: z.number(),
-      numberMatchCount: z.number(),
+      id: z.uuid().describe("The unique identifier for this prize"),
+      position: z
+        .number()
+        .describe(
+          "The position of this prize in relation to the other prizes. Higher position can be considered higher value",
+        ),
+      numberMatchCount: z
+        .number()
+        .describe(
+          "The count of matching numbers required to receive this prize",
+        ),
     }),
   ),
 });
+
+export const getGameResponseSchema = gameObjectSchema.clone();
 
 export type GetGameRequest = z.infer<typeof getGameRequestSchema>;
 export type GetGameResponse = z.infer<typeof getGameResponseSchema>;

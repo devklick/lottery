@@ -117,6 +117,7 @@ public abstract class IntegrationTestBase(ITestContextAccessor testContextAccess
             CloseTime = context.TimeProvider.UtcNow.AddMinutes(10).UtcDateTime,
             DrawTime = context.TimeProvider.UtcNow.AddMinutes(15).UtcDateTime,
             MaxSelections = 50,
+            MaxEntriesPerPlayer = 10,
             Name = "Test Game",
             Prizes = [
                 new () { Position = 1, NumberMatchCount = 5 },

@@ -1,4 +1,4 @@
-import { createTheme, MantineColorScheme, Paper } from "@mantine/core";
+import { createTheme, MantineColorScheme, Paper, Tooltip } from "@mantine/core";
 import { useColorScheme } from "@mantine/hooks";
 import { useMemo } from "react";
 
@@ -17,6 +17,12 @@ export function useCreateTheme(colorScheme: MantineColorScheme) {
           Paper: Paper.extend({
             defaultProps: {
               bg: activeColorScheme === "dark" ? "dark.6" : undefined,
+            },
+          }),
+          Tooltip: Tooltip.extend({
+            defaultProps: {
+              openDelay: 400,
+              closeDelay: 200,
             },
           }),
         },

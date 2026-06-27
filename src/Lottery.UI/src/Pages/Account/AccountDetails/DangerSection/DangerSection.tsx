@@ -7,6 +7,7 @@ import ConfirmDeleteAccountModal from "./ConfirmDeleteAccountModal";
 import DeleteAccountButton, {
   DeleteAccountButtonRef,
 } from "./DeleteAccountButton";
+import { useColorShadeForTheme } from "../../../../common/hooks/theme.hooks";
 
 export default function DangerSection() {
   const [expanded, { toggle: toggleExpanded }] = useDisclosure();
@@ -20,19 +21,20 @@ export default function DangerSection() {
   }
 
   const showRed = hovered || expanded;
+  const baseColor = useColorShadeForTheme({ color: "dark", dark: 4, light: 3 });
 
   return (
     <>
       <Divider
         w="100%"
-        color={showRed ? "red" : "dark.4"}
+        color={showRed ? "red" : baseColor}
         labelPosition="left"
         label={
           <Group onClick={toggleExpanded}>
             <Button
               ref={ref}
               size="compact-xs"
-              color={showRed ? "red" : "dark.4"}
+              color={showRed ? "red" : baseColor}
               rightSection={
                 expanded ? (
                   <IconChevronUp size={12} />

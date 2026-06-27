@@ -19,6 +19,9 @@ public class Result<TValue>
     public Result<TOther> ChangeValue<TOther>(TOther? value = default)
         => new() { Messages = Messages, Status = Status, Value = value };
 
+    public static Result<TValue> Error(ResultStatus status)
+        => Error(status, new List<string>());
+
     public static Result<TValue> Error(ResultStatus status, params IEnumerable<string> messages)
         => Error(status, messages.Select(m => new Message { Value = m, Code = MessageCode.General }));
 
@@ -38,9 +41,10 @@ public class Result<TValue>
         Messages.AddRange(messages);
     }
 
-    public void AddMessages(MessageCode code, params string[] messages)
+    public Result<TValue> AddMessages(MessageCode code, params string[] messages)
     {
         Messages ??= [];
         Messages.AddRange(messages.Select(m => new Message { Value = m, Code = code }));
+        return this;
     }
 }

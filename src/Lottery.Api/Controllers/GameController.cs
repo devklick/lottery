@@ -32,7 +32,7 @@ public class GameController(
     [HttpPost]
     public async Task<ActionResult<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
-        var response = await gameService.CreateGame(request, User);
+        var response = await gameService.CreateGame(request);
 
         return CreateObjectResult(response);
     }

@@ -8,6 +8,4 @@ public class CreateEntryRequest
 {
     [Required, FromBody, BindProperty(Name = "")]
     public required CreateEntryRequestBody Body { get; set; }
-
-    public CreateEntryRequestUnbound Unbound { get; set; } = new();
 }

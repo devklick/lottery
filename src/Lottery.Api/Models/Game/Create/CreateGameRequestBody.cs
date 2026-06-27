@@ -38,6 +38,12 @@ public class CreateGameRequestBody : IValidatableObject
     [Required, CompareWithOther(ComparisonType.LessThanOrEqual, nameof(MaxSelections))]
     public required int SelectionsRequiredForEntry { get; set; }
 
+    /// <summary>
+    /// The maximum number of entries a single player can have in this game.
+    /// </summary>
+    [Required, Range(0, 100)]
+    public required int MaxEntriesPerPlayer { get; set; }
+
 
     [Required]
     public required List<Prize> Prizes { get; set; } = [];

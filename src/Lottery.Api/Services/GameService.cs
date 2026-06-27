@@ -12,35 +12,30 @@ using Lottery.Api.Repositories.Game;
 using Lottery.Api.Repositories.Game.Filters;
 using Lottery.Common.Models;
 using Lottery.DB.Entities.Dbo;
+using Lottery.DB.Entities.Idt;
 using Lottery.DB.Entities.Ref;
 using Lottery.Resulting;
 
 namespace Lottery.Api.Services;
 
-public class GameService(GameRepository gameRepository, UserService userService, IMapper mapper, ResultService resultService)
+public class GameService(
+    GameRepository gameRepository,
+    UserService userService,
+    IMapper mapper,
+    ResultService resultService)
 {
-    private readonly GameRepository _gameRepository = gameRepository;
-    private readonly UserService _userService = userService;
-    private readonly IMapper _mapper = mapper;
-    private readonly ResultService _resultService = resultService;
-
-    public async Task<Result<CreateGameResponse>> CreateGame(CreateGameRequest request, ClaimsPrincipal user)
+    public async Task<Result<CreateGameResponse>> CreateGame(CreateGameRequest request)
     {
-        var userIdResult = _userService.GetUserId(user);
+        var userResult = await userService.GetCurrentUser();
 
-        if (userIdResult.Status != ResultStatus.Ok)
+        if (!userResult.Success)
         {
-            return new Result<CreateGameResponse>
-            {
-                Messages = userIdResult.Messages,
-                Status = userIdResult.Status
-            };
+            return userResult.ChangeValue<CreateGameResponse>();
         }
-        ;
+        var userId = userResult.Value.Id;
 
-        request.Unbound.CreatedById = userIdResult.Value;
-
-        var entity = _mapper.Map<Game>(request);
+        var entity = mapper.Map<Game>(request);
+        entity.CreatedById = userId;
 
         for (int i = 1; i <= request.Body.MaxSelections; i++)
         {
@@ -58,19 +53,19 @@ public class GameService(GameRepository gameRepository, UserService userService,
             p.State = entity.State;
         });
 
-        var game = await _gameRepository.CreateGame(entity);
+        var game = await gameRepository.CreateGame(entity);
 
         return new Result<CreateGameResponse>
         {
             Status = ResultStatus.Ok,
-            Value = _mapper.Map<CreateGameResponse>(game)
+            Value = mapper.Map<CreateGameResponse>(game)
         };
     }
 
     public async Task<Result<SearchGamesResponse>> SearchGames(SearchGamesRequest request)
     {
 
-        var (games, total) = await _gameRepository.SearchGames(
+        var (games, total) = await gameRepository.SearchGames(
             request.Query.Page,
             request.Query.Limit,
             gamesFilter: new SearchGames.GamesFilter
@@ -104,7 +99,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             Status = ResultStatus.Ok,
             Value = new SearchGamesResponse
             {
-                Items = _mapper.Map<IEnumerable<SearchGamesResponseItem>>(games),
+                Items = mapper.Map<IEnumerable<SearchGamesResponseItem>>(games),
                 Limit = request.Query.Limit,
                 Page = request.Query.Page,
                 Total = total,
@@ -114,7 +109,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
 
     public async Task<Result<GetGameResponse>> GetGame(GetGameRequest request)
     {
-        var game = await _gameRepository.GetGame(request.Route.Id,
+        var game = await gameRepository.GetGame(request.Route.Id,
             selectionsFilter: new()
             {
                 Include = true,
@@ -138,14 +133,14 @@ public class GameService(GameRepository gameRepository, UserService userService,
             : new Result<GetGameResponse>
             {
                 Status = ResultStatus.Ok,
-                Value = _mapper.Map<GetGameResponse>(game)
+                Value = mapper.Map<GetGameResponse>(game)
             };
     }
 
     public async Task<Result<EditGameResponse>> EditGame(EditGameRequest request, ClaimsPrincipal user)
     {
         // TODO: Clean this method up, split into smaller methods
-        var userIdResult = _userService.GetUserId(user);
+        var userIdResult = userService.GetUserId(user);
         if (userIdResult.Status != ResultStatus.Ok)
         {
             return new Result<EditGameResponse>
@@ -155,7 +150,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             };
         }
 
-        var current = await _gameRepository.GetGame(request.Route.Id,
+        var current = await gameRepository.GetGame(request.Route.Id,
             selectionsFilter: new()
             {
                 Include = true,
@@ -193,7 +188,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             };
         }
 
-        var entity = _mapper.MergeInto<Game>(current, request.Body);
+        var entity = mapper.MergeInto<Game>(current, request.Body);
 
 
         var enabledSelectionsCount = entity.Selections.Count(s => s.State == ItemState.Enabled);
@@ -265,9 +260,9 @@ public class GameService(GameRepository gameRepository, UserService userService,
             });
         }
 
-        await _gameRepository.UpdateGame(entity);
+        await gameRepository.UpdateGame(entity);
 
-        await _gameRepository.SaveChangesAsync();
+        await gameRepository.SaveChangesAsync();
 
         // Only include enabled selections in the response
         entity.Selections = entity.Selections.Where(s => s.State == ItemState.Enabled).ToList();
@@ -275,13 +270,13 @@ public class GameService(GameRepository gameRepository, UserService userService,
         return new Result<EditGameResponse>
         {
             Status = ResultStatus.Ok,
-            Value = _mapper.Map<EditGameResponse>(entity)
+            Value = mapper.Map<EditGameResponse>(entity)
         };
     }
 
     public async Task<Result<ResultGameResponse>> ResultGame(ResultGameRequest request)
     {
-        var game = await _gameRepository.GetGame(request.Route.GameId,
+        var game = await gameRepository.GetGame(request.Route.GameId,
             prizesFilter: new() { Include = true, State = ItemState.Enabled },
             selectionsFilter: new() { Include = true, State = ItemState.Enabled },
             resultsFilter: new() { Include = true, State = ItemState.Enabled }
@@ -295,7 +290,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
             };
         }
 
-        var result = await _resultService.ResultGame(game, request.Body.WinningSelections.Select(ws => ws.SelectionNumber));
+        var result = await resultService.ResultGame(game, request.Body.WinningSelections.Select(ws => ws.SelectionNumber));
 
         if (result.Status != ResultStatus.Ok)
         {
@@ -309,7 +304,7 @@ public class GameService(GameRepository gameRepository, UserService userService,
         return new Result<ResultGameResponse>
         {
             Status = ResultStatus.Ok,
-            Value = _mapper.Map<ResultGameResponse>(result.Value)
+            Value = mapper.Map<ResultGameResponse>(result.Value)
         };
     }
 }

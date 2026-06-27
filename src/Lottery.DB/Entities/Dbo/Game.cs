@@ -57,6 +57,9 @@ public class Game : EntityObject
     [Required]
     public required int SelectionsRequiredForEntry { get; set; }
 
+    [Required]
+    public required int MaxEntriesPerPlayer { get; set; }
+
     #region Navigation Properties
     /// <summary>
     /// The selections linked to the game. 

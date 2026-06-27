@@ -33,6 +33,7 @@ function CreateGame({}: CreateGameProps) {
     drawTime: defaultDrawTime,
     maxSelections: 50,
     selectionsRequiredForEntry: 5,
+    maxEntriesPerPlayer: 10,
     prizes: [{ position: 1, numberMatchCount: 5 }],
   };
 

@@ -20,8 +20,7 @@ public class EntryController(
     [HttpPost]
     public async Task<ActionResult<CreateEntryResponse>> CreateEntry(CreateEntryRequest request)
     {
-        // TODO: Look into an issue where entries are allowed after the closing time.
-        var result = await entryService.CreateEntry(request, User);
+        var result = await entryService.CreateEntry(request);
 
         return CreateObjectResult(result);
     }

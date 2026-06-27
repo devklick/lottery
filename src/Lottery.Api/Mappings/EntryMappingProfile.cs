@@ -17,12 +17,10 @@ public class EntryMappingProfile : AutoMapper.Profile
     private void MapModelsForCreate()
     {
         CreateMap<CreateEntryRequest, DB.Entities.Dbo.Entry>()
-            .IncludeMembers(src => src.Body, src => src.Unbound);
+            .IncludeMembers(src => src.Body);
 
         CreateMap<CreateEntryRequestBody, DB.Entities.Dbo.Entry>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
-
-        CreateMap<CreateEntryRequestUnbound, DB.Entities.Dbo.Entry>();
 
         CreateMap<CreateEntryRequestBody.Selection, DB.Entities.Dbo.EntrySelection>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));

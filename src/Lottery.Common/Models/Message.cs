@@ -13,5 +13,6 @@ public enum MessageCode
 {
     General,
     RecentAuthRequired,
-    EmailVerificationRequired
+    EmailVerificationRequired,
+    MaxEntriesReached
 }

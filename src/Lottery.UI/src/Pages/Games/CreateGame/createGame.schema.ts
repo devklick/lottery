@@ -27,6 +27,7 @@ export const createGameRequestSchema = z
     state: stateSchema.default("enabled"),
     maxSelections: z.number().positive().min(3).max(100),
     selectionsRequiredForEntry: z.number().positive().min(3).max(100),
+    maxEntriesPerPlayer: z.number().min(1).max(100),
     prizes: createGamePrizesRequestSchema,
   })
   .superRefine(validateSelectionsRequiredForEntry)

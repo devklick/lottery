@@ -16,6 +16,7 @@ const placeholders: EditGameRequestBody = {
     { position: 3, numberMatchCount: 3 },
   ],
   selectionsRequiredForEntry: 5,
+  maxEntriesPerPlayer: 10,
   startTime: new Date(),
   state: "enabled",
 };
@@ -55,12 +56,14 @@ function EditGame({}: EditGameProps) {
       placeholders.selectionsRequiredForEntry,
     startTime: query.data?.startTime ?? placeholders.startTime,
     state: query.data?.state ?? placeholders.state,
+    maxEntriesPerPlayer: placeholders.maxEntriesPerPlayer,
   };
 
   const formDisabled = query.data?.gameStatus !== "future";
   return (
     <CreateOrEditGame
       mode="edit"
+      loading={query.isLoading}
       initialValues={initialValues}
       mutationFn={mutation.mutateAsync}
       submitDisabled={(form) => formDisabled || form.isTouched()}

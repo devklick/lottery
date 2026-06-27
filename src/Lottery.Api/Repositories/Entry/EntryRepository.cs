@@ -66,7 +66,7 @@ public class EntryRepository(LotteryDBContext db) : RepositoryBase<LotteryDBCont
 
         if (prizeFilter != null)
         {
-            if (prizeFilter.Include) query = query.Include(e => e.Prize).ThenInclude(p => p.GamePrize);
+            if (prizeFilter.Include) query = query.Include(e => e.Prize).ThenInclude(p => p!.GamePrize);
             query = query.Where(e => e.Prize == null || !prizeFilter.State.HasValue || e.Prize.State == prizeFilter.State);
         }
 

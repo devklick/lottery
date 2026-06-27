@@ -12,6 +12,7 @@ public class GetGameResponse
     public required DateTime? ResultedAt { get; set; }
     public required string Name { get; set; }
     public required int SelectionsRequiredForEntry { get; set; }
+    public required int MaxEntriesPerPlayer { get; set; }
     public required GameStatus GameStatus { get; set; }
     public required ItemState State { get; set; }
     public List<Selection> Selections { get; set; } = [];
