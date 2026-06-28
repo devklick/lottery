@@ -12,18 +12,18 @@ interface AccountProps {}
 
 // eslint-disable-next-line no-empty-pattern
 function Account({}: AccountProps) {
-  const { authenticated } = useUserStore();
+  const authenticated = useUserStore((s) => s.authenticated);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authenticated()) {
+    if (!authenticated) {
       navigate("/account/signIn");
     }
   }, [authenticated, navigate]);
 
   return (
     <Page title="Account">
-      <AccountDetails authenticated={authenticated()} />
+      <AccountDetails authenticated={authenticated} />
       <YourEntries />
       <YourWins />
     </Page>

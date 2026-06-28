@@ -4,8 +4,7 @@ import { persist } from "zustand/middleware";
 import { UserType } from "../common/schemas";
 
 interface UserStore {
-  _authenticated: boolean;
-  authenticated(): boolean;
+  authenticated: boolean;
   sessionExpiry: Date;
   userType: UserType;
 
@@ -14,31 +13,42 @@ interface UserStore {
   isUserType(userType: UserType): boolean;
 }
 
+let expiryTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleExpiry(expiry: Date, onExpired: VoidFunction) {
+  if (expiryTimeout) {
+    clearTimeout(expiryTimeout);
+  }
+
+  const ms = expiry.getTime() - Date.now();
+
+  if (ms <= 0) {
+    onExpired();
+    return;
+  }
+
+  expiryTimeout = setTimeout(() => {
+    onExpired();
+  }, ms);
+}
+
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
-      _authenticated: false,
+      authenticated: false,
       userType: "Guest",
       sessionExpiry: new Date(0),
-      authenticated() {
-        if (!get()._authenticated) {
-          return false;
-        }
-        if (get().sessionExpiry.getTime() < Date.now()) {
-          set({ _authenticated: false, sessionExpiry: new Date(0) });
-          return false;
-        }
-        return true;
-      },
       login(userType, sessionExpiry) {
-        set({ _authenticated: true, userType, sessionExpiry });
+        set({ authenticated: true, userType, sessionExpiry });
+        scheduleExpiry(sessionExpiry, () => get().logout());
       },
       logout() {
         set({
-          _authenticated: false,
+          authenticated: false,
           userType: "Guest",
           sessionExpiry: new Date(0),
         });
+        if (expiryTimeout) clearTimeout(expiryTimeout);
       },
       isUserType(userType) {
         return get().userType === userType;
@@ -53,6 +63,13 @@ export const useUserStore = create<UserStore>()(
           ...current,
           ...us!,
           sessionExpiry: new Date(us.sessionExpiry),
+        };
+      },
+      onRehydrateStorage() {
+        return (state) => {
+          if (!state) return;
+          scheduleExpiry(state.sessionExpiry, () => state.logout());
+          return state;
         };
       },
     },

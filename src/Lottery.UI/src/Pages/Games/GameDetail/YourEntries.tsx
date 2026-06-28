@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import EditEntry from "./EditEntry";
 import { EntryPrize } from "./game.schema";
@@ -31,6 +31,7 @@ interface YourEntriesProps {
   winningSelections?: ReadonlyArray<{ id: string; selectionNumber: number }>;
   gameId: string;
   gameStatus: GameStatus;
+  onEntryCountReceived(total: number): void;
 }
 
 function YourEntries({
@@ -38,9 +39,10 @@ function YourEntries({
   winningSelections,
   gameSelections,
   gameStatus,
+  onEntryCountReceived,
 }: YourEntriesProps) {
   const { colors } = useMantineTheme();
-  const user = useUserStore();
+  const authenticated = useUserStore((s) => s.authenticated);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [editTarget, setEditTarget] = useState<{
@@ -52,8 +54,14 @@ function YourEntries({
   const query = useQuery({
     queryKey: ["entries", gameId, page, limit],
     queryFn: () => gameService.getEntries({ query: { limit, page, gameId } }),
-    enabled: user.authenticated(),
+    enabled: authenticated,
   });
+
+  useEffect(() => {
+    if (query.data?.total !== undefined) {
+      onEntryCountReceived(query.data?.total);
+    }
+  }, [onEntryCountReceived, query.data?.total]);
 
   const resulted = !!winningSelections?.length;
 
@@ -134,7 +142,7 @@ function YourEntries({
   ));
 
   const subheader = (() => {
-    if (entries?.length) return;
+    if (entries?.length) return "View your current entries in this game";
     if (gameStatus === "closed" || gameStatus === "resulted")
       return "You did not enter this game";
     if (gameStatus === "future")
@@ -144,6 +152,8 @@ function YourEntries({
 
   function handleEntryEdited() {
     setEditTarget(null);
+    setPage(1);
+    query.refetch();
   }
 
   return (
@@ -153,7 +163,7 @@ function YourEntries({
       subheader={subheader}
       className="your-entries-page-section"
     >
-      {!user.authenticated() ? (
+      {!authenticated ? (
         <Text span>
           <AnchorLink to="/account/signIn">Sign in</AnchorLink> to view your
           entries
@@ -172,6 +182,7 @@ function YourEntries({
             {entries}
             <PaginationBar
               limit={limit}
+              limits={[5, 10, 15, 20]}
               onLimitChanged={handleLimitChanged}
               onPageChanged={handlePageChanged}
               page={page}

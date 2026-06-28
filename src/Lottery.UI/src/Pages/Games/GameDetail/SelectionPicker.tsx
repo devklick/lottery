@@ -22,6 +22,7 @@ function SelectionPicker({
 }: SelectionPickerProps) {
   const [selectedNumbers, setSelectedNumbers] = useState([..._selectedNumbers]);
   function handleSelected(selectionNumber: number) {
+    if (disabled) return;
     if (selectedNumbers.includes(selectionNumber)) {
       setSelectedNumbers((cur) => cur.filter((c) => c !== selectionNumber));
     } else if (selectedNumbers.length < requiredCount) {
@@ -32,7 +33,7 @@ function SelectionPicker({
   const remaining = requiredCount - selectedNumbers.length;
 
   const submitButtonText = (() => {
-    if (disabled) return "Come back later";
+    if (disabled) return undefined;
     if (submitStatus === "submitting") return "Submitting";
     if (remaining) return `Submit (${remaining}/${requiredCount} remaining)`;
     return "Submit";

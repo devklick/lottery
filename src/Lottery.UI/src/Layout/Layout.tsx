@@ -15,9 +15,10 @@ function Layout({}: LayoutProps) {
   const [burgerOpened, { toggle: toggleBurger }] = useDisclosure();
   const navigate = useNavigate();
   const user = useUserStore();
+  const authenticated = useUserStore((s) => s.authenticated);
 
   async function handleClickLogInOrOut() {
-    if (user.authenticated()) {
+    if (authenticated) {
       await accountService.signOut();
       user.logout();
       navigate("/");
@@ -41,7 +42,7 @@ function Layout({}: LayoutProps) {
         toggleBurger={toggleBurger}
         handleClickLogInOrOut={handleClickLogInOrOut}
         navigate={navigate}
-        userAuthenticated={user.authenticated()}
+        userAuthenticated={authenticated}
         userType={user.userType}
       />
 

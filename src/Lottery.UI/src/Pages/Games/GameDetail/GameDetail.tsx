@@ -11,6 +11,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import dateFormat from "dateformat";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import gameService from "../gameService";
@@ -31,6 +32,7 @@ const placeholders: GetGameResponse = {
   closeTime: new Date(),
   resultedAt: new Date(),
   selectionsRequiredForEntry: 5,
+  maxEntriesPerPlayer: 10,
   startTime: new Date(),
   gameStatus: "open",
   results: [
@@ -61,16 +63,15 @@ interface GameDetailProps {}
 
 // eslint-disable-next-line no-empty-pattern
 function GameDetail({}: GameDetailProps) {
-  const { id } = useParams<Params>();
-  // This should not happen since it would match on a different route
-  if (!id) throw new Error("No gameId found");
+  const { id } = useParams<Params>() as Params;
+  const [totalEntries, setTotalEntries] = useState(0);
 
   const [resultGameOpened, { close: closeResultGame, open: openResultGame }] =
     useDisclosure(false);
 
   const query = useQuery({
     queryKey: ["game", id],
-    queryFn: async () => await gameService.getGame({ route: { id: id! } }),
+    queryFn: async () => await gameService.getGame({ route: { id } }),
     refetchInterval: 0,
   });
 
@@ -111,6 +112,8 @@ function GameDetail({}: GameDetailProps) {
   );
 
   const loading = query.isLoading;
+  const maxEntriesReached =
+    totalEntries >= (query.data?.maxEntriesPerPlayer ?? 0);
 
   return (
     <Container p={0}>
@@ -175,20 +178,22 @@ function GameDetail({}: GameDetailProps) {
           }
         />
 
-        <YourEntries
-          gameId={id!}
-          winningSelections={query.data?.results}
-          gameSelections={query.data?.selections ?? []}
-          gameStatus={query.data?.gameStatus ?? "closed"}
-        />
-
         <CreateEntry
-          gameId={id!}
+          gameId={id}
           selectionNumbers={
             query.data?.selections.map((s) => s.selectionNumber) ?? []
           }
           selectionsRequired={query.data?.selectionsRequiredForEntry ?? 0}
           gameStatus={query.data?.gameStatus ?? placeholders.gameStatus}
+          maxEntriesReached={maxEntriesReached}
+        />
+
+        <YourEntries
+          gameId={id}
+          winningSelections={query.data?.results}
+          gameSelections={query.data?.selections ?? []}
+          gameStatus={query.data?.gameStatus ?? "closed"}
+          onEntryCountReceived={setTotalEntries}
         />
       </Stack>
     </Container>

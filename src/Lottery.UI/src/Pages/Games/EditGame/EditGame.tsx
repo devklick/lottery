@@ -66,7 +66,7 @@ function EditGame({}: EditGameProps) {
       loading={query.isLoading}
       initialValues={initialValues}
       mutationFn={mutation.mutateAsync}
-      submitDisabled={(form) => formDisabled || form.isTouched()}
+      submitDisabled={(form) => formDisabled || !form.isTouched()}
       onCancel={() => navigate(`/games/${id}`)}
       disabled={formDisabled}
     />

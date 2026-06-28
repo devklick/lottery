@@ -1,8 +1,6 @@
 import {
   Button,
   Checkbox,
-  Group,
-  InputLabel,
   PasswordInput,
   Stack,
   Text,
@@ -21,6 +19,7 @@ import {
   signInRequestSchema,
 } from "./signIn.schema";
 import AnchorLink from "../../../components/AnchorLink/AnchorLink";
+import FieldWrapper from "../../../components/FieldWrapper";
 import Page from "../../../components/Page";
 import PageSection from "../../../components/PageSection";
 import { useUserStore } from "../../../stores/user.store";
@@ -72,28 +71,45 @@ function SignIn({}: SignInProps) {
       <PageSection width={"auto"}>
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
-            <TextInput
-              {...form.getInputProps("usernameOrEmail")}
-              placeholder="Username or Email"
-              name="username-or-email"
-              type="text"
-            />
+            <FieldWrapper
+              name="Username or email"
+              required
+              description={
+                signInRequestSchema.shape.usernameOrEmail.description
+              }
+            >
+              <TextInput
+                {...form.getInputProps("usernameOrEmail")}
+                placeholder="Username or Email"
+                name="username-or-email"
+                type="text"
+              />
+            </FieldWrapper>
 
-            <PasswordInput
-              {...form.getInputProps("password")}
-              placeholder="Password"
-              name="password"
-              type="password"
-            />
+            <FieldWrapper
+              name="Password"
+              required
+              description={signInRequestSchema.shape.password.description}
+            >
+              <PasswordInput
+                {...form.getInputProps("password")}
+                placeholder="Password"
+                name="password"
+                type="password"
+              />
+            </FieldWrapper>
 
-            <Group justify="space-between">
+            <FieldWrapper
+              name="Stay signed in"
+              direction="row"
+              description={signInRequestSchema.shape.staySignedIn.description}
+            >
               <Checkbox
                 {...form.getInputProps("staySignedIn")}
                 defaultChecked={initialValues.staySignedIn}
                 name="stay-signed-in"
               />
-              <InputLabel fw={"normal"}>Stay signed in</InputLabel>
-            </Group>
+            </FieldWrapper>
 
             <Button variant="filled" type="submit">
               Submit

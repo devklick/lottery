@@ -9,6 +9,7 @@ import {
   signUpRequestSchema,
 } from "./signUp.schema";
 import AnchorLink from "../../../components/AnchorLink/AnchorLink";
+import FieldWrapper from "../../../components/FieldWrapper";
 import Page from "../../../components/Page";
 import PageSection from "../../../components/PageSection";
 import accountService from "../accountService";
@@ -38,33 +39,59 @@ function SignUp({}: SignUpProps) {
       <PageSection width={"auto"}>
         <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
           <Stack gap={24}>
-            <TextInput
-              {...form.getInputProps("email")}
-              placeholder="Email"
-              name="email"
-              type="email"
-            />
+            <FieldWrapper
+              name="Email"
+              description={signUpRequestSchema.shape.email.description}
+              required
+            >
+              <TextInput
+                {...form.getInputProps("email")}
+                placeholder="Email"
+                name="email"
+                type="email"
+              />
+            </FieldWrapper>
 
-            <TextInput
-              {...form.getInputProps("username")}
-              placeholder="Username"
-              name="username"
-              type="text"
-            />
+            <FieldWrapper
+              name="Username"
+              description={signUpRequestSchema.shape.username.description}
+              required
+            >
+              <TextInput
+                {...form.getInputProps("username")}
+                placeholder="Username"
+                name="username"
+                type="text"
+              />
+            </FieldWrapper>
 
-            <PasswordInput
-              {...form.getInputProps("password")}
-              placeholder="Password"
-              name="password"
-              type="password"
-            />
+            <FieldWrapper
+              name="Password"
+              description={signUpRequestSchema.shape.password.description}
+              required
+            >
+              <PasswordInput
+                {...form.getInputProps("password")}
+                placeholder="Password"
+                name="password"
+                type="password"
+              />
+            </FieldWrapper>
 
-            <PasswordInput
-              {...form.getInputProps("confirmPassword")}
-              placeholder="Confirm Password"
-              name="confirm-password"
-              type="password"
-            />
+            <FieldWrapper
+              name="Confirm Password"
+              description={
+                signUpRequestSchema.shape.confirmPassword.description
+              }
+              required
+            >
+              <PasswordInput
+                {...form.getInputProps("confirmPassword")}
+                placeholder="Confirm Password"
+                name="confirm-password"
+                type="password"
+              />
+            </FieldWrapper>
 
             <Button variant="filled" type="submit">
               Submit

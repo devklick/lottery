@@ -90,11 +90,14 @@ export default function CreateOrEditGame<
     initialValues,
   });
 
+  const isTouched = form.isTouched();
+  const setValues = form.setValues;
+
   useEffect(() => {
-    if (!form.isTouched()) {
-      form.setValues(initialValues);
+    if (!isTouched) {
+      setValues(initialValues);
     }
-  }, [initialValues]);
+  }, [initialValues, isTouched, setValues]);
 
   const twoCols: GridColProps = {
     span: { xs: 12, sm: 6, md: 6, lg: 6 },

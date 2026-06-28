@@ -29,7 +29,7 @@ export default function FieldLabel({
 
   return (
     <Tooltip label={description} disabled={!description} position="bottom">
-      <Skeleton visible={loading}>
+      <Skeleton visible={loading} flex={"1 1 0"}>
         <Group w="100%" justify="space-between">
           <InputLabel required={required}>{name}</InputLabel>
           {description && <IconInfoCircle size={16} color={infoIconColor} />}

@@ -2,9 +2,13 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Wait until `waiting` becomes true or until `minTime` has elapsed, whichever comes last.
+ *
+ * If `waiting` is false initially, returns false immediately without waiting.
+ *
+ * @todo firm this up, as it's a bit nonsensical
  */
 export function useWaitFor(waiting: boolean, minTime: number) {
-  const [isWaiting, setIsWaiting] = useState(true);
+  const [isWaiting, setIsWaiting] = useState(waiting);
 
   // eslint-disable-next-line react-hooks/purity
   const startedAtRef = useRef<number | null>(Date.now());

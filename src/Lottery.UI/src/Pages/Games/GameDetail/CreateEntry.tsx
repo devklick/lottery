@@ -13,6 +13,7 @@ interface CreateEntryProps {
   selectionNumbers: Array<number>;
   selectionsRequired: number;
   gameStatus: GameStatus;
+  maxEntriesReached?: boolean;
 }
 
 function CreateEntry({
@@ -20,6 +21,7 @@ function CreateEntry({
   gameId,
   selectionsRequired,
   gameStatus,
+  maxEntriesReached,
 }: CreateEntryProps) {
   const [success, setSuccess] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState<ReadonlyArray<number>>(
@@ -67,6 +69,8 @@ function CreateEntry({
   }
 
   const subheader = (() => {
+    if (maxEntriesReached)
+      return "You have reached the maximum number of entries allowed in this game";
     switch (gameStatus) {
       case "future":
         return "Come back when the game opens to pick your numbers";
@@ -91,7 +95,7 @@ function CreateEntry({
         selectedNumbers={selectedNumbers}
         selectionNumbers={selections}
         onSubmit={handleSubmitEntry}
-        disabled={gameStatus !== "open"}
+        disabled={gameStatus !== "open" || maxEntriesReached}
         submitStatus={
           mutation.isPending ? "submitting" : success ? "success" : "waiting"
         }

@@ -69,6 +69,7 @@ public class Program
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
         {
             options.LoginPath = "/account/signIn";
+            // TODO: Implement a sliding expiration to keep auth fresh
         });
 
         var app = builder.Build();
