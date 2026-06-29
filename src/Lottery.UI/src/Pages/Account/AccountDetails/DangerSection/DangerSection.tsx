@@ -48,8 +48,8 @@ export default function DangerSection() {
           </Group>
         }
       />
-      <Collapse expanded={expanded}>
-        <Group>
+      <Collapse expanded={expanded} w="100%">
+        <Group justify="end">
           <DeleteAccountButton ref={buttonRef} onClicked={openModal} />
         </Group>
       </Collapse>

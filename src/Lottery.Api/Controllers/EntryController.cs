@@ -28,7 +28,7 @@ public class EntryController(
     [HttpGet]
     public async Task<ActionResult<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request)
     {
-        var result = await entryService.SearchEntries(request, User);
+        var result = await entryService.SearchEntries(request);
 
         return CreateObjectResult(result);
     }
@@ -36,7 +36,7 @@ public class EntryController(
     [HttpPost("{entryId}/edit")]
     public async Task<ActionResult<EditEntryResponse>> EditEntry(EditEntryRequest request)
     {
-        var result = await entryService.EditEntry(request, User);
+        var result = await entryService.EditEntry(request);
 
         return CreateObjectResult(result);
     }

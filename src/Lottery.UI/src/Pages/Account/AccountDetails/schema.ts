@@ -30,3 +30,30 @@ export const updateAccountResponseSchema = z.object({
 });
 
 export type UpdateAccountResponse = z.infer<typeof updateAccountResponseSchema>;
+
+export const changePasswordRequestBodySchema = z.object({
+  currentPassword: z.string(),
+  newPassword: z.string(),
+});
+export const changePasswordFormSchema = changePasswordRequestBodySchema
+  .extend({
+    confirmNewPassword: z.string(),
+  })
+  .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+    if (newPassword !== confirmNewPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Passwords do not match",
+        path: ["confirmNewPassword"],
+      });
+    }
+  });
+export const changePasswordResponseSchema = z.object({});
+
+export type ChangePasswordRequestBody = z.infer<
+  typeof changePasswordRequestBodySchema
+>;
+export type ChangePasswordForm = z.infer<typeof changePasswordFormSchema>;
+export type ChangePasswordResponse = z.infer<
+  typeof changePasswordResponseSchema
+>;

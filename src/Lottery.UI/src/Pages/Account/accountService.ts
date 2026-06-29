@@ -1,8 +1,11 @@
 import {
+  ChangePasswordRequestBody,
+  ChangePasswordResponse,
+  changePasswordResponseSchema,
   UpdateAccountRequestBody,
   UpdateAccountResponse,
   updateAccountResponseSchema,
-} from "./AccountDetails/updateAccountDetails.schema";
+} from "./AccountDetails/schema";
 import {
   ConfirmEmailChangeRequestQuery,
   ConfirmEmailChangeResponse,
@@ -64,6 +67,9 @@ interface AccountService {
   resetPassword(
     request: ResetPasswordRequestBody,
   ): Promise<ResetPasswordResponse>;
+  changePassword(
+    request: ChangePasswordRequestBody,
+  ): Promise<ChangePasswordResponse>;
   deleteAccount(): Promise<DeleteAccountResponse>;
 }
 
@@ -261,12 +267,30 @@ export function createAccountService({
   const deleteAccount: AccountService["deleteAccount"] = async () => {
     const result = await api.delete<unknown, DeleteAccountResponse>("/account");
 
-    console.log("result", result);
     if (!result.success) {
       throw result;
     }
 
     const valid = confirmEmailChangeResponseSchema.safeParse(result.data);
+
+    if (valid.success) {
+      return valid.data;
+    }
+
+    throw valid.error.message;
+  };
+
+  const changePassword: AccountService["changePassword"] = async (request) => {
+    const result = await api.post<
+      ChangePasswordRequestBody,
+      ChangePasswordResponse
+    >("/account/password/update", request);
+
+    if (!result.success) {
+      throw result;
+    }
+
+    const valid = changePasswordResponseSchema.safeParse(result.data);
 
     if (valid.success) {
       return valid.data;
@@ -287,6 +311,7 @@ export function createAccountService({
     forgotPassword,
     resetPassword,
     deleteAccount,
+    changePassword,
   };
 }
 

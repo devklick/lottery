@@ -1,26 +1,33 @@
-import { Grid, Text, TextInput, Tooltip, useMantineTheme } from "@mantine/core";
+import {
+  Divider,
+  Group,
+  Stack,
+  Text,
+  TextInput,
+  useMantineTheme,
+} from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
-  IconCheck,
   IconCircleCheck,
   IconInfoCircle,
-  IconX,
   IconXboxX,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-import Footer from "./Footer";
+import ChangePassword from "./ChangePassword";
+import EditButton from "./EditButton";
 import {
   UpdateAccountRequestBody,
   updateAccountRequestBodySchema,
   UpdateAccountResponse,
-} from "./updateAccountDetails.schema";
+} from "./schema";
 import { withDefaults } from "../../../common/utils/object.utils";
 import PageSection from "../../../components/PageSection";
 import { useGetAccount, useUpdateAccount } from "../account.hooks";
 import ConfirmPasswordModal from "../ConfirmPasswordModal";
+import DangerSection from "./DangerSection/DangerSection";
 
 interface AccountDetailsProps {
   authenticated: boolean;
@@ -113,8 +120,8 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
   return (
     <PageSection
       title="Account Details"
-      subheader="Here you can find the basic information account your account"
       collapsable
+      width={"100%"}
       children={
         <>
           <ConfirmPasswordModal
@@ -125,81 +132,72 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
             opened={confirmPasswordModalOpened}
           />
 
-          <form
-            id="update-account"
-            onSubmit={form.onSubmit(
-              async (data) => await updateAccount.mutateAsync(data),
-            )}
-          >
-            <Grid w={"100%"} maw={600}>
-              <Grid.Col span={5.5}>
-                <Text ta={"right"}>Username</Text>
-              </Grid.Col>
-              <Grid.Col span={5.5}>
-                <TextInput
-                  {...form.getInputProps("username")}
-                  disabled={!editing}
-                  ta={"left"}
+          <Stack w="100%" gap={"xs"}>
+            <form
+              id="update-account"
+              style={{ width: "100%" }}
+              onSubmit={form.onSubmit(
+                async (data) => await updateAccount.mutateAsync(data),
+              )}
+            >
+              <Stack w="100%" gap={"xs"}>
+                <Group w={"100%"}>
+                  <Text ta={"start"} flex="1 1 0">
+                    Username
+                  </Text>
+                  <TextInput
+                    flex="1 1 0"
+                    {...form.getInputProps("username")}
+                    disabled={!editing}
+                    ta={"left"}
+                  />
+                </Group>
+                <Group w="100%">
+                  <Text ta={"start"} flex="1 1 0">
+                    Email
+                  </Text>
+                  <TextInput
+                    flex="1 1 0"
+                    {...form.getInputProps("email")}
+                    disabled={!editing}
+                    ta={"left"}
+                  />
+                </Group>
+                <Group w="100%">
+                  <Text ta={"start"} flex="1 1 0">
+                    Phone Number
+                  </Text>
+                  <TextInput
+                    flex="1 1 0"
+                    {...form.getInputProps("phoneNumber")}
+                    disabled={!editing}
+                    ta={"left"}
+                  />
+                </Group>
+                <EditButton
+                  editing={editing}
+                  cancelEditDisabled={updateAccount.isPending}
+                  onCancelEditClicked={() => {
+                    form.reset();
+                    setEditing(false);
+                  }}
+                  onEditClicked={() => setEditing(true)}
+                  submitEditDisabled={!form.isDirty()}
                 />
-              </Grid.Col>
-              <Grid.Col span={1} />
+                <Divider />
+              </Stack>
+            </form>
 
-              <Grid.Col span={5.5}>
-                <Text ta={"right"}>Email</Text>
-              </Grid.Col>
-              <Grid.Col span={5.5}>
-                <TextInput
-                  {...form.getInputProps("email")}
-                  disabled={!editing}
-                  ta={"left"}
-                />
-              </Grid.Col>
-              <Grid.Col span={1}>
-                {accountQuery.data?.emailConfirmed ? (
-                  <Tooltip label="Email confirmed">
-                    <IconCheck size={16} />
-                  </Tooltip>
-                ) : (
-                  <IconX size={16} />
-                )}
-              </Grid.Col>
-
-              <Grid.Col span={5.5}>
-                <Text ta={"right"}>Phone Number</Text>
-              </Grid.Col>
-              <Grid.Col span={5.5}>
-                <TextInput
-                  {...form.getInputProps("phoneNumber")}
-                  disabled={!editing}
-                  ta={"left"}
-                />
-              </Grid.Col>
-              <Grid.Col span={1}>
-                {accountQuery.data?.phoneNumber &&
-                  (accountQuery.data?.phoneNumberConfirmed ? (
-                    <Tooltip label="Phone number confirmed">
-                      <IconCheck size={16} />
-                    </Tooltip>
-                  ) : (
-                    <IconX size={16} />
-                  ))}
-              </Grid.Col>
-            </Grid>
-          </form>
+            <Group align="start">
+              <Text ta={"start"} flex={"1 1 0"}>
+                Password
+              </Text>
+              <ChangePassword />
+            </Group>
+          </Stack>
         </>
       }
-      footer={
-        <Footer
-          editing={editing}
-          cancelEditDisabled={updateAccount.isPending}
-          onCancelEditClicked={() => {
-            form.reset();
-            setEditing(false);
-          }}
-          onEditClicked={() => setEditing(true)}
-          submitEditDisabled={!form.isDirty()}
-        />
-      }
+      footer={<DangerSection />}
     />
   );
 }

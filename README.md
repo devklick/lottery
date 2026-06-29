@@ -41,15 +41,18 @@ LOTTERY_MIGRATOR_DB_PASSWORD=<add>
 # These env vars are the passwords for these users.
 LOTTERY_SYSTEM_ADMIN_PASSWORD=<add>
 LOTTERY_GAME_ADMIN_PASSWORD=<add>
+
+# API key for https://resend.com/
+EMAIL_API_KEY=<add>
 ```
 
-One your env vars are defined, you can now run:
+Once your env vars are defined, you can now run:
 ```
 docker compose up
 ```
 
 The UI can be accessed from [http://localhost:3000](http://localhost:3000) and 
-the API can be accessed from [http://localhost:5000](http://localhost:5000). 
+the API can be accessed from [http://localhost:5000](http://localhost:5000) (change the ports here if you used different ports in your .env file). 
 You can log into the UI as either the Game Admin or System Admin:
 
 #### Game Admin

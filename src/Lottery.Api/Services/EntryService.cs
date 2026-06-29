@@ -114,10 +114,10 @@ public class EntryService(
         });
     }
 
-    public async Task<Result<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request, ClaimsPrincipal user)
+    public async Task<Result<SearchEntriesResponse>> SearchEntries(SearchEntriesRequest request)
     {
-        var userIdResult = userService.GetUserId(user);
-        if (userIdResult.Status != ResultStatus.Ok)
+        var userIdResult = await userService.GetCurrentUser();
+        if (!userIdResult.Success)
         {
             return new Result<SearchEntriesResponse>
             {
@@ -130,7 +130,7 @@ public class EntryService(
             request.Query.Page, request.Query.Limit,
             entryFilter: new SearchEntries.EntryFilter
             {
-                UserId = userIdResult.Value,
+                UserId = userIdResult.Value.Id,
                 State = ItemState.Enabled
             },
             gameFilter: new SearchEntries.GameFilter
@@ -161,11 +161,11 @@ public class EntryService(
         };
     }
 
-    public async Task<Result<EditEntryResponse>> EditEntry(EditEntryRequest request, ClaimsPrincipal user)
+    public async Task<Result<EditEntryResponse>> EditEntry(EditEntryRequest request)
     {
         // get the player
-        var userIdResult = userService.GetUserId(user);
-        if (userIdResult.Status != ResultStatus.Ok)
+        var userIdResult = await userService.GetCurrentUser();
+        if (!userIdResult.Success)
         {
             return new Result<EditEntryResponse>
             {
@@ -191,7 +191,7 @@ public class EntryService(
             });
 
         // Make sure it's a valid entry for this player
-        if (entry == null || entry.CreatedById != userIdResult.Value)
+        if (entry == null || entry.CreatedById != userIdResult.Value.Id)
         {
             return new Result<EditEntryResponse>
             {
