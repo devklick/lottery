@@ -28,7 +28,12 @@ export default function FieldLabel({
   });
 
   return (
-    <Tooltip label={description} disabled={!description} position="bottom">
+    <Tooltip
+      label={description}
+      disabled={!description}
+      position="bottom"
+      events={{ focus: false, hover: true, touch: true }}
+    >
       <Skeleton visible={loading} flex={"1 1 0"}>
         <Group w="100%" justify="space-between">
           <InputLabel required={required}>{name}</InputLabel>

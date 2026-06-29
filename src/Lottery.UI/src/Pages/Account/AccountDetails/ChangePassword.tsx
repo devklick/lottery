@@ -38,21 +38,30 @@ export default function ChangePassword() {
               required
               description="You must know your current password in order to change it"
             >
-              <PasswordInput {...form.getInputProps("currentPassword")} />
+              <PasswordInput
+                {...form.getInputProps("currentPassword")}
+                disabled={!expanded}
+              />
             </FieldWrapper>
             <FieldWrapper
               name="New Password"
               required
               description="This is the password you want to use in the future"
             >
-              <PasswordInput {...form.getInputProps("newPassword")} />
+              <PasswordInput
+                {...form.getInputProps("newPassword")}
+                disabled={!expanded}
+              />
             </FieldWrapper>
             <FieldWrapper
               name="Confirm New Password"
               required
               description="Re-type your new password to ensure you have entered correctly"
             >
-              <PasswordInput {...form.getInputProps("confirmNewPassword")} />
+              <PasswordInput
+                {...form.getInputProps("confirmNewPassword")}
+                disabled={!expanded}
+              />
             </FieldWrapper>
           </Stack>
         </form>

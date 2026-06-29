@@ -1,6 +1,6 @@
 import {
   Divider,
-  Group,
+  Flex,
   Stack,
   Text,
   TextInput,
@@ -141,7 +141,11 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
               )}
             >
               <Stack w="100%" gap={"xs"}>
-                <Group w={"100%"}>
+                <Flex
+                  w="100%"
+                  gap={"xs"}
+                  direction={{ base: "column", sm: "row" }}
+                >
                   <Text ta={"start"} flex="1 1 0">
                     Username
                   </Text>
@@ -151,8 +155,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                     disabled={!editing}
                     ta={"left"}
                   />
-                </Group>
-                <Group w="100%">
+                </Flex>
+                <Flex
+                  w="100%"
+                  gap={"xs"}
+                  direction={{ base: "column", sm: "row" }}
+                >
                   <Text ta={"start"} flex="1 1 0">
                     Email
                   </Text>
@@ -162,8 +170,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                     disabled={!editing}
                     ta={"left"}
                   />
-                </Group>
-                <Group w="100%">
+                </Flex>
+                <Flex
+                  w="100%"
+                  gap={"xs"}
+                  direction={{ base: "column", sm: "row" }}
+                >
                   <Text ta={"start"} flex="1 1 0">
                     Phone Number
                   </Text>
@@ -173,7 +185,7 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                     disabled={!editing}
                     ta={"left"}
                   />
-                </Group>
+                </Flex>
                 <EditButton
                   editing={editing}
                   cancelEditDisabled={updateAccount.isPending}
@@ -188,12 +200,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
               </Stack>
             </form>
 
-            <Group align="start">
+            <Flex w="100%" gap={"xs"} direction={{ base: "column", sm: "row" }}>
               <Text ta={"start"} flex={"1 1 0"}>
                 Password
               </Text>
               <ChangePassword />
-            </Group>
+            </Flex>
           </Stack>
         </>
       }
