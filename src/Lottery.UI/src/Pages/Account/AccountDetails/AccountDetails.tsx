@@ -10,24 +10,25 @@ import { schemaResolver, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
+  IconCheck,
   IconCircleCheck,
+  IconExclamationMark,
   IconInfoCircle,
   IconXboxX,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import ChangePassword from "./ChangePassword";
+import DangerSection from "./DangerSection/DangerSection";
 import EditButton from "./EditButton";
 import {
   UpdateAccountRequestBody,
   updateAccountRequestBodySchema,
   UpdateAccountResponse,
 } from "./schema";
-import { withDefaults } from "../../../common/utils/object.utils";
 import PageSection from "../../../components/PageSection";
 import { useGetAccount, useUpdateAccount } from "../account.hooks";
 import ConfirmPasswordModal from "../ConfirmPasswordModal";
-import DangerSection from "./DangerSection/DangerSection";
 
 interface AccountDetailsProps {
   authenticated: boolean;
@@ -40,26 +41,19 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
 
   const form = useForm<UpdateAccountRequestBody>({
     validate: schemaResolver(updateAccountRequestBodySchema),
-    initialValues: withDefaults<UpdateAccountRequestBody>(
-      accountQuery.data ?? {},
-      {
-        email: "",
-        phoneNumber: "",
-        username: "",
-      },
-    ),
     validateInputOnChange: true,
   });
 
-  // TODO: Fix this nonsense - it doesnt work.
-  // After the form is submitted and the mutation is successful, we want to
-  // refetch the account details and update them in the form.
-  // This shouldnt be difficult...
   useEffect(() => {
     if (accountQuery.status === "success" && accountQuery.data) {
-      form.setInitialValues(accountQuery.data);
+      form.setInitialValues({
+        email: accountQuery.data.email ?? "",
+        phoneNumber: accountQuery.data.phoneNumber ?? "",
+        username: accountQuery.data.username ?? "",
+      });
       form.reset();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountQuery.data, accountQuery.status]);
 
@@ -169,6 +163,14 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                     {...form.getInputProps("email")}
                     disabled={!editing}
                     ta={"left"}
+                    rightSection={(() => {
+                      if (!accountQuery.data?.email) return;
+                      return accountQuery.data?.emailConfirmed ? (
+                        <IconCheck />
+                      ) : (
+                        <IconExclamationMark />
+                      );
+                    })()}
                   />
                 </Flex>
                 <Flex
@@ -184,6 +186,14 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                     {...form.getInputProps("phoneNumber")}
                     disabled={!editing}
                     ta={"left"}
+                    rightSection={(() => {
+                      if (!accountQuery.data?.phoneNumber) return;
+                      return accountQuery.data?.phoneNumberConfirmed ? (
+                        <IconCheck />
+                      ) : (
+                        <IconExclamationMark />
+                      );
+                    })()}
                   />
                 </Flex>
                 <EditButton

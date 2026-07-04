@@ -1,5 +1,7 @@
 import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconCircleCheck } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -14,11 +16,7 @@ import Page from "../../../components/Page";
 import PageSection from "../../../components/PageSection";
 import accountService from "../accountService";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface SignUpProps {}
-
-// eslint-disable-next-line no-empty-pattern
-function SignUp({}: SignUpProps) {
+function SignUp() {
   const form = useForm<SignUpRequest>({
     validate: schemaResolver(signUpRequestSchema),
     validateInputOnChange: true,
@@ -29,8 +27,13 @@ function SignUp({}: SignUpProps) {
   const mutation = useMutation<SignUpResponse, unknown, SignUpRequest>({
     mutationFn: accountService.signUp,
     onSuccess: () => {
-      console.log("mutation success");
-      navigate("/home");
+      notifications.show({
+        title: "Account Created",
+        message: "You can now log into your account",
+        icon: <IconCircleCheck />,
+        color: "green",
+      });
+      navigate("/account/signIn");
     },
   });
 

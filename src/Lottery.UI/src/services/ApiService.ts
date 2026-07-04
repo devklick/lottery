@@ -28,7 +28,7 @@ export type ErrorResult<T> = {
 };
 
 export function isReAuthError<T>(result: ErrorResult<T>): boolean {
-  const validation = apiMessagesSchema.safeParse(result);
+  const validation = apiMessagesSchema.safeParse(result.errors);
   return validation.success && validation.data[0].code === "RecentAuthRequired";
 }
 

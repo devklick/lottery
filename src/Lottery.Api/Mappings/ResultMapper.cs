@@ -19,7 +19,8 @@ public sealed class ResultMapper
             ResultStatus.Ok => new OkObjectResult(result),
             _ => new ObjectResult(result)
             {
-                StatusCode = 500
+                StatusCode = 500,
+                Value = result
             }
         };
     }
