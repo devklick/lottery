@@ -1,7 +1,5 @@
 import { Button, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconCircleCheck } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +9,7 @@ import {
   resetPasswordFormSchema,
   resetPasswordPageQuerySchema,
 } from "./schema";
+import { notifySuccess } from "../../../common/notifications";
 import Page from "../../../components/Page";
 import PageSection from "../../../components/PageSection";
 import useValidatedQueryParams from "../../../hooks/url/useValidatedSearchParams";
@@ -32,11 +31,9 @@ export default function ResetPassword() {
   }, [navigate, query.success]);
 
   function onResetPasswordSuccess() {
-    notifications.show({
+    notifySuccess({
       title: "Password Updated!",
       message: "You can now log in using your new password",
-      icon: <IconCircleCheck />,
-      color: "green",
     });
     navigate("/account/signIn");
   }

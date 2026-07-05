@@ -1,7 +1,5 @@
 import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconCircleCheck } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +8,7 @@ import {
   SignUpResponse,
   signUpRequestSchema,
 } from "./signUp.schema";
+import { notifySuccess } from "../../../common/notifications";
 import AnchorLink from "../../../components/AnchorLink/AnchorLink";
 import FieldWrapper from "../../../components/FieldWrapper";
 import Page from "../../../components/Page";
@@ -27,11 +26,9 @@ function SignUp() {
   const mutation = useMutation<SignUpResponse, unknown, SignUpRequest>({
     mutationFn: accountService.signUp,
     onSuccess: () => {
-      notifications.show({
+      notifySuccess({
         title: "Account Created",
         message: "You can now log into your account",
-        icon: <IconCircleCheck />,
-        color: "green",
       });
       navigate("/account/signIn");
     },

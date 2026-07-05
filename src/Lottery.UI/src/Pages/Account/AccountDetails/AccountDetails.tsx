@@ -1,22 +1,8 @@
-import {
-  Divider,
-  Flex,
-  Stack,
-  Text,
-  TextInput,
-  useMantineTheme,
-} from "@mantine/core";
+import { Divider, Stack, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconCheck,
-  IconCircleCheck,
-  IconExclamationMark,
-  IconInfoCircle,
-  IconXboxX,
-} from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { IconCheck, IconExclamationMark } from "@tabler/icons-react";
+import { useCallback, useState } from "react";
 
 import ChangePassword from "./ChangePassword";
 import DangerSection from "./DangerSection/DangerSection";
@@ -24,11 +10,14 @@ import EditButton from "./EditButton";
 import {
   UpdateAccountRequestBody,
   updateAccountRequestBodySchema,
-  UpdateAccountResponse,
 } from "./schema";
+import { useWaitFor } from "../../../common/hooks/time.hooks";
+import { notifyError } from "../../../common/notifications";
+import FieldWrapper from "../../../components/FieldWrapper";
 import PageSection from "../../../components/PageSection";
 import { useGetAccount, useUpdateAccount } from "../account.hooks";
 import ConfirmPasswordModal from "../ConfirmPasswordModal";
+import { GetAccountResponse } from "../SignUp/getAccount.schema";
 
 interface AccountDetailsProps {
   authenticated: boolean;
@@ -37,27 +26,30 @@ interface AccountDetailsProps {
 export default function AccountDetails({ authenticated }: AccountDetailsProps) {
   const [editing, setEditing] = useState(false);
 
-  const accountQuery = useGetAccount({ enabled: authenticated });
-
   const form = useForm<UpdateAccountRequestBody>({
     validate: schemaResolver(updateAccountRequestBodySchema),
     validateInputOnChange: true,
   });
 
-  useEffect(() => {
-    if (accountQuery.status === "success" && accountQuery.data) {
-      form.setInitialValues({
-        email: accountQuery.data.email ?? "",
-        phoneNumber: accountQuery.data.phoneNumber ?? "",
-        username: accountQuery.data.username ?? "",
+  const { initialize: initializeForm } = form;
+
+  const onQuerySuccess = useCallback(
+    (data: GetAccountResponse) => {
+      initializeForm({
+        email: data.email ?? "",
+        phoneNumber: data.phoneNumber ?? "",
+        username: data.username ?? "",
       });
-      form.reset();
-    }
+    },
+    [initializeForm],
+  );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountQuery.data, accountQuery.status]);
+  const accountQuery = useGetAccount({
+    enabled: authenticated,
+    onSuccess: onQuerySuccess,
+  });
 
-  const { colors } = useMantineTheme();
+  const loading = useWaitFor(accountQuery.isLoading, 400);
 
   const [
     confirmPasswordModalOpened,
@@ -69,25 +61,7 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
     onReAuthRequired: openConfirmPasswordModal,
   });
 
-  async function updateAccountSuccess(data: UpdateAccountResponse) {
-    notifications.show({
-      title: "Account details updated",
-      message: "Your new details have been saved",
-      icon: <IconCircleCheck />,
-      color: colors.green[5],
-      autoClose: 5000,
-    });
-    if (data.email.messages?.[0].code === "EmailVerificationRequired") {
-      notifications.show({
-        title: "Verification email send",
-        message:
-          "Please check your emails to confirm the new email address. Once confirmed, it will be updated",
-        icon: <IconInfoCircle />,
-        color: colors.blue[5],
-        autoClose: 5000,
-      });
-    }
-
+  async function updateAccountSuccess() {
     closeConfirmPasswordModal();
     setEditing(false);
     await accountQuery.refetch();
@@ -98,12 +72,9 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
   }
 
   function confirmPasswordFailed() {
-    notifications.show({
-      title: "Unable to update account details",
-      message: "Password verification failed",
-      icon: <IconXboxX />,
-      color: colors.red[5],
-      autoClose: 5000,
+    notifyError({
+      title: "Password verification failed",
+      message: "Unable to update your account details",
     });
 
     closeConfirmPasswordModal();
@@ -135,29 +106,23 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
               )}
             >
               <Stack w="100%" gap={"xs"}>
-                <Flex
-                  w="100%"
-                  gap={"xs"}
+                <FieldWrapper
+                  name="Username"
                   direction={{ base: "column", sm: "row" }}
+                  loading={loading}
                 >
-                  <Text ta={"start"} flex="1 1 0">
-                    Username
-                  </Text>
                   <TextInput
                     flex="1 1 0"
                     {...form.getInputProps("username")}
                     disabled={!editing}
                     ta={"left"}
                   />
-                </Flex>
-                <Flex
-                  w="100%"
-                  gap={"xs"}
+                </FieldWrapper>
+                <FieldWrapper
+                  name="Email"
                   direction={{ base: "column", sm: "row" }}
+                  loading={loading}
                 >
-                  <Text ta={"start"} flex="1 1 0">
-                    Email
-                  </Text>
                   <TextInput
                     flex="1 1 0"
                     {...form.getInputProps("email")}
@@ -172,15 +137,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                       );
                     })()}
                   />
-                </Flex>
-                <Flex
-                  w="100%"
-                  gap={"xs"}
+                </FieldWrapper>
+                <FieldWrapper
+                  name="Phone Number"
                   direction={{ base: "column", sm: "row" }}
+                  loading={loading}
                 >
-                  <Text ta={"start"} flex="1 1 0">
-                    Phone Number
-                  </Text>
                   <TextInput
                     flex="1 1 0"
                     {...form.getInputProps("phoneNumber")}
@@ -195,8 +157,9 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                       );
                     })()}
                   />
-                </Flex>
+                </FieldWrapper>
                 <EditButton
+                  loading={loading}
                   editing={editing}
                   cancelEditDisabled={updateAccount.isPending}
                   onCancelEditClicked={() => {
@@ -206,16 +169,12 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
                   onEditClicked={() => setEditing(true)}
                   submitEditDisabled={!form.isDirty()}
                 />
-                <Divider />
               </Stack>
             </form>
-
-            <Flex w="100%" gap={"xs"} direction={{ base: "column", sm: "row" }}>
-              <Text ta={"start"} flex={"1 1 0"}>
-                Password
-              </Text>
+            <Divider />
+            <FieldWrapper name="Password" direction="row" loading={loading}>
               <ChangePassword />
-            </Flex>
+            </FieldWrapper>
           </Stack>
         </>
       }

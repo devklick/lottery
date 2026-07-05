@@ -1,18 +1,13 @@
 import { useMantineTheme } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconCircleCheck, IconXboxX } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useConfirmEmailChange } from "./hooks";
 import { confirmEmailChangePageQuerySchema } from "./schema";
+import { notifyError, notifySuccess } from "../../../common/notifications";
 import useValidatedQueryParams from "../../../hooks/url/useValidatedSearchParams";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ConfirmEmailChangeProps {}
-
-// eslint-disable-next-line no-empty-pattern
-export default function ConfirmEmailChange({}: ConfirmEmailChangeProps) {
+export default function ConfirmEmailChange() {
   const paramValidation = useValidatedQueryParams(
     confirmEmailChangePageQuerySchema,
   );
@@ -30,18 +25,14 @@ export default function ConfirmEmailChange({}: ConfirmEmailChangeProps) {
   useEffect(() => {
     if (query.status === "pending") return;
     else if (query.status === "success") {
-      notifications.show({
+      notifySuccess({
         title: "Email address updated",
         message: "Your email address has successfully been updated",
-        icon: <IconCircleCheck />,
-        color: colors.green[5],
       });
     } else {
-      notifications.show({
+      notifyError({
         title: "Error updating email address",
         message: "We ran into a problem while updating your email address",
-        icon: <IconXboxX />,
-        color: colors.red[5],
       });
     }
   }, [colors.green, colors.red, query.status]);

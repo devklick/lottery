@@ -1,17 +1,8 @@
-import {
-  Button,
-  CheckIcon,
-  Group,
-  Modal,
-  Paper,
-  Stack,
-  Tabs,
-  Text,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
+import { Button, Group, Modal, Paper, Stack, Tabs, Text } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { notifyInfo, updateNotifySuccess } from "../../../common/notifications";
 import SelectionPicker from "../GameDetail/SelectionPicker";
 import gameService from "../gameService";
 
@@ -48,10 +39,10 @@ function ResultGameModal({
   });
 
   function handleSubmit(selectedNumbers: Array<number> = []) {
-    const id = notifications.show({
-      loading: true,
+    const id = notifyInfo({
       title: "Resulting game",
       message: `The results are being processed${selectedNumbers?.length ? ` (${selectedNumbers.join(", ")})` : ""}`,
+      loading: true,
       autoClose: false,
       allowClose: false,
     });
@@ -65,13 +56,10 @@ function ResultGameModal({
       route: { gameId },
     });
     onSubmit();
-    notifications.update({
-      id,
-      loading: false,
+    updateNotifySuccess(id, {
       title: "Game resulted",
       message: `The game has successfully been resulted${selectedNumbers?.length ? ` (${selectedNumbers.join(", ")})` : ""}`,
-      icon: <CheckIcon />,
-      autoClose: 3000,
+      loading: false,
       allowClose: true,
     });
   }

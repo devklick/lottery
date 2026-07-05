@@ -1,13 +1,12 @@
 import { Button, Stack, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconCircleCheck } from "@tabler/icons-react";
 
 import { useForgotPassword } from "./hooks";
 import {
   ForgotPasswordRequestBody,
   forgotPasswordRequestBodySchema,
 } from "./schema";
+import { notifySuccess } from "../../../common/notifications";
 import Page from "../../../components/Page";
 import PageSection from "../../../components/PageSection";
 
@@ -22,12 +21,10 @@ export default function ForgotPassword() {
   });
 
   function handleSuccess() {
-    notifications.show({
+    notifySuccess({
       title: "Request submitted",
       message:
         "If your email is registered, a password reset link will be sent",
-      icon: <IconCircleCheck />,
-      color: "green",
     });
   }
 

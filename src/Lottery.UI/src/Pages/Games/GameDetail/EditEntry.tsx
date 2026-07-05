@@ -1,11 +1,10 @@
-import { CheckIcon, Modal } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 
 import SelectionPicker from "./SelectionPicker";
+import { notifyInfo, updateNotifySuccess } from "../../../common/notifications";
 import gameService from "../gameService";
-
 
 interface EditEntryProps {
   selectionNumbers: ReadonlyArray<number>;
@@ -28,10 +27,10 @@ function EditEntry({
   });
 
   async function handleSubmit(selectionNumbers: Array<number>) {
-    const id = notifications.show({
-      loading: true,
+    const id = notifyInfo({
       title: "Updating entry",
       message: `Your numbers are being updated (${selectionNumbers.join(", ")})`,
+      loading: true,
       autoClose: false,
       allowClose: false,
     });
@@ -43,14 +42,10 @@ function EditEntry({
         })),
       },
     });
-    notifications.update({
-      id,
-      loading: false,
+    updateNotifySuccess(id, {
       title: "Entry updated",
       message: `Your numbers have been updated (${selectionNumbers.join(", ")})`,
-      icon: <CheckIcon />,
-      autoClose: 3000,
-      allowClose: true,
+      loading: false,
     });
 
     close();

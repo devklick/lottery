@@ -1,10 +1,9 @@
-import { Button, Modal, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCircleCheck, IconXboxX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
 import { useDeleteAccount } from "./hooks";
+import { notifyError, notifySuccess } from "../../../../common/notifications";
 import { useUserStore } from "../../../../stores/user.store";
 import ConfirmPassword from "../../ConfirmPasswordModal/ConfirmPassword";
 
@@ -19,7 +18,6 @@ export default function ConfirmDeleteAccountModal({
   const [passwordRequired, { open: setPasswordRequired }] = useDisclosure();
   const logout = useUserStore((s) => s.logout);
   const navigate = useNavigate();
-  const { colors } = useMantineTheme();
 
   const deleteAccount = useDeleteAccount({
     onReAuthRequired: setPasswordRequired,
@@ -27,12 +25,9 @@ export default function ConfirmDeleteAccountModal({
   });
 
   function onPasswordFailed() {
-    notifications.show({
-      title: "Unable to delete account",
-      message: "Password verification failed",
-      icon: <IconXboxX />,
-      color: colors.red[5],
-      autoClose: 5000,
+    notifyError({
+      title: "Password verification failed",
+      message: "Unable to delete your account",
     });
   }
 
@@ -42,12 +37,9 @@ export default function ConfirmDeleteAccountModal({
 
   function onAccountDeleted() {
     closeModal();
-    notifications.show({
+    notifySuccess({
       title: "Account Deleted",
       message: "You can no longer log in to your account",
-      icon: <IconCircleCheck />,
-      color: "green",
-      autoClose: 7000,
     });
     logout();
     navigate("/home");

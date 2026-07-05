@@ -1,4 +1,4 @@
-import { Flex, Skeleton } from "@mantine/core";
+import { Flex, InputLabelProps, Skeleton, StyleProp } from "@mantine/core";
 import { CSSProperties, PropsWithChildren } from "react";
 
 import { useWaitFor } from "../../common/hooks/time.hooks";
@@ -10,7 +10,9 @@ interface FieldWrapperProps {
   required?: boolean;
   loading?: boolean;
   minLoadingTime?: number;
-  direction?: CSSProperties["flexDirection"];
+  direction?: StyleProp<CSSProperties["flexDirection"]>;
+  fieldFlex?: StyleProp<CSSProperties["flex"]>;
+  labelProps?: InputLabelProps;
 }
 
 export default function FieldWrapper({
@@ -21,11 +23,13 @@ export default function FieldWrapper({
   loading,
   minLoadingTime = 400,
   direction = "column",
+  fieldFlex,
+  labelProps,
 }: PropsWithChildren<FieldWrapperProps>) {
   const showSkeleton = useWaitFor(loading ?? false, minLoadingTime);
 
   const skeleton = (
-    <Skeleton visible={showSkeleton} flex="0 1 0">
+    <Skeleton visible={showSkeleton} flex={fieldFlex}>
       {children}
     </Skeleton>
   );
@@ -39,6 +43,7 @@ export default function FieldWrapper({
         required={required}
         description={description}
         loading={showSkeleton}
+        labelProps={labelProps}
       />
       {skeleton}
     </Flex>

@@ -5,11 +5,8 @@ import {
   Stack,
   Text,
   TextInput,
-  useMantineTheme,
 } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconXboxX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +15,7 @@ import {
   SignInResponse,
   signInRequestSchema,
 } from "./signIn.schema";
+import { notifyError } from "../../../common/notifications";
 import AnchorLink from "../../../components/AnchorLink/AnchorLink";
 import FieldWrapper from "../../../components/FieldWrapper";
 import Page from "../../../components/Page";
@@ -25,11 +23,7 @@ import PageSection from "../../../components/PageSection";
 import { useUserStore } from "../../../stores/user.store";
 import accountService from "../accountService";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface SignInProps {}
-
-// eslint-disable-next-line no-empty-pattern
-function SignIn({}: SignInProps) {
+function SignIn() {
   const initialValues: SignInRequest = {
     password: "",
     usernameOrEmail: "",
@@ -43,7 +37,6 @@ function SignIn({}: SignInProps) {
 
   const navigate = useNavigate();
   const userStore = useUserStore();
-  const { colors } = useMantineTheme();
 
   function onSignInSuccess(response: SignInResponse) {
     userStore.login(response.userType, response.sessionExpiry);
@@ -51,12 +44,9 @@ function SignIn({}: SignInProps) {
   }
 
   function onSignInFailed() {
-    notifications.show({
+    notifyError({
       title: "Login failed",
       message: "Please check your credentials and try again",
-      icon: <IconXboxX />,
-      color: colors.red[5],
-      autoClose: 5000,
     });
   }
 
@@ -103,6 +93,7 @@ function SignIn({}: SignInProps) {
               name="Stay signed in"
               direction="row"
               description={signInRequestSchema.shape.staySignedIn.description}
+              fieldFlex={"0 1 0"}
             >
               <Checkbox
                 {...form.getInputProps("staySignedIn")}

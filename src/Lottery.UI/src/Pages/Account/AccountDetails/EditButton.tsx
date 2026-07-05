@@ -1,4 +1,10 @@
-import { Button, ButtonGroup, Group, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  ButtonGroup,
+  Group,
+  Skeleton,
+  useMantineTheme,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 interface EditButtonProps {
@@ -7,6 +13,7 @@ interface EditButtonProps {
   submitEditDisabled: boolean;
   cancelEditDisabled: boolean;
   onCancelEditClicked(): void;
+  loading?: boolean;
 }
 
 export default function EditButton({
@@ -15,13 +22,18 @@ export default function EditButton({
   onCancelEditClicked,
   onEditClicked,
   submitEditDisabled,
+  loading,
 }: EditButtonProps) {
   const { breakpoints } = useMantineTheme();
   const sm = useMediaQuery(`(max-width: ${breakpoints.sm})`);
   const xs = useMediaQuery(`(max-width: ${breakpoints.xs})`);
   return (
     <Group justify="flex-end" w="100%">
-      {!editing && <Button onClick={onEditClicked}>Edit</Button>}
+      {!editing && (
+        <Skeleton visible={loading} w={"fit-content"}>
+          <Button onClick={onEditClicked}>Edit</Button>
+        </Skeleton>
+      )}
       {editing && (
         <ButtonGroup
           orientation={xs ? "vertical" : "horizontal"}

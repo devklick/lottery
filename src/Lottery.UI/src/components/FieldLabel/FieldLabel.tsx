@@ -1,6 +1,7 @@
 import {
   Group,
   InputLabel,
+  InputLabelProps,
   InputWrapperProps,
   Skeleton,
   Tooltip,
@@ -14,6 +15,7 @@ interface FieldLabelProps {
   description?: string;
   required?: boolean;
   loading?: boolean;
+  labelProps?: InputLabelProps;
 }
 
 export default function FieldLabel({
@@ -21,6 +23,7 @@ export default function FieldLabel({
   description,
   required,
   loading = false,
+  labelProps,
 }: FieldLabelProps) {
   const infoIconColor = useColorForTheme({
     dark: ["cyan", 5],
@@ -34,9 +37,11 @@ export default function FieldLabel({
       position="bottom"
       events={{ focus: false, hover: true, touch: true }}
     >
-      <Skeleton visible={loading} flex={"1 1 0"}>
+      <Skeleton visible={loading}>
         <Group w="100%" justify="space-between">
-          <InputLabel required={required}>{name}</InputLabel>
+          <InputLabel {...labelProps} required={required}>
+            {name}
+          </InputLabel>
           {description && <IconInfoCircle size={16} color={infoIconColor} />}
         </Group>
       </Skeleton>
