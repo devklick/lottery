@@ -1,9 +1,10 @@
-import { Button, Card, Group, Skeleton, Stack, Text } from "@mantine/core";
+import { Card, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
 import ResultGameModal from "./ResultGameModal";
 import { GameStatus } from "../../common/schemas";
+import Button from "../../components/Button";
 import GameStatusBadge from "../../components/GameStatusBadge";
 import ManageGameButton from "../../components/ManageGameButton";
 import { useUserStore } from "../../stores/user.store";

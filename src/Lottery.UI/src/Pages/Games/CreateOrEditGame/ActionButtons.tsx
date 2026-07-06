@@ -1,5 +1,6 @@
-import { Button, ButtonGroup, Group, useMantineTheme } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { Group } from "@mantine/core";
+
+import Button from "../../../components/Button";
 
 interface CreateOrEditGameActionButtonsProps {
   cancelDisabled: boolean;
@@ -14,36 +15,14 @@ export default function CreateOrEditGameActionButtons({
   submitDisabled,
   formId,
 }: CreateOrEditGameActionButtonsProps) {
-  const { breakpoints } = useMantineTheme();
-  const sm = useMediaQuery(`(max-width: ${breakpoints.sm})`);
-  const xs = useMediaQuery(`(max-width: ${breakpoints.xs})`);
   return (
     <Group w={"100%"} justify="end">
-      <ButtonGroup
-        orientation={xs ? "vertical" : "horizontal"}
-        w={sm ? "100%" : "auto"}
-      >
-        <Button
-          disabled={cancelDisabled}
-          type="reset"
-          onClick={onCancel}
-          fullWidth={sm}
-          variant="outline"
-          color="red"
-        >
-          Cancel
-        </Button>
-        <Button
-          disabled={submitDisabled}
-          type="submit"
-          variant="gradient"
-          gradient={{ from: "blue", to: "grape", deg: 20 }}
-          fullWidth={sm}
-          form={formId}
-        >
-          Submit
-        </Button>
-      </ButtonGroup>
+      <Button.Pair.CancelSubmit
+        cancelDisabled={cancelDisabled}
+        onCancelClicked={onCancel}
+        submitDisabled={submitDisabled}
+        form={formId}
+      />
     </Group>
   );
 }

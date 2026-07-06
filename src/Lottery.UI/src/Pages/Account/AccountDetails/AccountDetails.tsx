@@ -172,7 +172,11 @@ export default function AccountDetails({ authenticated }: AccountDetailsProps) {
               </Stack>
             </form>
             <Divider />
-            <FieldWrapper name="Password" direction="row" loading={loading}>
+            <FieldWrapper
+              name="Password"
+              direction={{ base: "column", sm: "row" }}
+              loading={loading}
+            >
               <ChangePassword />
             </FieldWrapper>
           </Stack>

@@ -1,16 +1,10 @@
-import {
-  Button,
-  ButtonGroup,
-  Collapse,
-  Group,
-  PasswordInput,
-  Stack,
-} from "@mantine/core";
+import { Collapse, Group, PasswordInput, Stack } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 
 import { useChangePassword } from "./hooks";
 import { ChangePasswordForm, changePasswordFormSchema } from "./schema";
+import Button from "../../../components/Button";
 import FieldWrapper from "../../../components/FieldWrapper";
 
 export default function ChangePassword() {
@@ -67,24 +61,14 @@ export default function ChangePassword() {
         </form>
       </Collapse>
       <Group justify="end">
-        <ButtonGroup>
-          {expanded && (
-            <>
-              <Button onClick={toggle} variant="outline" color="red">
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="gradient"
-                gradient={{ from: "blue", to: "grape", deg: 20 }}
-                form={"change-password-form"}
-              >
-                Submit
-              </Button>
-            </>
-          )}
-          {!expanded && <Button onClick={toggle}>Change Password</Button>}
-        </ButtonGroup>
+        {expanded ? (
+          <Button.Pair.CancelSubmit
+            onCancelClicked={toggle}
+            form="change-password-form"
+          />
+        ) : (
+          <Button onClick={toggle}>Change Password</Button>
+        )}
       </Group>
     </Stack>
   );
